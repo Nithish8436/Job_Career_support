@@ -195,7 +195,7 @@ async function callGroqAI(messages, jsonMode = true, useResponseFormat = true) {
         return content;
     } catch (error) {
         const errMsg = error.response?.data?.error?.message || error.message || '';
-        console.error('Groq API Error Details:', error.response?.data || error.message);
+        console.error(' Error Details:', error.response?.data || error.message);
 
         // Fallback: if Groq fails to generate strict JSON, retry once without response_format
         if (jsonMode && useResponseFormat && errMsg.toLowerCase().includes('failed_generation')) {
@@ -559,6 +559,40 @@ Provide clear, concise, and professional guidance using headings and bullet poin
     }
 }
 
+async function generateInterviewFeedback(interviewSummary, mode = 'technical') {
+    const systemPrompt = mode === 'technical'
+        ? `You are an expert technical interviewer. Provide concise, user-friendly feedback in Markdown (max 350 words). Format EXACTLY as:\n\n## Overall Score: [X]/10\n\n**Top Strengths**\n- bullet1\n- bullet2\n\n**Top Improvements**\n- bullet1\n- bullet2\n\n**Per-Question Summary (1-2 sentences each)**\n1. Q1: [one-sentence feedback]\n2. Q2: [one-sentence feedback]\n\nBe specific and actionable. Use simple language. Do not include long paragraphs or extra sections.`
+        : `You are an expert HR interviewer. Provide concise, user-friendly behavioral feedback in Markdown (max 350 words). Format EXACTLY as:\n\n## Overall Score: [X]/10\n\n**Top Strengths**\n- bullet1\n- bullet2\n\n**Top Improvements**\n- bullet1\n- bullet2\n\n**Per-Question Summary (1-2 sentences each)**\n1. Q1: [one-sentence feedback]\n2. Q2: [one-sentence feedback]\n\nBe specific and actionable. Use simple language. Do not include long paragraphs or extra sections.`;
+
+    const userPrompt = `Here are the Q&A pairs:\n\n${interviewSummary}\n\nReturn the concise feedback in the exact format requested above.`;
+
+    try {
+        const response = await callGroqAI([
+            { role: 'system', content: systemPrompt },
+            { role: 'user', content: userPrompt }
+        ], false, false);
+
+        const text = typeof response === 'string' ? response : JSON.stringify(response);
+
+        // Quick heuristic: if the response is too long or missing headings, retry once with stricter instruction
+        if (!text || text.length < 20 || !/##\s*Overall Score/i.test(text)) {
+            console.warn('[generateInterviewFeedback] Response missing expected format, retrying with stricter prompt');
+            const retrySystem = systemPrompt + '\n\nIMPORTANT: Respond with exactly the sections requested and start with "## Overall Score".';
+            const retry = await callGroqAI([
+                { role: 'system', content: retrySystem },
+                { role: 'user', content: userPrompt }
+            ], false, false);
+            const retryText = typeof retry === 'string' ? retry : JSON.stringify(retry);
+            if (retryText && /##\s*Overall Score/i.test(retryText)) return retryText;
+        }
+
+        return text;
+    } catch (error) {
+        console.error('[generateInterviewFeedback] Error:', error);
+        throw error;
+    }
+}
+
 module.exports = {
     extractResumeText,
     extractDocumentText: extractResumeText,
@@ -566,4 +600,6 @@ module.exports = {
     generateCareerSuggestions,
     generateEnhancedResume,
     chatWithAI
+    ,
+    generateInterviewFeedback
 };

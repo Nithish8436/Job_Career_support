@@ -120,6 +120,48 @@ router.post('/analyze', async (req, res) => {
     }
 });
 
+// DELETE /api/match/:id - Delete a single match (must be before GET /:id)
+router.delete('/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        // Find and delete the match
+        const match = await Match.findByIdAndDelete(id);
+        
+        if (!match) {
+            return res.status(404).json({ error: 'Match not found' });
+        }
+
+        res.json({
+            success: true,
+            message: 'Match deleted successfully',
+            matchId: id
+        });
+    } catch (error) {
+        console.error('Delete match error:', error);
+        res.status(500).json({ error: 'Failed to delete match', details: error.message });
+    }
+});
+
+// DELETE /api/match/user/:userId/all - Delete all matches for a user
+router.delete('/user/:userId/all', async (req, res) => {
+    try {
+        const { userId } = req.params;
+
+        // Delete all matches for the user
+        const result = await Match.deleteMany({ userId });
+
+        res.json({
+            success: true,
+            message: `Deleted ${result.deletedCount} matches`,
+            deletedCount: result.deletedCount
+        });
+    } catch (error) {
+        console.error('Delete all matches error:', error);
+        res.status(500).json({ error: 'Failed to delete matches', details: error.message });
+    }
+});
+
 // GET /api/match/:id
 router.get('/:id', async (req, res) => {
     try {

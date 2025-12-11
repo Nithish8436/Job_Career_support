@@ -14,6 +14,7 @@ const HistoryPage = () => {
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
     const [filter, setFilter] = useState('all'); // all, high, medium, low
+    const [deleting, setDeleting] = useState(null);
 
     useEffect(() => {
         const fetchHistory = async () => {
@@ -36,6 +37,59 @@ const HistoryPage = () => {
             fetchHistory();
         }
     }, [user, token]);
+
+    const handleDeleteMatch = async (matchId, e) => {
+        e.preventDefault();
+        e.stopPropagation();
+
+        if (!window.confirm('Are you sure you want to delete this match history? This action cannot be undone.')) {
+            return;
+        }
+
+        setDeleting(matchId);
+        try {
+            const response = await fetch(`http://localhost:5000/api/match/${matchId}`, {
+                method: 'DELETE',
+                headers: { 'x-auth-token': token }
+            });
+
+            if (response.ok) {
+                setMatches(matches.filter(m => m._id !== matchId));
+            } else {
+                alert('Failed to delete match. Please try again.');
+            }
+        } catch (error) {
+            console.error('Error deleting match:', error);
+            alert('Error deleting match. Please try again.');
+        } finally {
+            setDeleting(null);
+        }
+    };
+
+    const handleDeleteAll = async () => {
+        if (!window.confirm('Are you sure you want to delete ALL match histories? This action cannot be undone.')) {
+            return;
+        }
+
+        setDeleting('all');
+        try {
+            const response = await fetch(`http://localhost:5000/api/match/user/${user.id}/all`, {
+                method: 'DELETE',
+                headers: { 'x-auth-token': token }
+            });
+
+            if (response.ok) {
+                setMatches([]);
+            } else {
+                alert('Failed to delete matches. Please try again.');
+            }
+        } catch (error) {
+            console.error('Error deleting matches:', error);
+            alert('Error deleting matches. Please try again.');
+        } finally {
+            setDeleting(null);
+        }
+    };
 
     const getScoreColor = (score) => {
         if (score >= 80) return 'text-green-600 bg-green-50 border-green-200';
@@ -64,12 +118,25 @@ const HistoryPage = () => {
                         <h1 className="text-2xl font-bold text-gray-900">Analysis History</h1>
                         <p className="text-gray-600 mt-1">View and manage your past resume analyses</p>
                     </div>
-                    <Link to="/upload">
-                        <Button className="gap-2">
-                            <FileText className="w-4 h-4" />
-                            New Analysis
-                        </Button>
-                    </Link>
+                    <div className="flex gap-2">
+                        {matches.length > 0 && (
+                            <Button 
+                                variant="outline" 
+                                className="gap-2 text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200"
+                                onClick={handleDeleteAll}
+                                disabled={deleting === 'all'}
+                            >
+                                <Trash2 className="w-4 h-4" />
+                                {deleting === 'all' ? 'Deleting...' : 'Delete All'}
+                            </Button>
+                        )}
+                        <Link to="/upload">
+                            <Button className="gap-2">
+                                <FileText className="w-4 h-4" />
+                                New Analysis
+                            </Button>
+                        </Link>
+                    </div>
                 </div>
 
                 {/* Filters and Search */}
@@ -154,10 +221,24 @@ const HistoryPage = () => {
                                                     </div>
                                                 </div>
 
-                                                {/* Action */}
+                                                {/* Actions */}
                                                 <div className="flex items-center gap-4 text-primary font-medium text-sm">
-                                                    View Report
-                                                    <ArrowRight className="w-4 h-4" />
+                                                    <button
+                                                        onClick={(e) => handleDeleteMatch(match._id, e)}
+                                                        disabled={deleting === match._id}
+                                                        className="p-2 text-red-500 hover:bg-red-50 hover:text-red-700 rounded-lg transition-colors disabled:opacity-50"
+                                                        title="Delete this match"
+                                                    >
+                                                        {deleting === match._id ? (
+                                                            <Loader2 className="w-4 h-4 animate-spin" />
+                                                        ) : (
+                                                            <Trash2 className="w-4 h-4" />
+                                                        )}
+                                                    </button>
+                                                    <div className="flex items-center gap-2">
+                                                        View Report
+                                                        <ArrowRight className="w-4 h-4" />
+                                                    </div>
                                                 </div>
                                             </div>
                                         </CardContent>

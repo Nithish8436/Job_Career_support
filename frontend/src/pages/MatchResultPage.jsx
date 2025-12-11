@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../co
 import { Modal } from '../components/ui/Modal';
 import { motion } from 'framer-motion';
 import { CheckCircle, XCircle, AlertTriangle, ArrowLeft, Download, Share2, Loader2, Bot, Sparkles, ArrowRight } from 'lucide-react';
-import { Link, useSearchParams } from 'react-router-dom';
+import { Link, useSearchParams, useNavigate } from 'react-router-dom';
 import { cn } from '../lib/utils';
 import SkillsRadar from '../components/SkillsRadar';
 import { toPng } from 'html-to-image';
@@ -67,6 +67,7 @@ const computeCareerMatch = (career, matchedSkills = [], overallScore = 0) => {
 };
 
 const MatchResultPage = () => {
+    const navigate = useNavigate();
     const [copyNotification, setCopyNotification] = useState(false);
     const [searchParams] = useSearchParams();
     const matchId = searchParams.get('matchId');
@@ -159,6 +160,13 @@ const MatchResultPage = () => {
         if (!matchId) return;
 
         try {
+            // Show a loading indicator
+            const originalText = 'Export PDF';
+            const button = event.target.closest('button');
+            const originalButtonHTML = button.innerHTML;
+            button.disabled = true;
+            button.innerHTML = 'Generating PDF...';
+
             const response = await fetch('http://localhost:5000/api/match/export-pdf', {
                 method: 'POST',
                 headers: {
@@ -180,9 +188,17 @@ const MatchResultPage = () => {
             a.click();
             window.URL.revokeObjectURL(url);
             document.body.removeChild(a);
+
+            // Restore button
+            button.disabled = false;
+            button.innerHTML = originalButtonHTML;
         } catch (err) {
             console.error('PDF Export failed:', err);
             alert('Failed to export PDF. Please try again.');
+            if (event.target.closest('button')) {
+                event.target.closest('button').disabled = false;
+                event.target.closest('button').innerHTML = 'Export PDF';
+            }
         }
     };
 
@@ -235,12 +251,15 @@ const MatchResultPage = () => {
             <nav className="border-b border-gray-100 bg-white sticky top-0 z-50">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
                     <div className="flex items-center gap-4">
-                        <Link to="/upload">
-                            <Button variant="ghost" size="sm" className="gap-2">
-                                <ArrowLeft className="w-4 h-4" />
-                                Back
-                            </Button>
-                        </Link>
+                        <Button 
+                            variant="ghost" 
+                            size="sm" 
+                            className="gap-2"
+                            onClick={() => navigate(-1)}
+                        >
+                            <ArrowLeft className="w-4 h-4" />
+                            Back
+                        </Button>
                         <span className="text-lg font-semibold text-text">Analysis Report</span>
                     </div>
                     <div className="flex items-center gap-2">

@@ -64,7 +64,20 @@ const InterviewPage = () => {
         }
     };
 
+    // Debug: log transcript updates to help diagnose recognition speed/accuracy
+    useEffect(() => {
+        if (!transcript) return;
+        // Log short previews to avoid noisy logs
+        console.debug('[Speech] transcript update:', transcript.substring(0, 200));
+    }, [transcript]);
+
     const startCountdown = () => {
+        // If user already started the microphone manually, do not auto-start countdown/listening
+        if (listening) {
+            setCountdown(null);
+            return;
+        }
+
         setCountdown(3);
         let count = 3;
         const timer = setInterval(() => {
@@ -73,11 +86,14 @@ const InterviewPage = () => {
             if (count === 0) {
                 clearInterval(timer);
                 setCountdown(null);
-                SpeechRecognition.startListening({
-                    continuous: true,
-                    interimResults: true,
-                    language: 'en-US'
-                });
+                // Double-check listening state before starting
+                if (!listening) {
+                    SpeechRecognition.startListening({
+                        continuous: true,
+                        interimResults: true,
+                        language: 'en-US'
+                    });
+                }
             }
         }, 1000);
     };
@@ -239,14 +255,24 @@ Example format:
         setTimeout(() => speakQuestion(firstQuestion), 500);
     };
 
-    const submitAnswer = () => {
+    const submitAnswer = async () => {
+        // If still listening, stop and wait briefly for final transcript to settle
         if (listening) {
-            SpeechRecognition.stopListening();
+            try {
+                SpeechRecognition.stopListening();
+            } catch (e) {
+                console.warn('stopListening error:', e);
+            }
+
+            // Wait for the browser recognition to finalize final results
+            await new Promise((res) => setTimeout(res, 700));
         }
+
+        const finalAnswer = transcript || '';
 
         const newAnswers = [...answers, {
             question: currentQuestion,
-            answer: transcript
+            answer: finalAnswer
         }];
         setAnswers(newAnswers);
 
@@ -264,37 +290,85 @@ Example format:
 
     const generateFallbackFeedback = (allAnswers, interviewMode) => {
         const totalQuestions = allAnswers.length;
-        const avgAnswerLength = allAnswers.reduce((sum, qa) => sum + (qa.answer?.length || 0), 0) / totalQuestions;
-        
-        return `## Overall Score: ${avgAnswerLength > 50 ? '7' : '6'}/10
+        const avgAnswerLength = Math.round(allAnswers.reduce((sum, qa) => sum + (qa.answer?.length || 0), 0) / Math.max(1, totalQuestions));
 
-## 💪 ${interviewMode === 'technical' ? 'Technical ' : ''}Strengths
+        // Concise, user-friendly fallback: score, top strengths, top improvements, brief Q-by-Q
+        const score = avgAnswerLength > 120 ? 8 : avgAnswerLength > 60 ? 6 : 4;
 
-- Completed all ${totalQuestions} interview questions
-- ${avgAnswerLength > 50 ? 'Provided detailed answers' : 'Attempted to answer all questions'}
-- Demonstrated willingness to engage with the interview process
+        const strengths = [];
+        if (avgAnswerLength > 120) strengths.push('Provided detailed responses');
+        if (avgAnswerLength > 60) strengths.push('Answered all questions and engaged with prompts');
+        if (strengths.length === 0) strengths.push('Attempted to answer questions');
 
-## 🎯 Areas for Improvement
+        const improvements = [];
+        if (avgAnswerLength <= 60) improvements.push('Give longer, more structured answers with examples');
+        improvements.push('Focus on direct answers and include one specific result or metric when possible');
+        if (interviewMode === 'technical') improvements.push('Add technical depth: mention key techniques or trade-offs');
 
-- ${avgAnswerLength < 50 ? 'Provide more detailed answers with specific examples' : 'Consider adding more technical depth to responses'}
-- Practice structuring answers more clearly
-- Include concrete examples from past experience
+        const qByQ = allAnswers.map((qa, idx) => {
+            const short = (qa.answer || '').trim().replace(/\s+/g, ' ').slice(0, 140);
+            const note = short.length === 0 ? 'No answer recorded.' : `Answer captured (${short.length} chars).`;
+            return `Q${idx + 1}: ${note}`;
+        }).join('\n');
 
-## 📝 Question-by-Question Summary
+        return `## Overall Score: ${score}/10\n\n**Strengths**\n- ${strengths.join('\n- ')}\n\n**Areas to Improve**\n- ${improvements.slice(0,3).join('\n- ')}\n\n**Question Summary**\n${qByQ}\n\n**Next Steps**\n- Practice 2-3 STAR-structured answers for behavioral prompts.\n- For technical questions, state the approach, trade-offs, and one concrete example.`;
+    };
 
-${allAnswers.map((qa, idx) => `### Question ${idx + 1}: ${qa.question}
-**Your Answer:** ${qa.answer || 'No answer provided'}
-**Length:** ${qa.answer?.length || 0} characters
-`).join('\n')}
+    // Normalize AI feedback markdown: ensure paragraphs have blank lines between them
+    // while preserving list continuity and headings.
+    const formatFeedbackMarkdown = (text) => {
+        if (!text || typeof text !== 'string') return text;
 
-## ✅ Action Items
+        const lines = text.split(/\r?\n/).map(l => l.replace(/\s+$/g, ''));
+        const out = [];
 
-1. **Practice answering questions out loud** - This helps improve clarity and confidence
-2. **Prepare specific examples** - Have 3-5 concrete examples ready for behavioral questions
-3. **Study technical fundamentals** - Review core concepts relevant to your field
-4. **Record yourself** - Practice speaking clearly and at a moderate pace
+        const isListItem = (ln) => /^\s*([-*+]\s+|\d+\.\s+)/.test(ln);
+        const isHeading = (ln) => /^\s{0,3}#{1,6}\s+/.test(ln) || /^\s*\*\*/.test(ln);
 
-*Note: This is a basic feedback summary. For detailed AI-powered feedback, please try again.*`;
+        for (let i = 0; i < lines.length; i++) {
+            const line = lines[i].trim();
+            if (line === '') {
+                // preserve single blank line
+                if (out.length === 0 || out[out.length - 1] === '') continue;
+                out.push('');
+                continue;
+            }
+
+            if (isListItem(line)) {
+                // keep list items contiguous
+                out.push(line);
+                continue;
+            }
+
+            if (isHeading(line)) {
+                // ensure a blank line before and after headings
+                if (out.length > 0 && out[out.length - 1] !== '') out.push('');
+                out.push(line);
+                // add a blank line after heading if next is regular text
+                const next = (lines[i + 1] || '').trim();
+                if (next && !isListItem(next) && !isHeading(next)) out.push('');
+                continue;
+            }
+
+            // Regular paragraph line: push and if next line is regular text, insert blank line
+            out.push(line);
+            const nextLine = (lines[i + 1] || '').trim();
+            if (nextLine && !isListItem(nextLine) && !isHeading(nextLine)) {
+                // add blank line only if next line is not part of the same paragraph (heuristic)
+                out.push('');
+            }
+        }
+
+        // Join using double newlines for paragraphs, single newlines are preserved in lists
+        // Reconstruct: ensure that list items remain each on their own line without extra blank lines
+        const resultLines = [];
+        for (let j = 0; j < out.length; j++) {
+            resultLines.push(out[j]);
+        }
+
+        // Collapse multiple blank lines into a single blank line
+        const cleaned = resultLines.join('\n').replace(/\n{3,}/g, '\n\n');
+        return cleaned.trim();
     };
 
     const getFinalFeedback = async (allAnswers) => {
@@ -306,121 +380,57 @@ ${allAnswers.map((qa, idx) => `### Question ${idx + 1}: ${qa.question}
                 `**Q${idx + 1}:** ${qa.question}\n**A${idx + 1}:** ${qa.answer}`
             ).join('\n\n');
 
+            // Request concise, user-friendly feedback (short bullets, max ~350 words)
             const feedbackPrompt = mode === 'technical'
-                ? `You are an expert technical interviewer providing detailed, constructive feedback. 
-
-I just completed a TECHNICAL mock interview. Here are all my questions and answers:
-
-${interviewSummary}
-
-Please provide comprehensive, accurate technical feedback. Be specific about:
-- Technical accuracy of answers
-- Depth of knowledge demonstrated
-- Areas where answers were incomplete or incorrect
-- What the candidate did well technically
-- Specific technical concepts they should study
-
-Use proper markdown formatting:
+                ? `You are an expert technical interviewer. Provide concise, user-friendly feedback in Markdown (max ~350 words). Format EXACTLY as:
 
 ## Overall Score: [X]/10
 
-Provide a score from 1-10 based on technical accuracy, depth, and clarity.
+**Top Strengths**
+- bullet1
+- bullet2
 
-## 💪 Technical Strengths
+**Top Improvements**
+- bullet1
+- bullet2
 
-List 3-5 specific technical strengths demonstrated in the answers. Be concrete:
-- "Demonstrated solid understanding of [concept] by explaining [specific detail]"
-- "Correctly identified [technical point] and provided accurate explanation"
+**Per-Question Summary (1-2 sentences each)**
+1. Q1: [one-sentence feedback]
+2. Q2: [one-sentence feedback]
 
-## 🎯 Areas for Technical Improvement
+Be specific and actionable. Use simple language. Do not include long paragraphs or extra sections. Here are the Q&A pairs:
 
-List 3-5 specific areas needing improvement with actionable details:
-- "Incorrect explanation of [concept]. The correct answer is [explanation]"
-- "Missing key point about [topic]. Should have mentioned [specific detail]"
-- "Could deepen understanding of [concept] by studying [specific resources/topics]"
-
-## 📝 Question-by-Question Feedback
-
-For each question, provide:
-### Question [N]: [Question text]
-**Answer Given:** [Brief summary of what was said]
-**Feedback:** 
-- ✅ What was correct/good
-- ❌ What was incorrect or missing
-- 💡 What should have been included
-- 📚 Recommended study topics
-
-## ✅ Action Items
-
-Provide 3-5 specific, actionable steps:
-1. **[Specific action]** - [Why this helps technically] - [Resources to use]
-2. **[Specific action]** - [Why this helps technically] - [Resources to use]
-3. **[Specific action]** - [Why this helps technically] - [Resources to use]
-
-Be honest, constructive, and specific. Focus on technical accuracy and depth.`
-                : `You are an expert HR interviewer providing detailed, constructive behavioral feedback.
-
-I just completed an HR/BEHAVIORAL mock interview. Here are all my questions and answers:
-
-${interviewSummary}
-
-Please provide comprehensive, accurate behavioral feedback. Be specific about:
-- Use of STAR method (Situation, Task, Action, Result)
-- Clarity and structure of responses
-- Examples provided and their relevance
-- Communication skills demonstrated
-- Areas where answers were vague or incomplete
-
-Use proper markdown formatting:
+${interviewSummary}`
+                : `You are an expert HR interviewer. Provide concise, user-friendly behavioral feedback in Markdown (max ~350 words). Format EXACTLY as:
 
 ## Overall Score: [X]/10
 
-Provide a score from 1-10 based on answer structure, clarity, relevance, and use of examples.
+**Top Strengths**
+- bullet1
+- bullet2
 
-## 💪 Strengths
+**Top Improvements**
+- bullet1
+- bullet2
 
-List 3-5 specific behavioral strengths demonstrated:
-- "Effectively used STAR method in [specific question] by clearly describing [situation]"
-- "Demonstrated strong [skill] by providing concrete example of [specific instance]"
-- "Showed good self-awareness by acknowledging [specific point]"
+**Per-Question Summary (1-2 sentences each)**
+1. Q1: [one-sentence feedback]
+2. Q2: [one-sentence feedback]
 
-## 🎯 Areas for Improvement
+Be specific and actionable. Use simple language. Do not include long paragraphs or extra sections. Here are the Q&A pairs:
 
-List 3-5 specific areas needing improvement with actionable details:
-- "Answer lacked structure. Should use STAR method: Situation was [missing], Task was [missing]..."
-- "Example was too vague. Should have included specific metrics like [what was missing]"
-- "Didn't clearly connect experience to question. Should have emphasized [specific connection]"
-
-## 📝 Question-by-Question Feedback
-
-For each question, provide:
-### Question [N]: [Question text]
-**Answer Given:** [Brief summary]
-**Feedback:**
-- ✅ What was effective (structure, clarity, examples)
-- ❌ What was missing or could be improved
-- 💡 How to strengthen this answer
-- 📝 Suggested improved answer structure
-
-## ✅ Action Items
-
-Provide 3-5 specific, actionable steps:
-1. **[Specific action]** - [Why this helps] - [How to practice]
-2. **[Specific action]** - [Why this helps] - [How to practice]
-3. **[Specific action]** - [Why this helps] - [How to practice]
-
-Be honest, constructive, and specific. Focus on answer structure, clarity, and use of concrete examples.`;
+${interviewSummary}`;
 
             try {
-                const response = await fetch('http://localhost:5000/api/chat', {
+                const response = await fetch('http://localhost:5000/api/interview/feedback', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                         'x-auth-token': token
                     },
                     body: JSON.stringify({
-                        message: feedbackPrompt,
-                        history: []
+                        interviewSummary,
+                        mode
                     })
                 });
 
@@ -431,7 +441,7 @@ Be honest, constructive, and specific. Focus on answer structure, clarity, and u
 
                 const data = await response.json();
                 if (data.success && data.message) {
-                    setFinalFeedback(data.message);
+                    setFinalFeedback(formatFeedbackMarkdown(data.message));
                 } else {
                     throw new Error(data.error || data.details || 'Failed to get feedback');
                 }
@@ -439,14 +449,14 @@ Be honest, constructive, and specific. Focus on answer structure, clarity, and u
                 console.error('Feedback fetch error:', fetchError);
                 // Generate a basic fallback feedback
                 const fallbackFeedback = generateFallbackFeedback(allAnswers, mode);
-                setFinalFeedback(fallbackFeedback);
+                setFinalFeedback(formatFeedbackMarkdown(fallbackFeedback));
             }
 
             // Award XP for interview completion
             await awardXP('interview_complete', {}, token);
         } catch (error) {
             console.error('Error getting feedback:', error);
-            setFinalFeedback(`## Great Job! 🎉\n\nYou completed the ${mode} interview! Unfortunately, I couldn't connect to get detailed feedback, but you showed great effort in answering all questions.`);
+            setFinalFeedback(formatFeedbackMarkdown(`## Great Job! 🎉\n\nYou completed the ${mode} interview! Unfortunately, I couldn't connect to get detailed feedback, but you showed great effort in answering all questions.`));
 
             // Still award XP even if feedback fails
             await awardXP('interview_complete', {}, token);
