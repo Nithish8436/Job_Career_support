@@ -75,71 +75,80 @@ const LandingPage = () => {
     };
 
     return (
-        <div className="min-h-screen bg-white font-sans text-slate-900">
+        <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-blue-50 font-sans text-slate-900">
             {/* Navbar */}
-            <nav className="bg-white sticky top-0 z-50 border-b border-gray-100 backdrop-blur-md bg-white/90">
+            <nav className="sticky top-0 z-50 border-b border-gray-100 backdrop-blur-md bg-white/95 shadow-sm">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
                     <div className="flex items-center gap-2 cursor-pointer" onClick={() => scrollToSection('hero')}>
-                        <div className="w-9 h-9 bg-blue-600 rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-blue-600/20">
+                        <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center text-white font-bold text-lg shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50 transition-shadow">
                             CC
                         </div>
-                        <span className="text-xl font-bold text-slate-900 tracking-tight">Career Compass</span>
+                        <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent tracking-tight">Career Compass</span>
                     </div>
                     <div className="hidden md:flex items-center gap-8 text-sm font-medium text-slate-600">
                         <button
                             onClick={() => scrollToSection('hero')}
-                            className={`transition-colors ${activeSection === 'hero' ? 'text-blue-600 font-bold' : 'hover:text-blue-600'}`}
+                            className={`transition-colors ${activeSection === 'hero' ? 'text-blue-600 font-bold border-b-2 border-blue-600' : 'text-slate-600 hover:text-blue-600'}`}
                         >
                             Resume Scanner
                         </button>
                         <button
                             onClick={() => scrollToSection('ats')}
-                            className={`transition-colors ${activeSection === 'ats' ? 'text-blue-600 font-bold' : 'hover:text-blue-600'}`}
+                            className={`transition-colors ${activeSection === 'ats' ? 'text-blue-600 font-bold border-b-2 border-blue-600' : 'text-slate-600 hover:text-blue-600'}`}
                         >
                             ATS Check
                         </button>
                         <button
                             onClick={() => scrollToSection('optimization')}
-                            className={`transition-colors ${activeSection === 'optimization' ? 'text-blue-600 font-bold' : 'hover:text-blue-600'}`}
+                            className={`transition-colors ${activeSection === 'optimization' ? 'text-blue-600 font-bold border-b-2 border-blue-600' : 'text-slate-600 hover:text-blue-600'}`}
                         >
                             Optimization
                         </button>
                         <button
                             onClick={() => scrollToSection('testimonials')}
-                            className={`transition-colors ${activeSection === 'testimonials' ? 'text-blue-600 font-bold' : 'hover:text-blue-600'}`}
+                            className={`transition-colors ${activeSection === 'testimonials' ? 'text-blue-600 font-bold border-b-2 border-blue-600' : 'text-slate-600 hover:text-blue-600'}`}
                         >
                             Testimonials
                         </button>
                     </div>
                     <div className="flex items-center gap-4">
                         <Link to="/login">
-                            <Button variant="ghost" className="text-slate-600 font-semibold hover:text-blue-600 hover:bg-blue-50">Log In</Button>
+                            <Button variant="ghost" className="text-slate-700 font-semibold hover:text-blue-600 hover:bg-blue-50/80 transition-colors">Log In</Button>
                         </Link>
                         <Link to="/register">
-                            <Button className="bg-blue-600 hover:bg-blue-700 text-white font-bold px-6 shadow-md shadow-blue-600/20 transition-all hover:scale-105">Sign Up</Button>
+                            <Button className="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white font-bold px-6 shadow-lg shadow-blue-600/30 transition-all hover:shadow-blue-600/50 hover:scale-105">Sign Up</Button>
                         </Link>
                     </div>
                 </div>
             </nav>
 
             {/* Hero Section */}
-            <div id="hero" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-32">
-                <div className="grid lg:grid-cols-2 gap-16 items-center">
-                    <div className="max-w-2xl">
-                        <h1 className="text-5xl md:text-7xl font-bold text-slate-900 leading-tight mb-8">
+            <div id="hero" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-32 relative overflow-hidden">
+                {/* Background decoration */}
+                <div className="absolute top-10 -left-40 w-80 h-80 bg-blue-200/40 rounded-full blur-3xl animate-pulse"></div>
+                <div className="absolute bottom-0 -right-40 w-80 h-80 bg-cyan-200/30 rounded-full blur-3xl animate-pulse"></div>
+                
+                <div className="grid lg:grid-cols-2 gap-16 items-center relative z-10">
+                    <motion.div 
+                        className="max-w-2xl"
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.6 }}
+                    >
+                        <h1 className="text-5xl md:text-7xl font-bold text-slate-900 leading-tight mb-6">
                             Optimize your resume <br />
-                            to get more interviews
+                            <span className="bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">to get more interviews</span>
                         </h1>
-                        <p className="text-xl text-slate-600 mb-10 leading-relaxed">
+                        <p className="text-xl text-slate-600 mb-10 leading-relaxed font-medium">
                             Career Compass helps you optimize your resume for any job, highlighting the key experience and skills recruiters need to see.
                         </p>
                         <Link to="/upload">
-                            <Button size="lg" className="h-16 px-10 text-xl bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-xl shadow-blue-600/30 transition-all hover:scale-105 hover:-translate-y-1">
+                            <Button size="lg" className="h-16 px-10 text-lg bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white font-bold rounded-xl shadow-xl shadow-blue-600/30 transition-all hover:shadow-blue-600/50 hover:scale-105 hover:-translate-y-1">
                                 Scan Your Resume For Free
+                                <ArrowRight className="ml-2 w-5 h-5" />
                             </Button>
                         </Link>
-
-                    </div>
+                    </motion.div>
 
                     {/* Hero Visual - Dashboard Mockup */}
                     <motion.div
@@ -148,8 +157,8 @@ const LandingPage = () => {
                         transition={{ duration: 0.8, ease: "easeOut" }}
                         className="relative hidden lg:block"
                     >
-                        <div className="absolute -inset-4 bg-gradient-to-r from-blue-100 to-purple-100 rounded-3xl blur-2xl opacity-50"></div>
-                        <div className="relative bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden">
+                        <div className="absolute -inset-4 bg-gradient-to-r from-blue-200/60 via-cyan-200/50 to-blue-200/40 rounded-3xl blur-2xl opacity-60"></div>
+                        <div className="relative bg-white rounded-2xl shadow-2xl border border-gray-200 overflow-hidden hover:shadow-3xl transition-shadow duration-300">
                             <div className="bg-slate-50 px-6 py-4 border-b border-gray-100 flex justify-between items-center">
                                 <div>
                                     <h3 className="font-bold text-slate-800">Resume scan results</h3>
@@ -172,7 +181,7 @@ const LandingPage = () => {
                                         </svg>
                                         <span className="absolute text-4xl font-extrabold text-slate-900">91%</span>
                                     </div>
-                                    <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg shadow-lg shadow-blue-600/20">Upload & rescan</Button>
+                                    <Button className="w-full bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white font-semibold py-3 rounded-lg shadow-lg shadow-blue-600/20 transition-all">Upload & rescan</Button>
                                 </div>
 
                                 <div className="w-2/3 p-8">
@@ -329,60 +338,87 @@ const LandingPage = () => {
 
 
             {/* Testimonials Section */}
-            <div id="testimonials" className="py-24 bg-white">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-                    <h2 className="text-3xl font-bold text-slate-900 mb-16">What Career Compass customers are saying</h2>
+            <div id="testimonials" className="py-32 bg-gradient-to-b from-white to-slate-50 relative overflow-hidden">
+                {/* Background decoration */}
+                <div className="absolute top-20 right-0 w-96 h-96 bg-blue-100/30 rounded-full blur-3xl"></div>
+                
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                    <div className="text-center mb-16">
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.6 }}
+                            viewport={{ once: true }}
+                        >
+                            <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-4">What Career Compass <br/><span className="bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">customers are saying</span></h2>
+                            <p className="text-lg text-slate-600 max-w-2xl mx-auto">Join thousands of job seekers who've successfully landed interviews with our platform</p>
+                        </motion.div>
+                    </div>
 
-                    <div className="relative max-w-4xl mx-auto">
-                        <div className="grid md:grid-cols-3 gap-8">
-                            {testimonials.map((t, i) => (
-                                <motion.div
-                                    key={i}
-                                    whileHover={{ y: -5 }}
-                                    className="bg-white p-8 rounded-2xl shadow-xl border border-slate-100 text-left flex flex-col h-full"
-                                >
-                                    <div className="flex gap-1 mb-4">
-                                        {[...Array(t.rating)].map((_, i) => (
-                                            <Star key={i} className="w-5 h-5 fill-yellow-400 text-yellow-400" />
-                                        ))}
-                                    </div>
-                                    <h3 className="font-bold text-lg text-slate-900 mb-3">{t.title}</h3>
-                                    <p className="text-slate-600 text-sm leading-relaxed mb-6 flex-grow">"{t.text}"</p>
-                                    <div className="pt-6 border-t border-slate-100">
-                                        <p className="font-bold text-slate-900 text-sm">{t.name}</p>
-                                        <p className="text-slate-500 text-xs">{t.date}</p>
-                                    </div>
-                                </motion.div>
-                            ))}
-                        </div>
+                    <div className="grid md:grid-cols-3 gap-8">
+                        {testimonials.map((t, i) => (
+                            <motion.div
+                                key={i}
+                                whileHover={{ y: -8 }}
+                                initial={{ opacity: 0, y: 20 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                transition={{ duration: 0.5, delay: i * 0.1 }}
+                                viewport={{ once: true }}
+                                className="bg-white p-8 rounded-2xl shadow-lg border border-slate-200 hover:border-blue-300 text-left flex flex-col h-full hover:shadow-xl transition-all"
+                            >
+                                <div className="flex gap-1 mb-4">
+                                    {[...Array(t.rating)].map((_, i) => (
+                                        <Star key={i} className="w-5 h-5 fill-yellow-400 text-yellow-400" />
+                                    ))}
+                                </div>
+                                <h3 className="font-bold text-lg text-slate-900 mb-3">{t.title}</h3>
+                                <p className="text-slate-600 text-sm leading-relaxed mb-6 flex-grow">"{t.text}"</p>
+                                <div className="pt-6 border-t border-slate-100">
+                                    <p className="font-bold text-slate-900 text-sm">{t.name}</p>
+                                    <p className="text-slate-500 text-xs">{t.date}</p>
+                                </div>
+                            </motion.div>
+                        ))}
+                    </div>
 
-                        {/* Navigation Buttons (Visual only for now as grid shows all 3) */}
-                        <div className="flex justify-center gap-4 mt-12">
-                            <button className="w-12 h-12 rounded-full bg-white border border-slate-200 flex items-center justify-center hover:bg-slate-50 transition-colors">
-                                <ChevronLeft className="w-6 h-6 text-slate-600" />
-                            </button>
-                            <button className="w-12 h-12 rounded-full bg-white border border-slate-200 flex items-center justify-center hover:bg-slate-50 transition-colors">
-                                <ChevronRight className="w-6 h-6 text-slate-600" />
-                            </button>
-                        </div>
+                    {/* Navigation Buttons (Visual only for now as grid shows all 3) */}
+                    <div className="flex justify-center gap-4 mt-12">
+                        <button className="w-12 h-12 rounded-full bg-white border border-slate-300 flex items-center justify-center hover:bg-blue-50 hover:border-blue-400 transition-all hover:shadow-md">
+                            <ChevronLeft className="w-6 h-6 text-slate-600" />
+                        </button>
+                        <button className="w-12 h-12 rounded-full bg-white border border-slate-300 flex items-center justify-center hover:bg-blue-50 hover:border-blue-400 transition-all hover:shadow-md">
+                            <ChevronRight className="w-6 h-6 text-slate-600" />
+                        </button>
                     </div>
                 </div>
             </div>
 
             {/* All-in-One Tool Section */}
-            <div id="features" className="py-24 bg-gradient-to-b from-blue-50 to-white">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div id="features" className="py-32 bg-gradient-to-b from-blue-50 via-cyan-50 to-white relative overflow-hidden">
+                {/* Background decoration */}
+                <div className="absolute top-0 left-0 w-96 h-96 bg-cyan-200/20 rounded-full blur-3xl"></div>
+                <div className="absolute bottom-0 right-0 w-96 h-96 bg-blue-200/20 rounded-full blur-3xl"></div>
+                
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
                     <div className="text-center max-w-3xl mx-auto mb-16">
-                        <h2 className="text-4xl font-bold text-slate-900 mb-6">The all-in-one job search tool</h2>
-                        <p className="text-lg text-slate-600">
-                            Career Compass tools offer everything you need to save time and get more job interviews. Your resume is just the beginning!
-                        </p>
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.6 }}
+                            viewport={{ once: true }}
+                        >
+                            <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-6">The <span className="bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">all-in-one</span> job search tool</h2>
+                            <p className="text-lg text-slate-600 leading-relaxed">
+                                Career Compass tools offer everything you need to save time and get more job interviews. Your resume is just the beginning!
+                            </p>
+                        </motion.div>
                     </div>
 
                     <div className="grid md:grid-cols-2 gap-12 items-center">
                         <div>
-                            <Button size="lg" className="w-full md:w-auto bg-blue-600 hover:bg-blue-700 text-white font-bold px-8 h-14 rounded-lg text-lg shadow-lg shadow-blue-600/20">
+                            <Button size="lg" className="w-full md:w-auto bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white font-bold px-8 h-14 rounded-lg text-lg shadow-lg shadow-blue-600/30 transition-all hover:shadow-blue-600/50">
                                 Start Optimizing Your Job Search
+                                <ArrowRight className="ml-2 w-5 h-5" />
                             </Button>
                         </div>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -393,11 +429,15 @@ const LandingPage = () => {
                             ].map((item, i) => (
                                 <motion.div
                                     key={i}
-                                    whileHover={{ scale: 1.02, backgroundColor: '#F8FAFC' }}
-                                    className="bg-white p-4 rounded-xl border border-slate-200 flex items-center gap-3 shadow-sm cursor-pointer"
+                                    whileHover={{ scale: 1.05, backgroundColor: '#F0F9FF' }}
+                                    initial={{ opacity: 0, x: -20 }}
+                                    whileInView={{ opacity: 1, x: 0 }}
+                                    transition={{ duration: 0.5, delay: i * 0.1 }}
+                                    viewport={{ once: true }}
+                                    className="bg-white p-6 rounded-xl border border-slate-200 hover:border-blue-300 flex items-center gap-4 shadow-sm hover:shadow-md transition-all cursor-pointer"
                                 >
-                                    <item.icon className="w-5 h-5 text-blue-600" />
-                                    <span className="font-bold text-slate-700">{item.text}</span>
+                                    <item.icon className="w-6 h-6 text-blue-600 flex-shrink-0" />
+                                    <span className="font-bold text-slate-800">{item.text}</span>
                                 </motion.div>
                             ))}
                         </div>
@@ -406,37 +446,37 @@ const LandingPage = () => {
             </div>
 
             {/* Simple Footer */}
-            <footer className="bg-slate-900 text-slate-400 py-12">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid md:grid-cols-4 gap-8">
+            <footer className="bg-gradient-to-r from-slate-900 to-slate-800 text-slate-300 py-16 border-t border-slate-700">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid md:grid-cols-4 gap-12">
                     <div>
                         <div className="flex items-center gap-2 mb-6">
-                            <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-lg">CC</div>
+                            <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-lg flex items-center justify-center text-white font-bold text-lg">CC</div>
                             <span className="text-xl font-bold text-white">Career Compass</span>
                         </div>
-                        <p className="text-sm">Optimize your resume to get more interviews.</p>
+                        <p className="text-sm text-slate-400">Optimize your resume to get more interviews.</p>
                     </div>
                     <div>
                         <h4 className="font-bold text-white mb-4">Products</h4>
-                        <ul className="space-y-2 text-sm">
-                            <li><a href="#" className="hover:text-white">Resume Scanner</a></li>
-                            <li><a href="#" className="hover:text-white">Resume Builder</a></li>
-                            <li><a href="#" className="hover:text-white">Job Tracker</a></li>
+                        <ul className="space-y-3 text-sm">
+                            <li><a href="#" className="text-slate-400 hover:text-blue-400 transition-colors">Resume Scanner</a></li>
+                            <li><a href="#" className="text-slate-400 hover:text-blue-400 transition-colors">Resume Builder</a></li>
+                            <li><a href="#" className="text-slate-400 hover:text-blue-400 transition-colors">Job Tracker</a></li>
                         </ul>
                     </div>
                     <div>
                         <h4 className="font-bold text-white mb-4">Resources</h4>
-                        <ul className="space-y-2 text-sm">
-                            <li><a href="#" className="hover:text-white">Blog</a></li>
-                            <li><a href="#" className="hover:text-white">ATS Guide</a></li>
-                            <li><a href="#" className="hover:text-white">Resume Examples</a></li>
+                        <ul className="space-y-3 text-sm">
+                            <li><a href="#" className="text-slate-400 hover:text-blue-400 transition-colors">Blog</a></li>
+                            <li><a href="#" className="text-slate-400 hover:text-blue-400 transition-colors">ATS Guide</a></li>
+                            <li><a href="#" className="text-slate-400 hover:text-blue-400 transition-colors">Resume Examples</a></li>
                         </ul>
                     </div>
                     <div>
                         <h4 className="font-bold text-white mb-4">Company</h4>
-                        <ul className="space-y-2 text-sm">
-                            <li><a href="#" className="hover:text-white">About Us</a></li>
-                            <li><a href="#" className="hover:text-white">Contact</a></li>
-                            <li><a href="#" className="hover:text-white">Privacy Policy</a></li>
+                        <ul className="space-y-3 text-sm">
+                            <li><a href="#" className="text-slate-400 hover:text-blue-400 transition-colors">About Us</a></li>
+                            <li><a href="#" className="text-slate-400 hover:text-blue-400 transition-colors">Contact</a></li>
+                            <li><a href="#" className="text-slate-400 hover:text-blue-400 transition-colors">Privacy Policy</a></li>
                         </ul>
                     </div>
                 </div>
