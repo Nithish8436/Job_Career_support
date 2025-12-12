@@ -147,16 +147,21 @@ async function callGroqAI(messages, jsonMode = true, useResponseFormat = true) {
 
     try {
         // Log request details for debugging
-        console.log(`[Groq] Sending request. Model: llama-3.3-70b-versatile. Messages: ${messages.length}. Content Length: ${messages[1]?.content?.length || 0}`);
+        console.log(
+            `[Groq] Sending request. Model: llama-3.3-70b-versatile. Messages: ${messages.length}. Content Length: ${messages[1]?.content?.length || 0}`
+        );
 
-        // Did not use json_object mode as it causes 'failed_generation' on complex prompts with Llama 3
+        // JSON mode disabled because strict json_object can cause failed_generation on Llama 3
         const response = await axios.post(
             GROQ_API_URL,
             {
                 model: 'llama-3.3-70b-versatile',
                 messages: messages,
-                temperature: 0.1, // Lower temperature for more deterministic output
-                response_format: jsonMode && useResponseFormat ? { type: 'json_object' } : undefined
+                temperature: 0.1, // lower temp for more accurate output
+                response_format:
+                    jsonMode && useResponseFormat
+                        ? { type: 'json_object' }
+                        : undefined
             },
             {
                 headers: {
@@ -166,21 +171,37 @@ async function callGroqAI(messages, jsonMode = true, useResponseFormat = true) {
             }
         );
 
-        if (!response.data || !response.data.choices || response.data.choices.length === 0) {
+        if (
+            !response.data ||
+            !response.data.choices ||
+            response.data.choices.length === 0
+        ) {
             console.error('Groq Empty Response:', JSON.stringify(response.data));
             throw new Error('Empty response from AI service');
         }
 
         let rawContent = response.data.choices[0]?.message?.content;
 
-        // Groq can return content as an array of parts; flatten to string
+        // Groq sometimes returns content as an array of chunks → flatten to string
         if (Array.isArray(rawContent)) {
-            rawContent = rawContent.map(part => part?.text ?? '').join('').trim();
+            rawContent = rawContent
+                .map(part => part?.text ?? '')
+                .join('')
+                .trim();
         }
 
-        const content = (typeof rawContent === 'string' ? rawContent : JSON.stringify(rawContent || '')).trim();
-        console.log('aiService.js Content----------------------------------------------:', content);
-        // Log full response for debugging (truncate if too long)
+        const content =
+            (typeof rawContent === 'string'
+                ? rawContent
+                : JSON.stringify(rawContent || '')
+            ).trim();
+
+        console.log(
+            'aiService.js Content----------------------------------------------:',
+            content
+        );
+
+        // Debug truncated view if large
         if (content.length > 1000) {
             console.log('[Groq] Raw AI Response (first 500 chars):', content.substring(0, 500) + '...');
             console.log('[Groq] Raw AI Response (last 500 chars):', '...' + content.substring(content.length - 500));
@@ -193,19 +214,130 @@ async function callGroqAI(messages, jsonMode = true, useResponseFormat = true) {
         }
 
         return content;
+
     } catch (error) {
-        const errMsg = error.response?.data?.error?.message || error.message || '';
+        const errMsg =
+            error.response?.data?.error?.message ||
+            error.message ||
+            '';
+
         console.error(' Error Details:', error.response?.data || error.message);
 
-        // Fallback: if Groq fails to generate strict JSON, retry once without response_format
-        if (jsonMode && useResponseFormat && errMsg.toLowerCase().includes('failed_generation')) {
-            console.warn('Groq failed_generation with response_format. Retrying without response_format...');
+        // Retry once without json_object formatting if model fails strict mode
+        if (
+            jsonMode &&
+            useResponseFormat &&
+            errMsg.toLowerCase().includes('failed_generation')
+        ) {
+            console.warn(
+                'Groq failed_generation with response_format. Retrying without response_format...'
+            );
             return callGroqAI(messages, jsonMode, false);
         }
 
         throw new Error(`AI Service Error: ${errMsg || 'Unknown error'}`);
     }
 }
+
+async function callGroqAI(messages, jsonMode = true, useResponseFormat = true) {
+    if (!GROQ_API_KEY) {
+        throw new Error('GROQ_API_KEY is missing in .env');
+    }
+
+    try {
+        // Log request details for debugging
+        console.log(
+            `[Groq] Sending request. Model: llama-3.3-70b-versatile. Messages: ${messages.length}. Content Length: ${messages[1]?.content?.length || 0}`
+        );
+
+        // JSON mode disabled because strict json_object can cause failed_generation on Llama 3
+        const response = await axios.post(
+            GROQ_API_URL,
+            {
+                model: 'llama-3.3-70b-versatile',
+                messages: messages,
+                temperature: 0.1, // lower temp for more accurate output
+                response_format:
+                    jsonMode && useResponseFormat
+                        ? { type: 'json_object' }
+                        : undefined
+            },
+            {
+                headers: {
+                    'Authorization': `Bearer ${GROQ_API_KEY}`,
+                    'Content-Type': 'application/json'
+                }
+            }
+        );
+
+        if (
+            !response.data ||
+            !response.data.choices ||
+            response.data.choices.length === 0
+        ) {
+            console.error('Groq Empty Response:', JSON.stringify(response.data));
+            throw new Error('Empty response from AI service');
+        }
+
+        let rawContent = response.data.choices[0]?.message?.content;
+
+        // Groq sometimes returns content as an array of chunks → flatten to string
+        if (Array.isArray(rawContent)) {
+            rawContent = rawContent
+                .map(part => part?.text ?? '')
+                .join('')
+                .trim();
+        }
+
+        const content =
+            (typeof rawContent === 'string'
+                ? rawContent
+                : JSON.stringify(rawContent || '')
+            ).trim();
+
+        console.log(
+            'aiService.js Content----------------------------------------------:',
+            content
+        );
+
+        // Debug truncated view if large
+        if (content.length > 1000) {
+            console.log('[Groq] Raw AI Response (first 500 chars):', content.substring(0, 500) + '...');
+            console.log('[Groq] Raw AI Response (last 500 chars):', '...' + content.substring(content.length - 500));
+        } else {
+            console.log('[Groq] Raw AI Response (full):', content);
+        }
+
+        if (jsonMode) {
+            return tryParseJson(content);
+        }
+
+        return content;
+
+    } catch (error) {
+        const errMsg =
+            error.response?.data?.error?.message ||
+            error.message ||
+            '';
+
+        console.error(' Error Details:', error.response?.data || error.message);
+
+        // Retry once without json_object formatting if model fails strict mode
+        if (
+            jsonMode &&
+            useResponseFormat &&
+            errMsg.toLowerCase().includes('failed_generation')
+        ) {
+            console.warn(
+                'Groq failed_generation with response_format. Retrying without response_format...'
+            );
+            return callGroqAI(messages, jsonMode, false);
+        }
+
+        throw new Error(`AI Service Error: ${errMsg || 'Unknown error'}`);
+    }
+}
+
 
 async function extractResumeText(buffer, extname) {
     try {
@@ -331,7 +463,7 @@ Return ONLY a JSON object with the structure specified. Do not include any resum
 
         // Handle potential wrapper difference if model output varies
         let suggestions = [];
-        
+
         if (Array.isArray(result)) {
             suggestions = result;
         } else if (result && Array.isArray(result.suggestions)) {
@@ -353,10 +485,10 @@ Return ONLY a JSON object with the structure specified. Do not include any resum
             .map(item => ({
                 title: item.title || 'Career Path',
                 description: item.description || item.whyThisFits || 'A great career path based on your skills',
-                requiredSkills: Array.isArray(item.requiredSkills) ? item.requiredSkills : 
-                               Array.isArray(item.roadmap) ? item.roadmap.slice(0, 3) : [],
-                matchScore: typeof item.matchScore === 'number' ? item.matchScore : 
-                           typeof item.matchPercent === 'number' ? item.matchPercent : 75,
+                requiredSkills: Array.isArray(item.requiredSkills) ? item.requiredSkills :
+                    Array.isArray(item.roadmap) ? item.roadmap.slice(0, 3) : [],
+                matchScore: typeof item.matchScore === 'number' ? item.matchScore :
+                    typeof item.matchPercent === 'number' ? item.matchPercent : 75,
                 imageUrl: `https://image.pollinations.ai/prompt/${encodeURIComponent((item.title || 'technology career') + ' professional workspace')}?width=800&height=400&nologo=true`
             }))
             .slice(0, 5); // Limit to 5 suggestions
@@ -372,7 +504,7 @@ Return ONLY a JSON object with the structure specified. Do not include any resum
 
 async function generateEnhancedResume(resumeText, jobDescription, analysisResults) {
     const { generateResumeTemplate } = require('../templates/resumeTemplate');
-    
+
     const systemPrompt = `You are an expert ATS-Friendly Resume Writer. 
     Your task is to extract and structure resume information into a JSON format that will be used with a standardized template.
 
@@ -481,18 +613,18 @@ async function generateEnhancedResume(resumeText, jobDescription, analysisResult
 
         // Use the template to generate HTML
         const htmlCode = generateResumeTemplate(cleanedData);
-        
+
         console.log('[Enhanced Resume] HTML generated successfully. Length:', htmlCode.length);
         return htmlCode;
     } catch (error) {
         console.error('[Enhanced Resume] Error generating structured data:', error);
         console.error('[Enhanced Resume] Error details:', error.message);
-        
+
         // Fallback: try to extract basic info from resume text
         const nameMatch = resumeText.match(/^([A-Z][a-z]+(?:\s+[A-Z][a-z]+)+)/m);
         const emailMatch = resumeText.match(/([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/);
         const phoneMatch = resumeText.match(/(\+?\d{1,3}[-.\s]?\(?\d{1,4}\)?[-.\s]?\d{1,4}[-.\s]?\d{1,9})/);
-        
+
         return generateResumeTemplate({
             name: nameMatch ? nameMatch[1] : 'Your Name',
             contact: {
@@ -511,87 +643,181 @@ async function generateEnhancedResume(resumeText, jobDescription, analysisResult
 }
 
 async function chatWithAI(message, history = []) {
-    // Check if this is a request for JSON (interview questions)
-    const isJsonRequest = message.includes('JSON array') || message.includes('["Question') || message.includes('CRITICAL: Return ONLY a valid JSON array');
-    
+    // Detect JSON request for interview questions
+    console.log("--------------------------[ChatWithAI] Received message:", message);
+    const isJsonRequest =
+        message.includes('JSON array') ||
+        message.includes('["Question') ||
+        message.includes('CRITICAL: Return ONLY a valid JSON array');
+
     const systemPrompt = isJsonRequest
-  ? `You are an expert AI Career Coach and Interview Assistant.
-When the user requests interview questions, respond ONLY with a valid JSON array of strings and nothing else.`
-  : `You are an expert AI Career Coach and Interview Assistant.
-Provide clear, concise, and professional guidance using headings and bullet points. Keep responses structured, actionable, and easy to understand.`;
+        ? `You are an expert Interview Assistant.
+Respond ONLY with a CLEAN JSON array of strings.
+No explanations, no markdown, no extra text.`
+        : `You are an AI Career Coach.
 
+Your answers MUST follow these rules:
 
-    // Format history for the API
-    const messages = [
-        { role: 'system', content: systemPrompt }
-    ];
+1. Start with a clear decision when the user asks about fit:
+   - "## Suitability: YES" or "## Suitability: NO"
 
-    // Add conversation history
+2. Keep responses SHORT:
+   - Max 6 bullet points
+   - Max 3–5 words per bullet when possible
+
+3. Use simple language.
+   No long sentences. No paragraphs.
+
+4. Output must always use this structure:
+   ## Suitability: YES/NO
+   - point
+   - point
+   - point
+
+   ## Key Strengths / Gaps
+   - point
+   - point
+
+   ## Recommendation
+   - point
+   - point
+
+5. Total output MUST be under 80–100 words.
+
+6. Focus ONLY on what the user can understand quickly and act on immediately.
+`;
+
+    const messages = [{ role: "system", content: systemPrompt }];
+
+    // Add chat history
     if (Array.isArray(history) && history.length > 0) {
         history.forEach(msg => {
             if (msg.role && msg.content) {
                 messages.push({
-                    role: msg.role === 'user' ? 'user' : 'assistant',
+                    role: msg.role,
                     content: msg.content
                 });
             }
         });
     }
 
-    // Add current message
-    messages.push({ role: 'user', content: message });
+    messages.push({ role: "user", content: message });
 
     try {
         const response = await callGroqAI(messages, isJsonRequest, false);
-        
-        // Ensure we return a string for non-JSON responses
+
         if (isJsonRequest) {
             return response;
-        } else {
-            // For text responses, ensure it's a string
-            return typeof response === 'string' ? response : String(response);
         }
+
+        return typeof response === "string" ? response : String(response);
+
     } catch (error) {
-        console.error('ChatWithAI Error:', error);
-        console.error('Error message:', error.message);
-        console.error('Error stack:', error.stack);
-        throw new Error(`AI Service Error: ${error.message || 'Failed to generate response'}`);
+        console.error("ChatWithAI Error:", error);
+        throw new Error("AI Service Error: " + error.message);
     }
 }
 
-async function generateInterviewFeedback(interviewSummary, mode = 'technical') {
-    const systemPrompt = mode === 'technical'
-        ? `You are an expert technical interviewer. Provide concise, user-friendly feedback in Markdown (max 350 words). Format EXACTLY as:\n\n## Overall Score: [X]/10\n\n**Top Strengths**\n- bullet1\n- bullet2\n\n**Top Improvements**\n- bullet1\n- bullet2\n\n**Per-Question Summary (1-2 sentences each)**\n1. Q1: [one-sentence feedback]\n2. Q2: [one-sentence feedback]\n\nBe specific and actionable. Use simple language. Do not include long paragraphs or extra sections.`
-        : `You are an expert HR interviewer. Provide concise, user-friendly behavioral feedback in Markdown (max 350 words). Format EXACTLY as:\n\n## Overall Score: [X]/10\n\n**Top Strengths**\n- bullet1\n- bullet2\n\n**Top Improvements**\n- bullet1\n- bullet2\n\n**Per-Question Summary (1-2 sentences each)**\n1. Q1: [one-sentence feedback]\n2. Q2: [one-sentence feedback]\n\nBe specific and actionable. Use simple language. Do not include long paragraphs or extra sections.`;
 
-    const userPrompt = `Here are the Q&A pairs:\n\n${interviewSummary}\n\nReturn the concise feedback in the exact format requested above.`;
+async function generateInterviewFeedback(interviewSummary, mode = 'technical') {
+
+    const systemPrompt =
+        mode === 'technical'
+            ? `You are an expert technical interviewer.
+
+Return feedback in a VERY SHORT format. STRICT RULES:
+
+1. MAX OUTPUT: 60–80 words.
+2. NO paragraphs. NO long explanations.
+3. ONLY include the following sections:
+
+## Overall Score: [X]/10
+
+**Top Strengths**
+- 2 short bullets
+- 3–5 words each
+
+**Top Improvements**
+- 2 short bullets
+- 3–5 words each
+
+DO NOT include:
+- Per-question summary
+- Extra sections
+- Long sentences
+- More than 2 bullets per section`
+            : `You are an expert HR interviewer.
+
+Return feedback in a VERY SHORT format. STRICT RULES:
+
+1. MAX OUTPUT: 60–80 words.
+2. NO paragraphs. NO long explanations.
+3. ONLY include the following sections:
+
+## Overall Score: [X]/10
+
+**Top Strengths**
+- 2 short bullets
+- 3–5 words each
+
+**Top Improvements**
+- 2 short bullets
+- 3–5 words each
+
+DO NOT include:
+- Per-question summary
+- Extra sections
+- Long sentences
+- More than 2 bullets per section`;
+
+    const userPrompt = `Here are the Q&A pairs:
+
+${interviewSummary}
+
+Return feedback ONLY in the exact short structure required above.`;
+
 
     try {
-        const response = await callGroqAI([
-            { role: 'system', content: systemPrompt },
-            { role: 'user', content: userPrompt }
-        ], false, false);
+        const response = await callGroqAI(
+            [
+                { role: 'system', content: systemPrompt },
+                { role: 'user', content: userPrompt }
+            ],
+            false,
+            false
+        );
 
         const text = typeof response === 'string' ? response : JSON.stringify(response);
 
-        // Quick heuristic: if the response is too long or missing headings, retry once with stricter instruction
-        if (!text || text.length < 20 || !/##\s*Overall Score/i.test(text)) {
-            console.warn('[generateInterviewFeedback] Response missing expected format, retrying with stricter prompt');
-            const retrySystem = systemPrompt + '\n\nIMPORTANT: Respond with exactly the sections requested and start with "## Overall Score".';
-            const retry = await callGroqAI([
-                { role: 'system', content: retrySystem },
-                { role: 'user', content: userPrompt }
-            ], false, false);
-            const retryText = typeof retry === 'string' ? retry : JSON.stringify(retry);
-            if (retryText && /##\s*Overall Score/i.test(retryText)) return retryText;
+        // If the output does NOT match the short format, retry once
+        const validFormat = /##\s*Overall Score/i.test(text);
+
+        if (!validFormat || text.length > 200) {
+            console.warn('[generateInterviewFeedback] Retrying with stricter short format');
+
+            const retrySystem = systemPrompt + `
+IMPORTANT: Output MUST be under 80 words. NO extra text. NO per-question summary.`;
+
+            const retry = await callGroqAI(
+                [
+                    { role: 'system', content: retrySystem },
+                    { role: 'user', content: userPrompt }
+                ],
+                false,
+                false
+            );
+
+            return typeof retry === 'string' ? retry : JSON.stringify(retry);
         }
 
         return text;
+
     } catch (error) {
         console.error('[generateInterviewFeedback] Error:', error);
         throw error;
     }
 }
+
 
 module.exports = {
     extractResumeText,
@@ -599,7 +825,6 @@ module.exports = {
     analyzeMatch,
     generateCareerSuggestions,
     generateEnhancedResume,
-    chatWithAI
-    ,
+    chatWithAI,
     generateInterviewFeedback
 };

@@ -29,7 +29,7 @@ router.post('/', auth, async (req, res) => {
     } catch (error) {
         console.error('Chat API Error:', error);
         console.error('Error stack:', error.stack);
-        res.status(500).json({ 
+        res.status(500).json({
             error: 'Failed to get response',
             details: error.message || 'Unknown error occurred'
         });
