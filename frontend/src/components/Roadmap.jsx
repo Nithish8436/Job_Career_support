@@ -128,9 +128,9 @@ const Roadmap = () => {
 
     if (loading) {
         return (
-            <Card>
+            <Card className="border-slate-200/50 shadow-sm">
                 <CardContent className="p-12 flex items-center justify-center">
-                    <Loader2 className="w-8 h-8 animate-spin text-primary" />
+                    <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
                 </CardContent>
             </Card>
         );
@@ -142,29 +142,29 @@ const Roadmap = () => {
     const xpInCurrentLevel = userXP % 500;
 
     return (
-        <Card>
+        <Card className="border-slate-200/50 shadow-sm">
             <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                    <Trophy className="w-5 h-5 text-primary" />
+                <CardTitle className="flex items-center gap-2 text-slate-900">
+                    <Trophy className="w-5 h-5 text-blue-600" />
                     Career Roadmap
                 </CardTitle>
             </CardHeader>
             <CardContent>
                 {/* Level & XP Progress */}
-                <div className="mb-6 p-4 bg-gradient-to-r from-primary/10 to-purple-100 rounded-lg">
+                <div className="mb-6 p-4 bg-gradient-to-r from-blue-50 to-cyan-50 rounded-lg border border-blue-200/50">
                     <div className="flex items-center justify-between mb-2">
-                        <span className="text-sm font-semibold text-gray-700">Level {userLevel}</span>
-                        <span className="text-xs text-gray-600">{xpInCurrentLevel} / {500} XP</span>
+                        <span className="text-sm font-semibold text-slate-700">Level {userLevel}</span>
+                        <span className="text-xs text-slate-600">{xpInCurrentLevel} / {500} XP</span>
                     </div>
-                    <div className="h-3 bg-white rounded-full overflow-hidden">
+                    <div className="h-3 bg-white rounded-full overflow-hidden border border-slate-200">
                         <motion.div
                             initial={{ width: 0 }}
                             animate={{ width: `${(xpInCurrentLevel / 500) * 100}%` }}
                             transition={{ duration: 1, ease: "easeOut" }}
-                            className="h-full bg-gradient-to-r from-primary to-purple-600"
+                            className="h-full bg-gradient-to-r from-blue-600 to-cyan-500"
                         />
                     </div>
-                    <p className="text-xs text-gray-600 mt-2 text-center">
+                    <p className="text-xs text-slate-600 mt-2 text-center">
                         Total XP: {userXP}
                     </p>
                 </div>
@@ -186,18 +186,18 @@ const Roadmap = () => {
                                 transition={{ delay: index * 0.1 }}
                                 className={cn(
                                     "relative p-4 rounded-lg border-2 transition-all",
-                                    isCompleted && "bg-green-50 border-green-200",
-                                    isCurrent && "bg-blue-50 border-blue-400 shadow-md",
-                                    isLocked && "bg-gray-50 border-gray-200 opacity-60"
+                                    isCompleted && "bg-gradient-to-br from-green-50 to-green-100/50 border-green-200",
+                                    isCurrent && "bg-gradient-to-br from-blue-50 to-blue-100/50 border-blue-400 shadow-md shadow-blue-200/30",
+                                    isLocked && "bg-slate-50/50 border-slate-200/50 opacity-60"
                                 )}
                             >
                                 <div className="flex items-start gap-3">
                                     {/* Icon */}
                                     <div className={cn(
-                                        "w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0",
-                                        isCompleted && "bg-green-500",
-                                        isCurrent && "bg-blue-500",
-                                        isLocked && "bg-gray-300"
+                                        "w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 border",
+                                        isCompleted && "bg-gradient-to-br from-green-500 to-green-600 border-green-600",
+                                        isCurrent && "bg-gradient-to-br from-blue-600 to-cyan-500 border-blue-600",
+                                        isLocked && "bg-gradient-to-br from-slate-300 to-slate-400 border-slate-400"
                                     )}>
                                         {isLocked ? (
                                             <Lock className="w-5 h-5 text-white" />
@@ -214,7 +214,7 @@ const Roadmap = () => {
                                             "font-semibold mb-1",
                                             isCompleted && "text-green-900",
                                             isCurrent && "text-blue-900",
-                                            isLocked && "text-gray-600"
+                                            isLocked && "text-slate-600"
                                         )}>
                                             {step.title}
                                         </h4>
@@ -222,7 +222,7 @@ const Roadmap = () => {
                                             "text-sm mb-2",
                                             isCompleted && "text-green-700",
                                             isCurrent && "text-blue-700",
-                                            isLocked && "text-gray-500"
+                                            isLocked && "text-slate-500"
                                         )}>
                                             {step.description}
                                         </p>
@@ -230,7 +230,7 @@ const Roadmap = () => {
                                             {!isCompleted && (
                                                 <span className={cn(
                                                     "font-medium",
-                                                    isCurrent ? "text-blue-600" : "text-gray-500"
+                                                    isCurrent ? "text-blue-600" : "text-slate-500"
                                                 )}>
                                                     Requires {step.xpRequired} XP
                                                 </span>
@@ -239,7 +239,7 @@ const Roadmap = () => {
                                                 "font-medium",
                                                 isCompleted && "text-green-600",
                                                 isCurrent && "text-blue-600",
-                                                isLocked && "text-gray-500"
+                                                isLocked && "text-slate-500"
                                             )}>
                                                 +{step.xpReward} XP Reward
                                             </span>
@@ -249,7 +249,7 @@ const Roadmap = () => {
                                     {/* Status Badge */}
                                     {isCurrent && (
                                         <div className="absolute top-2 right-2">
-                                            <span className="px-2 py-1 bg-blue-500 text-white text-xs font-bold rounded-full">
+                                            <span className="px-2 py-1 bg-gradient-to-r from-blue-600 to-cyan-500 text-white text-xs font-bold rounded-full shadow-sm">
                                                 ACTIVE
                                             </span>
                                         </div>
@@ -260,7 +260,7 @@ const Roadmap = () => {
                                 {index < roadmapSteps.length - 1 && (
                                     <div className={cn(
                                         "absolute left-8 top-full w-0.5 h-3 -mb-3",
-                                        isCompleted ? "bg-green-300" : "bg-gray-300"
+                                        isCompleted ? "bg-green-300" : "bg-slate-300"
                                     )} />
                                 )}
                             </motion.div>
@@ -269,43 +269,43 @@ const Roadmap = () => {
                 </div>
 
                 {/* Achievements Summary */}
-                <div className="mt-6 p-4 bg-gradient-to-r from-yellow-50 to-orange-50 rounded-lg border border-yellow-200">
+                <div className="mt-6 p-4 bg-gradient-to-br from-yellow-50 to-yellow-100/50 rounded-lg border border-yellow-200/50">
                     <div className="flex items-center gap-2 mb-2">
                         <Trophy className="w-5 h-5 text-yellow-600" />
                         <h4 className="font-semibold text-yellow-900">Achievements</h4>
                     </div>
                     <div className="grid grid-cols-3 gap-2 text-center">
                         <div>
-                            <p className="text-2xl font-bold text-yellow-700">{getCompletedCount()}</p>
-                            <p className="text-xs text-yellow-600">Completed</p>
+                            <p className="text-2xl font-bold text-green-600">{getCompletedCount()}</p>
+                            <p className="text-xs text-green-700">Completed</p>
                         </div>
                         <div>
-                            <p className="text-2xl font-bold text-blue-700">{getCurrentCount()}</p>
-                            <p className="text-xs text-blue-600">In Progress</p>
+                            <p className="text-2xl font-bold text-blue-600">{getCurrentCount()}</p>
+                            <p className="text-xs text-blue-700">In Progress</p>
                         </div>
                         <div>
-                            <p className="text-2xl font-bold text-gray-700">{getLockedCount()}</p>
-                            <p className="text-xs text-gray-600">Locked</p>
+                            <p className="text-2xl font-bold text-slate-600">{getLockedCount()}</p>
+                            <p className="text-xs text-slate-700">Locked</p>
                         </div>
                     </div>
                 </div>
 
                 {/* Stats */}
                 {progress && (
-                    <div className="mt-4 p-3 bg-gray-50 rounded-lg">
-                        <p className="text-xs text-gray-600 text-center mb-2 font-semibold">Your Stats</p>
+                    <div className="mt-4 p-3 bg-gradient-to-br from-slate-50 to-slate-100/50 rounded-lg border border-slate-200/50">
+                        <p className="text-xs text-slate-600 text-center mb-2 font-semibold">Your Stats</p>
                         <div className="grid grid-cols-3 gap-2 text-center text-xs">
                             <div>
-                                <p className="font-bold text-gray-900">{progress.stats.totalAnalyses}</p>
-                                <p className="text-gray-600">Analyses</p>
+                                <p className="font-bold text-slate-900">{progress.stats.totalAnalyses}</p>
+                                <p className="text-slate-600">Analyses</p>
                             </div>
                             <div>
-                                <p className="font-bold text-gray-900">{progress.stats.totalQuizzes}</p>
-                                <p className="text-gray-600">Quizzes</p>
+                                <p className="font-bold text-slate-900">{progress.stats.totalQuizzes}</p>
+                                <p className="text-slate-600">Quizzes</p>
                             </div>
                             <div>
-                                <p className="font-bold text-gray-900">{progress.stats.totalInterviews}</p>
-                                <p className="text-gray-600">Interviews</p>
+                                <p className="font-bold text-slate-900">{progress.stats.totalInterviews}</p>
+                                <p className="text-slate-600">Interviews</p>
                             </div>
                         </div>
                     </div>

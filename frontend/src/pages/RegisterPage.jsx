@@ -4,7 +4,7 @@ import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
-import { AlertCircle, Loader2, Eye, EyeOff, CheckCircle2, XCircle } from 'lucide-react';
+import { AlertCircle, Loader2, Eye, EyeOff, CheckCircle2, XCircle, ArrowRight, Sparkles } from 'lucide-react';
 
 const RegisterPage = () => {
     const [name, setName] = useState('');
@@ -67,31 +67,96 @@ const RegisterPage = () => {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-slate-100 via-blue-50 to-cyan-50">
+        <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-slate-50 via-white to-blue-50/30">
             <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.3 }}
-                className="w-full max-w-4xl bg-white rounded-3xl shadow-2xl overflow-hidden border border-gray-200/50"
+                className="w-full max-w-5xl bg-white rounded-3xl shadow-2xl overflow-hidden border border-slate-200/50"
             >
                 <div className="flex flex-col lg:flex-row">
-                    {/* Left Side - Form */}
-                    <div className="w-full lg:w-1/2 p-6 lg:p-10 bg-gradient-to-b from-white to-blue-50/30">
-                        {/* Logo */}
-                        <div className="mb-8">
-                            <div className="flex items-center gap-2 mb-8">
-                                <div className="w-9 h-9 bg-gradient-to-br from-blue-600 to-cyan-600 rounded-lg flex items-center justify-center text-white font-bold text-base shadow-md shadow-blue-600/20">
-                                    CC
+                    {/* Left Side - Card (like login page) */}
+                    <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-blue-50 via-cyan-50 to-slate-50 items-center justify-center p-8 relative overflow-hidden rounded-l-3xl">
+                        {/* Decorative Elements */}
+                        <div className="absolute top-0 left-0 w-64 h-64 bg-blue-500/5 rounded-full blur-3xl"></div>
+                        <div className="absolute bottom-0 right-0 w-48 h-48 bg-cyan-500/5 rounded-full blur-3xl"></div>
+                        
+                        {/* Card Container */}
+                        <motion.div
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: 0.2 }}
+                            className="relative z-10 w-full max-w-sm"
+                        >
+                            <div className="bg-white rounded-2xl shadow-lg border border-slate-200/80 p-8">
+                                {/* Card Header */}
+                                <div className="text-center mb-8">
+                                    <div className="w-16 h-16 mx-auto mb-4 rounded-xl bg-gradient-to-br from-blue-600 to-cyan-500 flex items-center justify-center shadow-md">
+                                        <svg className="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                                        </svg>
+                                    </div>
+                                    <h3 className="text-2xl font-bold text-slate-900 mb-2">Start Your Career Journey</h3>
+                                    <p className="text-slate-600 text-sm">
+                                        Join our community and unlock your career potential with AI-powered insights
+                                    </p>
                                 </div>
-                                <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">Career Compass</span>
+                                
+                                {/* Benefits List */}
+                                <div className="space-y-3">
+                                    {[
+                                        'Get instant resume-job match scores',
+                                        'Receive personalized improvement tips',
+                                        'Access AI mock interviews',
+                                        'Track your career progress',
+                                        'Join thousands of successful job seekers'
+                                    ].map((benefit, index) => (
+                                        <motion.div 
+                                            key={index}
+                                            initial={{ opacity: 0, x: -10 }}
+                                            animate={{ opacity: 1, x: 0 }}
+                                            transition={{ delay: 0.3 + index * 0.1 }}
+                                            className="flex items-start gap-3 p-2 rounded-lg hover:bg-slate-50/80 transition-colors"
+                                        >
+                                            {/* Checkbox circle */}
+                                            <div className="w-5 h-5 mt-0.5 rounded-full border-2 border-blue-500 flex items-center justify-center flex-shrink-0">
+                                                <div className="w-2 h-2 rounded-full bg-blue-500"></div>
+                                            </div>
+                                            <span className="text-slate-700 font-medium text-sm">{benefit}</span>
+                                        </motion.div>
+                                    ))}
+                                </div>
+                                
+                                
                             </div>
-                            <h1 className="text-3xl lg:text-5xl font-bold text-gray-900 mb-3">
-                                Create Your <br className="hidden lg:inline"/>Account
+                        </motion.div>
+                    </div>
+
+                    {/* Right Side - Form */}
+                    <div className="w-full lg:w-1/2 p-8 lg:p-12 bg-gradient-to-b from-white to-slate-50/50">
+                        {/* Logo */}
+                        <motion.div 
+                            initial={{ opacity: 0, y: -20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            className="mb-8"
+                        >
+                            <div className="flex items-center gap-2 mb-6">
+                                <motion.div 
+                                    whileHover={{ rotate: 5, scale: 1.1 }}
+                                    className="w-10 h-10 bg-gradient-to-br from-blue-600 to-cyan-500 rounded-lg flex items-center justify-center text-white font-bold text-lg shadow-lg shadow-blue-500/30"
+                                >
+                                    CC
+                                    <Sparkles className="absolute -top-1 -right-1 w-3 h-3 text-yellow-400 fill-yellow-400" />
+                                </motion.div>
+                                <span className="text-2xl font-bold bg-gradient-to-r from-slate-900 to-blue-700 bg-clip-text text-transparent">Career Compass</span>
+                            </div>
+                            <h1 className="text-4xl font-bold text-slate-900 mb-3">
+                                Create <br />Account
                             </h1>
-                            <p className="text-sm lg:text-base text-gray-600 font-medium">
-                                Join thousands building their careers
+                            <p className="text-slate-600 text-base font-medium">
+                                Join thousands building their careers with us
                             </p>
-                        </div>
+                        </motion.div>
 
                         {/* Error Message */}
                         <AnimatePresence mode="wait">
@@ -100,16 +165,16 @@ const RegisterPage = () => {
                                     initial={{ opacity: 0, y: -10 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     exit={{ opacity: 0, y: -10 }}
-                                                className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl flex items-center gap-3 text-red-700 text-sm font-medium"
+                                    className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl flex items-center gap-3 text-red-700 text-sm font-medium"
                                 >
-                                    <AlertCircle className="w-4 h-4 flex-shrink-0" />
+                                    <AlertCircle className="w-5 h-5 flex-shrink-0" />
                                     {authError || localError}
                                 </motion.div>
                             )}
                         </AnimatePresence>
 
                         {/* Form */}
-                                <form onSubmit={handleSubmit} className="space-y-4">
+                        <form onSubmit={handleSubmit} className="space-y-4">
                             {/* Name Field */}
                             <div>
                                 <Input
@@ -119,7 +184,7 @@ const RegisterPage = () => {
                                     value={name}
                                     onChange={(e) => setName(e.target.value)}
                                     required
-                                                className="w-full h-11 px-3 bg-white border border-gray-200/60 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder-gray-400 transition-all duration-150"
+                                    className="w-full h-12 px-4 bg-white border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-blue-400 placeholder-slate-400 transition-all duration-200"
                                 />
                             </div>
 
@@ -132,7 +197,7 @@ const RegisterPage = () => {
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
                                     required
-                                                className="w-full h-11 px-3 bg-white border border-gray-200/60 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder-gray-400 transition-all duration-150"
+                                    className="w-full h-12 px-4 bg-white border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-blue-400 placeholder-slate-400 transition-all duration-200"
                                 />
                             </div>
 
@@ -142,17 +207,17 @@ const RegisterPage = () => {
                                     <Input
                                         id="password"
                                         type={showPassword ? "text" : "password"}
-                                        placeholder="••••••••"
+                                        placeholder="Create password"
                                         value={password}
                                         onChange={(e) => setPassword(e.target.value)}
                                         required
                                         minLength={6}
-                                                    className="w-full h-11 px-3 pr-10 bg-white border border-gray-200/60 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder-gray-400 transition-all duration-150"
+                                        className="w-full h-12 px-4 pr-12 bg-white border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-blue-400 placeholder-slate-400 transition-all duration-200"
                                     />
                                     <button
                                         type="button"
                                         onClick={() => setShowPassword(!showPassword)}
-                                                     className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-blue-600 transition-colors"
+                                        className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-blue-600 transition-colors"
                                     >
                                         {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                                     </button>
@@ -160,24 +225,28 @@ const RegisterPage = () => {
 
                                 {/* Password Strength Indicator */}
                                 {password && (
-                                    <div className="mt-2 space-y-1">
+                                    <motion.div 
+                                        initial={{ opacity: 0, height: 0 }}
+                                        animate={{ opacity: 1, height: 'auto' }}
+                                        className="mt-2 space-y-1"
+                                    >
                                         <div className="flex gap-1">
                                             {[1, 2, 3, 4, 5].map((level) => (
                                                 <div
                                                     key={level}
                                                     className={`h-1 flex-1 rounded-full transition-all duration-300 ${level <= passwordStrength.strength
                                                         ? passwordStrength.color
-                                                        : 'bg-gray-200'
+                                                        : 'bg-slate-200'
                                                         }`}
                                                 />
                                             ))}
                                         </div>
                                         {passwordStrength.label && (
-                                            <p className="text-xs text-gray-600">
+                                            <p className="text-xs text-slate-600">
                                                 Password strength: <span className="font-medium">{passwordStrength.label}</span>
                                             </p>
                                         )}
-                                    </div>
+                                    </motion.div>
                                 )}
                             </div>
 
@@ -192,12 +261,12 @@ const RegisterPage = () => {
                                         onChange={(e) => setConfirmPassword(e.target.value)}
                                         required
                                         minLength={6}
-                                                    className="w-full h-11 px-3 pr-10 bg-white border border-gray-200/60 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder-gray-400 transition-all duration-150"
+                                        className="w-full h-12 px-4 pr-12 bg-white border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-blue-400 placeholder-slate-400 transition-all duration-200"
                                     />
                                     <button
                                         type="button"
                                         onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-blue-600 transition-colors"
+                                        className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-blue-600 transition-colors"
                                     >
                                         {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                                     </button>
@@ -205,7 +274,11 @@ const RegisterPage = () => {
 
                                 {/* Password Match Indicator */}
                                 {confirmPassword && (
-                                    <div className="mt-2 flex items-center gap-2 text-xs">
+                                    <motion.div 
+                                        initial={{ opacity: 0 }}
+                                        animate={{ opacity: 1 }}
+                                        className="mt-2 flex items-center gap-2 text-xs"
+                                    >
                                         {passwordsMatch ? (
                                             <>
                                                 <CheckCircle2 className="w-4 h-4 text-green-600" />
@@ -217,51 +290,62 @@ const RegisterPage = () => {
                                                 <span className="text-red-600 font-medium">Passwords don't match</span>
                                             </>
                                         )}
-                                    </div>
+                                    </motion.div>
                                 )}
                             </div>
 
+                            {/* Terms Checkbox */}
+                            <div className="flex items-start gap-3 text-sm pt-2">
+                                <input 
+                                    type="checkbox" 
+                                    id="terms" 
+                                    required
+                                    className="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500 mt-1"
+                                />
+                                <label htmlFor="terms" className="text-slate-700">
+                                    I agree to the{' '}
+                                    <a href="#" className="text-blue-600 hover:text-blue-700 font-medium hover:underline">Terms of Service</a>{' '}
+                                    and{' '}
+                                    <a href="#" className="text-blue-600 hover:text-blue-700 font-medium hover:underline">Privacy Policy</a>
+                                </label>
+                            </div>
+
                             {/* Submit Button */}
-                            <Button
-                                type="submit"
-                                className="w-full h-11 mt-4 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white font-semibold rounded-lg transition-all duration-150 shadow-md shadow-blue-600/20"
-                                disabled={isSubmitting}
-                            >
-                                {isSubmitting ? (
-                                    <>
-                                        <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                                        Creating Account...
-                                    </>
-                                ) : (
-                                    'Create Account'
-                                )}
-                            </Button>
+                            <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                                <Button
+                                    type="submit"
+                                    className="w-full h-12 mt-4 bg-gradient-to-r from-blue-700 to-cyan-600 hover:from-blue-800 hover:to-cyan-700 text-white font-semibold rounded-lg transition-all duration-200 shadow-lg shadow-blue-600/25 hover:shadow-blue-600/40 group"
+                                    disabled={isSubmitting}
+                                >
+                                    {isSubmitting ? (
+                                        <>
+                                            <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                                            Creating Account...
+                                        </>
+                                    ) : (
+                                        <>
+                                            Create Account
+                                            <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                                        </>
+                                    )}
+                                </Button>
+                            </motion.div>
                         </form>
 
                         {/* Sign In Link */}
-                        <p className="mt-6 text-center text-sm text-gray-600">
-                            Already have an account?{' '}
-                               <Link to="/login" className="text-blue-600 font-semibold hover:text-blue-700 hover:underline transition-colors">
-                                Sign In
-                            </Link>
-                        </p>
-                    </div>
-
-                    {/* Right Side - Illustration */}
-                    <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-blue-400 via-cyan-300 to-teal-400 items-center justify-center p-8 relative overflow-hidden rounded-r-3xl">
-                        {/* Decorative Clouds */}
-                        <div className="absolute top-10 left-10 w-24 h-16 bg-white/20 rounded-full blur-xl"></div>
-                        <div className="absolute top-32 right-20 w-32 h-20 bg-white/15 rounded-full blur-xl"></div>
-                        <div className="absolute bottom-20 left-32 w-28 h-18 bg-white/20 rounded-full blur-xl"></div>
-
-                        {/* Illustration */}
-                        <div className="relative z-10">
-                            <img
-                                src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=500&h=500&fit=crop"
-                                alt="Career success"
-                                className="w-full max-w-sm rounded-2xl shadow-lg"
-                            />
-                        </div>
+                        <motion.div 
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ delay: 0.3 }}
+                            className="mt-6 pt-6 border-t border-slate-100"
+                        >
+                            <p className="text-center text-sm text-slate-600">
+                                Already have an account?{' '}
+                                <Link to="/login" className="text-blue-600 font-semibold hover:text-blue-700 hover:underline transition-colors">
+                                    Sign In
+                                </Link>
+                            </p>
+                        </motion.div>
                     </div>
                 </div>
             </motion.div>

@@ -11,6 +11,7 @@ import DashboardPage from './pages/DashboardPage';
 import ChatPage from './pages/ChatPage';
 import InterviewPage from './pages/InterviewPage';
 import QuizPage from './pages/QuizPage';
+import ProfilePage from './pages/ProfilePage';
 
 import HistoryPage from './pages/HistoryPage';
 
@@ -38,6 +39,7 @@ function App() {
               </ProtectedRoute>
             }
           />
+          <Route path="/profile" element={<ProfilePage />} />
           <Route
             path="/upload"
             element={
