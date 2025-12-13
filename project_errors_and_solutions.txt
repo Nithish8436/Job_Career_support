@@ -1,0 +1,50 @@
+PROJECT ERROR LOG & RESOLUTIONS
+=================================
+
+This document tracks the major technical challenges faced during development and their solutions.
+
+1. CRITICAL: 500 INTERNAL SERVER ERROR IN CHAT
+   - **Issue**: The `chatWithAI` function in `aiService.js` was crashing because it tried to call `callGroqAI`, which was missing (undefined).
+   - **Cause**: A previous manual edit or merge accidentally deleted the `callGroqAI` function definition.
+   - **Solution**: Restored the `callGroqAI` function from a previous version/backup into `aiService.js`.
+
+2. FEATURE: AI NOT RECOGNIZING UPLOADED RESUME
+   - **Issue**: Users would upload a resume in the Chat, but when asking questions about it, the AI would say "Please upload your resume."
+   - **Cause**: 
+     1. The resume text was not being extracted and sent to the frontend.
+     2. The frontend was not passing this text to the AI context.
+     3. The AI system prompt did not explicitly know it could handle uploads.
+   - **Solution**:
+     1. Modified `backend/routes/upload.js` to return the extracted text in the API response.
+     2. Modified `frontend/src/pages/ChatPage.jsx` to store this text in a state variable (`resumeContext`).
+     3. Updated `ChatPage.jsx` to inject this text as a "system" message at the START of the chat history for every request.
+     4. Updated `aiService.js` prompt to explicitly instruct the AI to use uploaded files.
+
+3. UI/UX: CHAT FORMATTING ISSUES
+   - **Issue**: Chat messages were displaying as vertical bullet points, which looked cluttered.
+   - **Cause**: `ReactMarkdown` was using custom components (`ul`, `li`) that enforced a specific list style.
+   - **Solution**: Removed the custom component overrides in `ChatPage.jsx` to allow standard text rendering.
+
+4. UI/UX: INCORRECT AI RESPONSE LENGTH
+   - **Issue**: AI responses were too long and structured (Headings, Bullet points), which the user found overwhelming.
+   - **Cause**: The system prompt requested detailed analysis.
+   - **Solution**: Modified `aiService.js` system prompt to strictly enforce "2-3 short sentences" and "plain text only."
+
+5. CONFIGURATION: UNUSED TEST FILES
+   - **Issue**: The project contained clutter from multiple test scripts (`test_ai.js`, etc.) and unused routes (`/api/test`).
+   - **Cause**: Development artifacts left over.
+   - **Solution**: Deleted all root-level test scripts and removed the `/api/test` route from `server.js` and the filesystem.
+
+6. CONTENT: PROJECT NAMING
+   - **Issue**: The AI referred to the project as "Delta Forge", but the user requested anonymity for the brand.
+   - **Solution**: Updated the AI system prompt to refer to the project generic "This Career Support Platform".
+
+PREVIOUS/HISTORICAL ISSUES:
+---------------------------
+7. LOGIN/REGISTER UI STYLING
+   - **Issue**: Basic UI.
+   - **Solution**: Revamped with highly visual, animated designs using Framer Motion and modern Tailwind classes.
+
+8. PDF LAYOUT ISSUES
+   - **Issue**: Downloaded Resume PDFs had broken layouts.
+   - **Solution**: Adjusted HTML/CSS generation logic to ensure proper page breaks and styling suitable for `puppeteer`/`html-to-pdf` rendering.

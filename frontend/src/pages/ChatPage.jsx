@@ -24,6 +24,7 @@ const ChatPage = () => {
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [collapsed, setCollapsed] = useState(true);
     const [showProfileModal, setShowProfileModal] = useState(false);
+    const [resumeContext, setResumeContext] = useState(''); // Store resume text here
     const { token, user, logout } = useAuth();
     const messagesEndRef = useRef(null);
     const initialMessageSent = useRef(false);
@@ -79,14 +80,19 @@ const ChatPage = () => {
                 });
 
                 if (response.ok) {
+                    const data = await response.json();
+
                     const systemMessage = {
                         role: 'system',
                         content: `Resume "${selectedFile.name}" uploaded successfully. I can now provide personalized advice based on this resume.`
                     };
+
+                    setResumeContext(data.text);  // Store text for future context
                     setMessages(prev => [...prev, systemMessage]);
                     setSelectedFile(null); // Clear selected file after success
                 } else {
-                    throw new Error('Upload failed');
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || 'Upload failed');
                 }
             } catch (error) {
                 console.error('Upload error:', error);
@@ -120,6 +126,17 @@ const ChatPage = () => {
         }
 
         try {
+            // Construct history for API
+            let apiHistory = messages.filter(m => !m.hidden).map(({ role, content }) => ({ role, content }));
+
+            // Inject resume context at the START of history if available
+            if (resumeContext) {
+                apiHistory.unshift({
+                    role: 'system',
+                    content: `RESUME CONTEXT (Uploaded by user):\n${resumeContext}\n\nINSTRUCTION: Use this resume to answer the user's questions.`
+                });
+            }
+
             const response = await fetch('http://localhost:5000/api/chat', {
                 method: 'POST',
                 headers: {
@@ -128,7 +145,7 @@ const ChatPage = () => {
                 },
                 body: JSON.stringify({
                     message: finalMessage,
-                    history: messages.filter(m => m.role !== 'system')
+                    history: apiHistory
                 })
             });
 
@@ -236,7 +253,7 @@ const ChatPage = () => {
                             </div>
                         ) : (
                             <div className="space-y-6 pb-4">
-                                {messages.map((msg, idx) => (
+                                {messages.filter(m => !m.hidden).map((msg, idx) => (
                                     <div
                                         key={idx}
                                         className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}

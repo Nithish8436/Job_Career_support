@@ -1,0 +1,49 @@
+DATABASE DETAILS (MongoDB)
+==========================
+Database: MongoDB (Local or Atlas)
+ODM: Mongoose 9.0.0
+
+1. COLLECTIONS & SCHEMAS (`models/` folder)
+-------------------------------------------
+
+A. User (`models/User.js`)
+   - Purpose: Stores account information.
+   - Fields:
+     - `name` (String, Required)
+     - `email` (String, Unique, Required)
+     - `password` (String, Hashed)
+     - `createdAt` (Date)
+   - Indexes: email (Unique)
+
+B. Resume (`models/Resume.js`)
+   - Purpose: Stores uploaded resume data.
+   - Fields:
+     - `userId` (ObjectId, ref: User)
+     - `fileName` (String)
+     - `contentType` (String, e.g. application/pdf)
+     - `parsedData` (Object): Contains the extracted text used for AI analysis.
+       - `text` (String)
+   - Note: We do NOT store the raw binary file in DB to save space; we store extracted text.
+
+C. Match (`models/Match.js` or similar)
+   - Purpose: Stores history of Resume Analysis results.
+   - Fields:
+     - `userId` (ObjectId)
+     - `matchScore` (Number)
+     - `jobDescription` (String)
+     - `analysis` (Object): The JSON output from the AI (Missing skills, tips).
+     - `timestamp` (Date)
+
+D. Interview (`models/Interview.js`)
+   - Purpose: Stores mock interview sessions.
+   - Fields:
+     - `userId` (ObjectId)
+     - `role` (String)
+     - `conversation` (Array): List of Q&A pairs/transcripts.
+     - `score` (Number): Aggregate performance score.
+
+2. CONNECTION
+-------------
+- Config File: `config/db.js`
+- Connection String: Loaded from `.env` (`MONGO_URI`).
+- Logic: `mongoose.connect()` establishes the pool.

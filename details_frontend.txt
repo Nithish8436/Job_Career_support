@@ -1,0 +1,52 @@
+FRONTEND DETAILS & API CONSUMPTION
+====================================
+Framework: React 19 (Vite)
+Styling: TailwindCSS 4
+
+1. API CONFIGURATION
+--------------------
+- Base URL: `http://localhost:5000` (Typical development setup)
+- Authentication: JWT Token stored in localStorage (`token`).
+- Headers: `x-auth-token` is sent with every authenticated request.
+
+2. API USAGE BY COMPONENT/PAGE
+------------------------------
+
+A. AuthContext.jsx (Authentication)
+   - `POST /api/auth/register`: Creates a new user account.
+   - `POST /api/auth/login`: Authenticates user and retrieves JWT.
+   - `GET /api/auth/me`: Validates token and fetches current user profile on app load.
+
+B. ChatPage.jsx (AI Coach)
+   - `POST /api/chat`: Sends user message and history to backend. Receives AI response string.
+   - `POST /api/upload/resume`: Uploads resume PDF/DOCX during chat.
+     - Payload: FormData (resume file).
+     - Response: JSON (Success status, Parsed Text).
+
+C. UploadPage.jsx (Resume Analysis)
+   - `POST /api/upload/resume`: (If reusing upload) Uploads file.
+   - `POST /api/match`: Sends resume text and Job Description.
+     - Response: Analysis JSON (Score, Missing Skills, Tips).
+
+D. InterviewPage.jsx (Mock Interview)
+   - `POST /api/interview/start`: Initializes a new session.
+   - `POST /api/interview/feedback`: Sends user answer transcript.
+     - Response: AI feedback, rating, and next question.
+
+E. DashboardPage.jsx & HistoryPage.jsx
+   - `GET /api/match/history`: Fetches past resume analysis results.
+   - `GET /api/interview/history`: Fetches past interview sessions.
+   - `GET /api/progress`: Fetches gamification stats (XP, level).
+
+3. KEY CODE STRUCTURE
+---------------------
+- `src/pages/`: Contains the main view components.
+- `src/components/`: Reusable UI (Buttons, Charts, Sidebar).
+- `src/context/AuthContext.jsx`: Global state for User and Token.
+- `src/App.jsx`: Main routing logic (React Router).
+
+4. LIBRARIES & TOOLS
+--------------------
+- JSON Parsing: `JSON.stringify` for request bodies.
+- Markdown Rendering: `react-markdown` for displaying AI responses nicely.
+- PDF Generation: `html2canvas` + `jspdf` for downloading reports.

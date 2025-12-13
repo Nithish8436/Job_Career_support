@@ -1,0 +1,60 @@
+PROJECT ARCHITECTURE & TECHNOLOGY STACK
+=======================================
+
+1. HIGH-LEVEL ARCHITECTURE
+   - **Type**: Monorepo-style MERN Stack Application (Frontend + Backend within one root folder).
+   - **Frontend**: Single Page Application (SPA) built with React (Vite).
+   - **Backend**: REST API built with Node.js and Express.
+   - **Database**: MongoDB (NoSQL) for storing users, resumes, and logs.
+   - **AI Integration**: Groq API (Llama 3 Model) for fast, free/cheap inference.
+
+2. FOLDER STRUCTURE
+   e:\Delta_forge\
+   ├── backend/                # Node.js Server
+   │   ├── config/             # DB connection configs
+   │   ├── models/             # Mongoose Schemas (User, Resume, etc.)
+   │   ├── routes/             # API Endpoints (auth, chat, upload, etc.)
+   │   ├── services/           # Business Logic (aiService.js, pdfService.js)
+   │   ├── uploads/            # Temp storage for files
+   │   └── server.js           # Entry point
+   │
+   └── frontend/               # React Client
+       ├── public/             # Static assets
+       └── src/
+           ├── components/     # Reusable UI components (Sidebar, Inputs)
+           ├── context/        # React Context (AuthContext)
+           ├── pages/          # Route Views (ChatPage, Dashboard, Login)
+           ├── App.jsx         # Main Router
+           └── index.css       # Global Styles (Tailwind)
+
+3. TECHNOLOGY STACK
+
+   A. FRONTEND (frontend/package.json)
+      - **Framework**: React 19 (via Vite)
+      - **Styling**: TailwindCSS 4, Lucide React (Icons)
+      - **Animations**: Framer Motion
+      - **Routing**: React Router Dom 7
+      - **Data Visualization**: Recharts (for graphs/stats)
+      - **Utilities**: 
+        - `react-markdown` (Rendering AI responses)
+        - `axios` (HTTP requests)
+        - `jspdf` / `html2canvas` (PDF generation)
+
+   B. BACKEND (backend/package.json)
+      - **Runtime**: Node.js
+      - **Framework**: Express.js 5
+      - **Database ODM**: Mongoose 9 (MongoDB)
+      - **Authentication**: JWT (jsonwebtoken), bcryptjs
+      - **File Handling**: Multer (Uploads), PDF-Parse (Text extraction), Mammoth (DOCX)
+      - **AI/ML**: 
+        - `axios` (calling Groq API)
+        - `@google/generative-ai` (Gemini integration backup)
+        - `puppeteer` (Advanced PDF generation)
+
+   C. EXTERNAL SERVICES
+      - **Groq API**: Used for "Llama-3.3-70b-versatile" model usage (Chat, Analysis).
+      - **MongoDB**: Data persistence.
+
+4. KEY DATA FLOWS
+   - **Chat**: User Input -> Frontend -> `POST /api/chat` -> Backend (`aiService.js`) -> Groq API -> Response -> Frontend.
+   - **Resume Upload**: User File -> Frontend -> `POST /api/upload/resume` -> Backend (Multer) -> `pdf-parse` (Extract Text) -> Database (Store Text) -> Frontend (Receive Text for Context).

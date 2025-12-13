@@ -1,0 +1,56 @@
+PROJECT OVERVIEW
+================================
+Project Name: Career Support Platform (formerly Delta Forge)
+Description: 
+This is a comprehensive AI-powered career support application designed to assist job seekers in multiple stages of their career journey. The platform integrates advanced AI tools to analyze resumes, provide mock interview practice, generate personalized career roadmaps, and offer real-time career coaching via chat.
+
+CORE FEATURES & USER GUIDE
+================================
+
+1. AUTHENTICATION (Login / Register)
+   - Users must create an account to access the platform.
+   - Secure login ensures that user data (resumes, history) is private.
+   - Use the 'Get Started' button on the landing page or the 'Login' button in the navbar.
+
+2. RESUME ANALYSIS
+   - **Purpose**: To evaluate a user's resume against a specific job description (JD).
+   - **Usage**:
+     1. Navigate to the "Upload" page.
+     2. Upload your Resume (PDF or DOCX format).
+     3. Paste the Job Description text.
+     4. Click "Analyze".
+   - **Output**: 
+     - A Match Score (0-100%).
+     - Detailed feedback on matching and missing skills.
+     - Specific actionable tips to improve the resume.
+
+3. AI MOCK INTERVIEW
+   - **Purpose**: To practice interview questions in a simulated environment.
+   - **Usage**:
+     1. Navigate to the "Interview" page.
+     2. Select your target role (e.g., Frontend Developer).
+     3. Interact with the AI interviewer which asks questions.
+     4. (Optional) Use speech-to-text to answer verbally.
+   - **Output**:
+     - Real-time feedback on your answers.
+     - Suggestions for better phrasing or technical accuracy.
+
+4. CAREER ROADMAP
+   - **Purpose**: To provide a step-by-step learning path.
+   - **Usage**:
+     1. Go to the dashboard or Roadmap section.
+     2. View your personalized path based on your resume and goals.
+   - **Output**:
+     - A visual timeline of skills to learn (e.g., "Learn React", "Build Projects").
+
+5. AI COACH (CHAT)
+   - **Purpose**: A general-purpose assistant for career queries and app navigation.
+   - **Usage**:
+     1. Click the Chat icon in the sidebar.
+     2. Ask questions like "How do I improve my resume?" or "What is this project?".
+     3. You can also upload your resume directly in the chat for context-aware advice.
+   - **Output**:
+     - Short, direct, and helpful text responses.
+
+6. PROFILE & HISTORY
+   - Users can view their past analysis results and managing their profile settings via the Dashboard.
