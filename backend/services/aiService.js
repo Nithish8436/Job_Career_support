@@ -643,60 +643,80 @@ async function generateEnhancedResume(resumeText, jobDescription, analysisResult
 }
 
 async function chatWithAI(message, history = []) {
-    // Detect JSON request for interview questions
-    console.log("--------------------------[ChatWithAI] Received message:", message);
+    console.log("[ChatWithAI] Received message:", message);
+
+    const cleanMessage = message.trim().toLowerCase();
+
+    const isCasualMessage =
+        cleanMessage.length <= 15 ||
+        /^(hi|hello|hey|are you there|are you online|ping)$/i.test(cleanMessage);
+
+    /* ---------------- CASUAL MESSAGE: HARD EXIT ---------------- */
+    if (isCasualMessage) {
+        const messages = [
+            {
+                role: "system",
+                content: `
+You are a helpful assistant.
+Reply with ONLY ONE short, complete sentence.
+Do NOT add sections, bullet points, or labels.
+`
+            },
+            {
+                role: "user",
+                content: message
+            }
+        ];
+
+        try {
+            const response = await callGroqAI(messages, false, false);
+            return response;
+        } catch (e) {
+            return "Yes, I am here and ready to help you.";
+        }
+    }
+
+    /* ---------------- JSON REQUEST ---------------- */
+
     const isJsonRequest =
-        message.includes('JSON array') ||
+        message.includes("JSON array") ||
         message.includes('["Question') ||
-        message.includes('CRITICAL: Return ONLY a valid JSON array');
+        message.includes("CRITICAL: Return ONLY a valid JSON array");
 
     const systemPrompt = isJsonRequest
-        ? `You are an expert Interview Assistant.
-Respond ONLY with a CLEAN JSON array of strings.
-No explanations, no markdown, no extra text.`
-        : `You are an AI Career Coach.
+        ? `
+You are an expert Interview Assistant.
+Return ONLY a valid JSON array.
+No text outside JSON.
+`
+        : `
+You are an AI Career Coach.
 
-Your answers MUST follow these rules:
+Response Rules:
+1. Answer strictly in 2-3 short sentences.
+2. Be direct and helpful.
+3. No headings, no bullet points, no "Key Strengths" sections.
+4. Just plain text.
+5. IMPORTANT: You CAN accept resume uploads. If asked, say "Yes, please upload your resume using the paperclip icon."
+6. Once a resume is uploaded, provide specific feedback based on it.
 
-1. Start with a clear decision when the user asks about fit:
-   - "## Suitability: YES" or "## Suitability: NO"
-
-2. Keep responses SHORT:
-   - Max 6 bullet points
-   - Max 3–5 words per bullet when possible
-
-3. Use simple language.
-   No long sentences. No paragraphs.
-
-4. Output must always use this structure:
-   ## Suitability: YES/NO
-   - point
-   - point
-   - point
-
-   ## Key Strengths / Gaps
-   - point
-   - point
-
-   ## Recommendation
-   - point
-   - point
-
-5. Total output MUST be under 80–100 words.
-
-6. Focus ONLY on what the user can understand quickly and act on immediately.
+APP CONTEXT (Your Knowledge Base):
+- Project Name: This Career Support Platform
+- Resume Analysis: Users can upload a resume and Job Description to get a match score, missing skills, and improvement tips.
+- AI Mock Interview: Users can practice technical or behavioral interviews and get AI feedback.
+- Career Roadmap: Users get a personalized learning path based on their goals.
+- AI Chat: This feature. You assist with career advice, resume tips, and app navigation.
+- How to analyze resume: Go to 'Upload' page -> Upload PDF -> Paste Job Description -> Click Analyze.
 `;
+
+    /* ---------------- NORMAL FLOW ---------------- */
 
     const messages = [{ role: "system", content: systemPrompt }];
 
-    // Add chat history
-    if (Array.isArray(history) && history.length > 0) {
+    if (Array.isArray(history)) {
         history.forEach(msg => {
-            if (msg.role && msg.content) {
-                messages.push({
-                    role: msg.role,
-                    content: msg.content
-                });
+            if (msg?.role && msg?.content) {
+                messages.push(msg);
             }
         });
     }
@@ -704,17 +724,9 @@ Your answers MUST follow these rules:
     messages.push({ role: "user", content: message });
 
     try {
-        const response = await callGroqAI(messages, isJsonRequest, false);
-
-        if (isJsonRequest) {
-            return response;
-        }
-
-        return typeof response === "string" ? response : String(response);
-
-    } catch (error) {
-        console.error("ChatWithAI Error:", error);
-        throw new Error("AI Service Error: " + error.message);
+        return await callGroqAI(messages, isJsonRequest, false);
+    } catch (e) {
+        return "I encountered an error. Please try again.";
     }
 }
 

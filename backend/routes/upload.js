@@ -78,6 +78,7 @@ router.post('/resume', upload.single('resume'), async (req, res) => {
             message: 'Resume uploaded successfully',
             resumeId: resume._id,
             fileName: resume.fileName,
+            text: extractedText
         });
     } catch (error) {
         console.error('=== UPLOAD ERROR ===');

@@ -1,0 +1,56 @@
+BACKEND DETAILS & API ENDPOINTS
+=================================
+Runtime: Node.js
+Framework: Express.js 5
+
+1. SERVER ENTRY POINT
+---------------------
+- File: `server.js`
+- Port: 5000 (default)
+- Middleware:
+  - `cors()`: Enables Cross-Origin requests from Frontend.
+  - `express.json()`: Parses JSON request bodies.
+  - Custom Logging: Logs API method and URL.
+  - Global Error Handler: Catches and logs server errors.
+
+2. API ROUTE STRUCTURE (`routes/` folder)
+-----------------------------------------
+
+A. Auth Routes (`routes/auth.js`)
+   - `POST /api/auth/register`: Hashes password (bcryptjs) and saves new user.
+   - `POST /api/auth/login`: Verifies credentials and issues JWT.
+   - `GET /api/auth/me`: user details (Protected).
+
+B. Chat Routes (`routes/chat.js`)
+   - `POST /api/chat`: 
+     - Middleware: Auth.
+     - Actions: Calls `aiService.chatWithAI`.
+     - Returns: AI response message.
+
+C. Upload Routes (`routes/upload.js`)
+   - `POST /api/upload/resume`:
+     - Tool: Multer (MemoryStorage).
+     - Action: Extracts text from PDF/DOCX using `aiService.extractResumeText`.
+     - Returns: Parsed Text (critical for AI context).
+
+D. Match/Analysis Routes (`routes/match.js`)
+   - `POST /api/match`: 
+     - Actions: Calls `aiService.analyzeMatch` to compare Resume vs JD.
+     - Returns: JSON Score calculation.
+
+E. Interview Routes (`routes/interview.js`)
+   - `POST /api/interview/feedback`:
+     - Actions: Calls `aiService.generateInterviewFeedback`.
+     - Returns: AI critique of user answer.
+
+3. EXTERNAL SERVICES
+--------------------
+- **Groq API**: 
+  - Integration in `services/aiService.js`.
+  - Used for all intelligence (Chat, Match, Interview).
+  - Model: `llama-3.3-70b-versatile`.
+
+4. UTILITIES
+------------
+- `pdf-parse`: Library used to convert uploaded PDF buffers into raw text strings.
+- `mammoth`: Library used for DOCX text extraction.

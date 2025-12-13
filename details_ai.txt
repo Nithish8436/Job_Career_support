@@ -1,0 +1,44 @@
+AI IMPLEMENTATION DETAILS
+=========================
+Service File: `backend/services/aiService.js`
+
+1. CORE TECHNOLOGY
+------------------
+- Provider: Groq Cloud API (`https://api.groq.com/openai/v1/chat/completions`)
+- Model: `llama-3.3-70b-versatile` (High performance, low latency text generation)
+- Library: `axios` (used for standard HTTP POST requests to Groq).
+
+2. KEY AI FUNCTIONS
+-------------------
+
+A. `callGroqAI(messages, model)`
+   - The low-level wrapper that sends the payload to Groq.
+   - Handles errors and logs response status.
+   - Input: Array of message objects `[{ role: 'user', content: '...' }]`.
+
+B. `chatWithAI(message, history)`
+   - Purpose: Handles the interactive Chat Coach.
+   - System Prompt: 
+     - "You are an experienced generic Career Coach."
+     - Rules: Keep answers short (2-3 sentences), PLAIN TEXT only.
+     - App Knowledge: Contains specific context about "This Career Support Platform" features.
+   - Context Handling: 
+     - Accepts a `history` array.
+     - Detects uploaded Resume text (injected as a System message) to answer specific questions like "What are my skills?".
+
+C. `analyzeMatch(resumeText, jobDescription)`
+   - Purpose: Resume Scoring.
+   - System Prompt: "You are an expert ATS (Applicant Tracking System)..."
+   - Output Constraint: Strict JSON format `{ score, matchingSkills, missingSkills, tips }`.
+   - Logic: Compares the Resume Text vs Job Description Text.
+
+D. `generateInterviewFeedback(answer, question)`
+   - Purpose: Mock Interview Feedback.
+   - Prompt: "Evaluate this candidate's answer..."
+   - Output: Feedback string + 1-10 Rating.
+
+3. PROMPT ENGINEERING STRATEGIES
+--------------------------------
+- **JSON Enforcement**: For analysis tasks, we strictly instruct the AI to return *only* valid JSON parsing. We use regex cleaning to extract the JSON if the AI gets chatty.
+- **Context injection**: For uploads, we inject the file content as a `system` message: "RESUME CONTEXT: ...". This makes the LLM 'aware' of the document without fine-tuning.
+- **Role Persona**: We set distinct personas ("Strict ATS", "Friendly Coach") depending on the feature being used.
