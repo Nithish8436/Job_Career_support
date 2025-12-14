@@ -29,8 +29,10 @@ const DashboardPage = () => {
     const navigate = useNavigate();
 
     const handleLogout = () => {
-        logout();
         navigate('/');
+        setTimeout(() => {
+            logout();
+        }, 100);
     };
 
     const toggleSidebar = () => {

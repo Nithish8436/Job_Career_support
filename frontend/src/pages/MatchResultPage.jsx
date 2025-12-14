@@ -80,7 +80,7 @@ const MatchResultPage = () => {
     const [collapsed, setCollapsed] = useState(true);
     const [showProfileModal, setShowProfileModal] = useState(false);
     const contentRef = useRef(null);
-    const { user } = useAuth();
+    const { user, logout } = useAuth();
 
     useEffect(() => {
         const fetchMatchData = async () => {
@@ -110,6 +110,9 @@ const MatchResultPage = () => {
 
     const handleLogout = () => {
         navigate('/');
+        setTimeout(() => {
+            logout();
+        }, 100);
     };
 
     const handleGenerateEnhancedResume = async () => {

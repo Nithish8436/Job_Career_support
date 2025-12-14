@@ -23,10 +23,13 @@ const UploadPage = () => {
     const [showProfileModal, setShowProfileModal] = useState(false);
     const fileInputRef = useRef(null);
     const navigate = useNavigate();
-    const { user } = useAuth();
+    const { user, logout } = useAuth();
 
     const handleLogout = () => {
         navigate('/');
+        setTimeout(() => {
+            logout();
+        }, 100);
     };
 
     const handleDragOver = (e) => {

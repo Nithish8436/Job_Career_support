@@ -11,7 +11,7 @@ import SidebarOverlay from '../components/SidebarOverlay';
 import ProfileModal from '../components/ProfileModal';
 
 const HistoryPage = () => {
-    const { user, token } = useAuth();
+    const { user, token, logout } = useAuth();
     const navigate = useNavigate();
     const [matches, setMatches] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -45,8 +45,10 @@ const HistoryPage = () => {
     }, [user, token]);
 
     const handleLogout = () => {
-        // Your logout logic here
         navigate('/');
+        setTimeout(() => {
+            logout();
+        }, 100);
     };
 
     const handleDeleteMatch = async (matchId, e) => {

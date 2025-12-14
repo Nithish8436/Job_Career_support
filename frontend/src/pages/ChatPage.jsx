@@ -46,8 +46,10 @@ const ChatPage = () => {
     };
 
     const handleLogout = () => {
-        logout();
         navigate('/');
+        setTimeout(() => {
+            logout();
+        }, 100);
     };
 
     const handleFileSelect = (e) => {
@@ -374,7 +376,7 @@ const ChatPage = () => {
                                         onChange={(e) => setInput(e.target.value)}
                                         onKeyPress={handleKeyPress}
                                         placeholder="Ask me anything..."
-                                        className="w-full px-4 py-3 bg-transparent border-none focus:ring-0 resize-none text-slate-900 placeholder-slate-400"
+                                        className="w-full px-4 py-3 bg-transparent border-none focus:ring-0 focus:outline-none resize-none text-slate-900 placeholder-slate-400"
                                         rows="1"
                                         style={{
                                             minHeight: '52px',

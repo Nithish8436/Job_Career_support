@@ -737,49 +737,47 @@ async function generateInterviewFeedback(interviewSummary, mode = 'technical') {
         mode === 'technical'
             ? `You are an expert technical interviewer.
 
-Return feedback in a VERY SHORT format. STRICT RULES:
+Return feedback in a detailed but concise format. STRICT RULES:
 
-1. MAX OUTPUT: 60–80 words.
+1. MAX OUTPUT: 150 words.
 2. NO paragraphs. NO long explanations.
 3. ONLY include the following sections:
 
 ## Overall Score: [X]/10
 
 **Top Strengths**
-- 2 short bullets
-- 3–5 words each
+- 2 bullet points
+- Write exactly 2 complete sentences for each bullet point.
 
 **Top Improvements**
-- 2 short bullets
-- 3–5 words each
+- 2 bullet points
+- Write exactly 2 complete sentences for each bullet point.
 
 DO NOT include:
 - Per-question summary
 - Extra sections
-- Long sentences
 - More than 2 bullets per section`
             : `You are an expert HR interviewer.
 
-Return feedback in a VERY SHORT format. STRICT RULES:
+Return feedback in a detailed but concise format. STRICT RULES:
 
-1. MAX OUTPUT: 60–80 words.
+1. MAX OUTPUT: 150 words.
 2. NO paragraphs. NO long explanations.
 3. ONLY include the following sections:
 
 ## Overall Score: [X]/10
 
 **Top Strengths**
-- 2 short bullets
-- 3–5 words each
+- 2 bullet points
+- Write exactly 2 complete sentences for each bullet point.
 
 **Top Improvements**
-- 2 short bullets
-- 3–5 words each
+- 2 bullet points
+- Write exactly 2 complete sentences for each bullet point.
 
 DO NOT include:
 - Per-question summary
 - Extra sections
-- Long sentences
 - More than 2 bullets per section`;
 
     const userPrompt = `Here are the Q&A pairs:

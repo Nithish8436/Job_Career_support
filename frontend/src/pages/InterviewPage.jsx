@@ -34,7 +34,7 @@ const InterviewPage = () => {
     const [collapsed, setCollapsed] = useState(true);
     const [showProfileModal, setShowProfileModal] = useState(false);
     const { transcript, listening, resetTranscript, browserSupportsSpeechRecognition } = useSpeechRecognition();
-    const { token, user } = useAuth();
+    const { token, user, logout } = useAuth();
     const navigate = useNavigate();
 
     // Fetch user's resumes on component mount
@@ -55,8 +55,10 @@ const InterviewPage = () => {
     }, [user]);
 
     const handleLogout = () => {
-        // Your logout logic here
         navigate('/');
+        setTimeout(() => {
+            logout();
+        }, 100);
     };
 
     const speakQuestion = (text) => {
@@ -106,6 +108,31 @@ const InterviewPage = () => {
         }, 1000);
     };
 
+    const getRandomFocusAreas = (mode, domain) => {
+        const topics = {
+            frontend: ['CSS Grid & Flexbox', 'React Hooks', 'Web Performance', 'Accessibility (a11y)', 'State Management', 'DOM Manipulation', 'Browser APIs', 'Testing'],
+            backend: ['API Design', 'Database Indexing', 'Authentication & Security', 'Scalability', 'Caching Strategies', 'Node.js Event Loop', 'Microservices'],
+            fullstack: ['System Design', 'API Integration', 'Deployment & CI/CD', 'Database Normalization', 'Security Best Practices', 'State Management'],
+            datascience: ['Feature Engineering', 'Model Evaluation', 'Overfitting/Underfitting', 'SQL Complex Queries', 'Python/Pandas', 'Statistics'],
+            devops: ['CI/CD Pipelines', 'Docker & Containerization', 'Kubernetes', 'Cloud Services (AWS/Azure)', 'Monitoring & Logging', 'Infrastructure as Code'],
+            mobile: ['App Lifecycle', 'UI/Layouts', 'Performance Optimization', 'Offline Storage', 'Native vs Hybrid', 'State Management'],
+            hr: ['Conflict Resolution', 'Leadership Situations', 'Handling Failure', 'Career Ambitions', 'Workplace Ethics', 'Team Collaboration', 'Adaptability']
+        };
+
+        let pool = [];
+        if (mode === 'technical' && domain && topics[domain]) {
+            pool = topics[domain];
+        } else if (mode === 'hr') {
+            pool = topics.hr;
+        } else {
+            return '';
+        }
+
+        // Shuffle and pick 2
+        const shuffled = [...pool].sort(() => 0.5 - Math.random());
+        return shuffled.slice(0, 2).join(' and ');
+    };
+
     const generateQuestions = async (interviewMode, selectedDomain = null, resumeData = null) => {
         setLoading(true);
         try {
@@ -121,6 +148,7 @@ Requirements:
 - Questions should match their experience level and technologies
 - Mix of conceptual, practical, and problem-solving questions
 - Appropriate difficulty for their background
+- IMPORTANT: Ask UNIQUE and DIVERSE questions compared to previous interviews. Focus on different projects or skills if possible.
 
 CRITICAL: Return ONLY a valid JSON array with exactly 5 questions. No markdown, no explanations, no code blocks. Just the array.
 
@@ -135,9 +163,11 @@ Example format:
                     devops: 'DevOps Engineer - CI/CD pipelines, containerization (Docker/Kubernetes), cloud platforms (AWS/Azure/GCP), infrastructure as code, monitoring, automation',
                     mobile: 'Mobile Developer - iOS/Android development, mobile UI/UX patterns, performance optimization, native vs hybrid apps, mobile-specific challenges'
                 };
+                const focusAreas = getRandomFocusAreas('technical', selectedDomain);
                 prompt = `Generate exactly 5 technical interview questions for a ${domainPrompts[selectedDomain]} role.
 
 Requirements:
+- Focus specifically on: ${focusAreas}
 - Mix of conceptual understanding, practical application, and problem-solving
 - Appropriate for mid-level candidates
 - Cover key technologies and concepts in this domain
@@ -160,15 +190,12 @@ CRITICAL: Return ONLY a valid JSON array with exactly 5 questions. No markdown, 
 Example format:
 ["Question 1?", "Question 2?", "Question 3?", "Question 4?", "Question 5?"]`;
             } else {
+                const focusAreas = getRandomFocusAreas('hr', null);
                 prompt = `Generate exactly 5 HR/behavioral interview questions.
 
 Focus areas:
-- Teamwork and collaboration
-- Conflict resolution
-- Leadership and initiative
-- Work ethic and time management
-- Career goals and motivation
-- Handling pressure and challenges
+- ${focusAreas}
+- General fit and soft skills
 
 CRITICAL: Return ONLY a valid JSON array with exactly 5 questions. No markdown, no explanations, no code blocks. Just the array.
 
@@ -486,6 +513,24 @@ ${interviewSummary}`;
         resetTranscript();
     };
 
+    const handleBack = () => {
+        if (finished) {
+            handleRestart();
+        } else if (mode && !domain && !useResume) {
+            // In Domain Selection -> Go back to Mode Selection
+            setMode(null);
+        } else if (mode && (domain || useResume) && !started) {
+            // In Ready Screen -> Go back to Domain Selection (if technical) or Mode Selection (if HR)
+            if (mode === 'technical') {
+                setDomain(null);
+                setUseResume(false);
+                setSelectedResume(null);
+            } else {
+                setMode(null);
+            }
+        }
+    };
+
     const handleResumeUpload = async () => {
         if (!resumeFile || !user) return;
 
@@ -570,7 +615,7 @@ ${interviewSummary}`;
             />
 
             {/* Main Content */}
-            <div className="flex-1">
+            <div className="flex-1 flex flex-col">
                 {/* Navbar */}
                 <nav className="border-b border-slate-200/50 bg-white sticky top-0 z-20 backdrop-blur-sm bg-white/80">
                     <div className="px-4 h-16 flex items-center justify-between">
@@ -581,6 +626,15 @@ ${interviewSummary}`;
                             >
                                 <Menu className="w-5 h-5 text-slate-700" />
                             </button>
+                            {(mode || finished) && !started && (
+                                <button
+                                    onClick={handleBack}
+                                    className="p-2 hover:bg-slate-100 rounded-lg mr-2"
+                                    title="Go Back"
+                                >
+                                    <ArrowLeft className="w-5 h-5 text-slate-700" />
+                                </button>
+                            )}
                             {!mode ? (
                                 <span className="text-lg font-semibold text-slate-900">AI Mock Interview</span>
                             ) : mode && !domain && !useResume ? (

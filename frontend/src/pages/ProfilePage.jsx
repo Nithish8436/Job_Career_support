@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { User, Mail, Calendar, Shield, TrendingUp, FileText, Mic, Award, Sparkles, Edit2, Save, Menu, LogOut, ArrowLeft } from 'lucide-react';
+import { User, Mail, Calendar, Shield, TrendingUp, FileText, Mic, Award, Sparkles, Edit2, Save, Menu, LogOut } from 'lucide-react';
 import { Button } from '../components/ui/Button';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/Card';
 import { useAuth } from '../context/AuthContext';
@@ -53,8 +53,10 @@ const ProfilePage = () => {
     }, [user]);
 
     const handleLogout = () => {
-        logout();
         navigate('/');
+        setTimeout(() => {
+            logout();
+        }, 100);
     };
 
     const handleSaveProfile = async () => {
@@ -119,15 +121,7 @@ const ProfilePage = () => {
                             >
                                 <Menu className="w-5 h-5 text-slate-700" />
                             </button>
-                            <Button
-                                variant="ghost"
-                                size="sm"
-                                className="gap-2 text-slate-700 hover:bg-slate-100"
-                                onClick={() => navigate('/dashboard')}
-                            >
-                                <ArrowLeft className="w-4 h-4" />
-                                Back to Dashboard
-                            </Button>
+
                             <span className="text-lg font-semibold text-slate-900">My Profile</span>
                         </div>
                         <Button
