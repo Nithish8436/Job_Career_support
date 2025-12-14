@@ -2,19 +2,7 @@
 
 **Career Compass** is an advanced AI-powered career support platform designed to assist job seekers at every stage of their journey. By integrating cutting-edge AI tools, it provides personalized resume analysis, simulated mock interviews, and tailored career roadmaps to help users land their dream jobs.
 
-![Career Compass Dashboard](assets/landing_page.png)
-
-## 📸 Screenshots
-
-| **Interactive Dashboard** | **Intelligent Analysis** |
-|:---:|:---:|
-| ![Dashboard](assets/main_dashboard.png) | ![Upload](assets/upload_page.png) |
-| Track your progress and recent activity | Upload resume to get instant feedback |
-
-| **AI Mock Interviews** | **Visual Insights** |
-|:---:|:---:|
-| ![Mock Interview](assets/interview_page.png) | ![Insights](assets/resume_dashboard.png) |
-| Practice with AI-driven technical questions | Clear visualization of your skills match |
+![Career Compass Dashboard](https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?w=1200&h=400&fit=crop&q=80)
 
 ## ✨ Key Features
 
