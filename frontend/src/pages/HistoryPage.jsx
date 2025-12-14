@@ -25,7 +25,7 @@ const HistoryPage = () => {
     useEffect(() => {
         const fetchHistory = async () => {
             try {
-                const response = await fetch(`http://localhost:5000/api/match/user/${user.id}`, {
+                const response = await fetch(`http://localhost:5000/api/match/user/${user.id}?limit=100`, {
                     headers: { 'x-auth-token': token }
                 });
                 const data = await response.json();

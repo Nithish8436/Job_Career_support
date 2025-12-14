@@ -278,31 +278,19 @@ router.post('/export-pdf', async (req, res) => {
 // GET /api/match/user/:userId
 router.get('/user/:userId', async (req, res) => {
     try {
-        const matches = await Match.find({ userId: req.params.userId })
-            .sort({ createdAt: -1 })
-            .limit(20);
+        const limit = parseInt(req.query.limit) || 20;
 
-        // Calculate lifetime stats
-        const stats = await Match.aggregate([
-            { $match: { userId: req.params.userId } },
-            {
-                $group: {
-                    _id: null,
-                    totalMatches: { $sum: 1 },
-                    avgScore: { $avg: "$overallScore" }
-                }
-            }
+        const [matches, totalCount] = await Promise.all([
+            Match.find({ userId: req.params.userId })
+                .sort({ createdAt: -1 })
+                .limit(limit),
+            Match.countDocuments({ userId: req.params.userId })
         ]);
-
-        const lifetimeStats = stats.length > 0 ? stats[0] : { totalMatches: 0, avgScore: 0 };
 
         res.json({
             success: true,
             matches: matches,
-            stats: {
-                total: lifetimeStats.totalMatches,
-                avgScore: Math.round(lifetimeStats.avgScore || 0)
-            }
+            totalCount: totalCount
         });
     } catch (error) {
         console.error('Get user matches error:', error);

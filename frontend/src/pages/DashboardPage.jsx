@@ -72,18 +72,16 @@ const DashboardPage = () => {
                 if (data.success) {
                     setMatches(data.matches);
 
-                    // Use stats from server if available (for lifetime counts), otherwise calculate from visible list
-                    const total = data.stats ? data.stats.total : data.matches.length;
-                    const avgScore = data.stats
-                        ? data.stats.avgScore
-                        : (total > 0
-                            ? Math.round(data.matches.reduce((acc, curr) => acc + curr.overallScore, 0) / total)
-                            : 0);
+                    // Calculate stats
+                    const total = data.totalCount || data.matches.length;
+                    const avgScore = total > 0
+                        ? Math.round(data.matches.reduce((acc, curr) => acc + curr.overallScore, 0) / data.matches.length)
+                        : 0;
 
                     setStats({
                         total,
                         avgScore,
-                        saved: total // Same as total for now
+                        saved: total
                     });
                 }
             } catch (err) {
@@ -512,7 +510,7 @@ const DashboardPage = () => {
                                     {matches.length > 7 && (
                                         <div className="mt-4 text-center">
                                             <Link to="/history" className="text-sm text-blue-600 hover:text-blue-700 hover:underline font-medium">
-                                                View all {matches.length} analyses →
+                                                View all {stats.total} analyses →
                                             </Link>
                                         </div>
                                     )}
