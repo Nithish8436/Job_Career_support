@@ -139,105 +139,7 @@ function tryParseJson(content) {
     throw new Error('Failed to parse AI response as JSON');
 }
 
-// Helper to call Groq API
-async function callGroqAI(messages, jsonMode = true, useResponseFormat = true) {
-    if (!GROQ_API_KEY) {
-        throw new Error('GROQ_API_KEY is missing in .env');
-    }
 
-    try {
-        // Log request details for debugging
-        console.log(
-            `[Groq] Sending request. Model: llama-3.3-70b-versatile. Messages: ${messages.length}. Content Length: ${messages[1]?.content?.length || 0}`
-        );
-
-        // JSON mode disabled because strict json_object can cause failed_generation on Llama 3
-        const response = await axios.post(
-            GROQ_API_URL,
-            {
-                model: 'llama-3.3-70b-versatile',
-                messages: messages,
-                temperature: 0.1, // lower temp for more accurate output
-                response_format:
-                    jsonMode && useResponseFormat
-                        ? { type: 'json_object' }
-                        : undefined
-            },
-            {
-                headers: {
-                    'Authorization': `Bearer ${GROQ_API_KEY}`,
-                    'Content-Type': 'application/json'
-                }
-            }
-        );
-
-        if (
-            !response.data ||
-            !response.data.choices ||
-            response.data.choices.length === 0
-        ) {
-            console.error('Groq Empty Response:', JSON.stringify(response.data));
-            throw new Error('Empty response from AI service');
-        }
-
-        let rawContent = response.data.choices[0]?.message?.content;
-
-        // Groq sometimes returns content as an array of chunks → flatten to string
-        if (Array.isArray(rawContent)) {
-            rawContent = rawContent
-                .map(part => part?.text ?? '')
-                .join('')
-                .trim();
-        }
-
-        const content =
-            (typeof rawContent === 'string'
-                ? rawContent
-                : JSON.stringify(rawContent || '')
-            ).trim();
-
-        console.log(
-            'aiService.js Content----------------------------------------------:',
-            content
-        );
-
-        // Debug truncated view if large
-        if (content.length > 1000) {
-            console.log('[Groq] Raw AI Response (first 500 chars):', content.substring(0, 500) + '...');
-            console.log('[Groq] Raw AI Response (last 500 chars):', '...' + content.substring(content.length - 500));
-        } else {
-            console.log('[Groq] Raw AI Response (full):', content);
-        }
-
-        if (jsonMode) {
-            return tryParseJson(content);
-        }
-
-        return content;
-
-    } catch (error) {
-        const errMsg =
-            error.response?.data?.error?.message ||
-            error.message ||
-            '';
-
-        console.error(' Error Details:', error.response?.data || error.message);
-
-        // Retry once without json_object formatting if model fails strict mode
-        if (
-            jsonMode &&
-            useResponseFormat &&
-            errMsg.toLowerCase().includes('failed_generation')
-        ) {
-            console.warn(
-                'Groq failed_generation with response_format. Retrying without response_format...'
-            );
-            return callGroqAI(messages, jsonMode, false);
-        }
-
-        throw new Error(`AI Service Error: ${errMsg || 'Unknown error'}`);
-    }
-}
 
 async function callGroqAI(messages, jsonMode = true, useResponseFormat = true) {
     if (!GROQ_API_KEY) {
@@ -246,6 +148,8 @@ async function callGroqAI(messages, jsonMode = true, useResponseFormat = true) {
 
     try {
         // Log request details for debugging
+        const maskedKey = GROQ_API_KEY ? `${GROQ_API_KEY.substring(0, 10)}...` : 'undefined';
+        console.log(`[Groq] Using API Key: ${maskedKey}`);
         console.log(
             `[Groq] Sending request. Model: llama-3.3-70b-versatile. Messages: ${messages.length}. Content Length: ${messages[1]?.content?.length || 0}`
         );
@@ -726,7 +630,8 @@ APP CONTEXT (Your Knowledge Base):
     try {
         return await callGroqAI(messages, isJsonRequest, false);
     } catch (e) {
-        return "I encountered an error. Please try again.";
+        console.error("❌ Error in chatWithAI/callGroqAI:", e);
+        return `Error: ${e.message}`;
     }
 }
 

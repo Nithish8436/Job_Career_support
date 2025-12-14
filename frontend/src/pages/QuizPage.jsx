@@ -31,8 +31,11 @@ const QuizPage = () => {
     };
 
     const generateQuiz = async () => {
+        console.log('🎯 generateQuiz called!');
         setLoading(true);
+        console.log('🔄 Loading set to true');
         try {
+            console.log('📡 Making API request to /api/chat');
             const response = await fetch('http://localhost:5000/api/chat', {
                 method: 'POST',
                 headers: {
@@ -54,18 +57,45 @@ Return ONLY the JSON array, no other text.`,
                 })
             });
 
+            console.log('✅ API response received');
             const data = await response.json();
+            console.log('📦 Response data:', data);
+            console.log('🔍 data.success:', data.success);
+
+            let quizStarted = false;
+
             if (data.success) {
+                console.log('✅ Success is true, parsing message');
+                console.log('📄 Message:', data.message);
                 const jsonMatch = data.message.match(/\[[\s\S]*\]/);
+                console.log('🔎 JSON match:', jsonMatch);
                 if (jsonMatch) {
-                    const parsed = JSON.parse(jsonMatch[0]);
-                    setQuestions(parsed);
-                    setUserAnswers(new Array(parsed.length).fill(null));
-                    setStarted(true);
+                    try {
+                        const parsed = JSON.parse(jsonMatch[0]);
+                        console.log('✅ Parsed questions:', parsed.length);
+                        setQuestions(parsed);
+                        setUserAnswers(new Array(parsed.length).fill(null));
+                        setStarted(true);
+                        quizStarted = true;
+                        console.log('✅ Quiz started with AI questions');
+                    } catch (parseError) {
+                        console.error('❌ Error parsing JSON:', parseError);
+                    }
+                } else {
+                    console.log('❌ No JSON match found in message');
                 }
+            } else {
+                console.log('❌ data.success is false or undefined');
+            }
+
+            // If quiz didn't start with AI questions, use fallback
+            if (!quizStarted) {
+                console.log('📝 Using fallback questions because AI response was invalid');
+                throw new Error('Invalid API response, using fallback');
             }
         } catch (error) {
-            console.error('Error generating quiz:', error);
+            console.error('❌ Error generating quiz:', error);
+            console.log('📝 Using fallback questions');
             // Fallback questions
             const fallbackQuestions = [
                 {
@@ -124,11 +154,16 @@ Return ONLY the JSON array, no other text.`,
                     explanation: "For mid-level professionals, 1-2 pages is ideal to showcase relevant experience without overwhelming the reader."
                 }
             ];
+            console.log('✅ Fallback questions created:', fallbackQuestions.length);
             setQuestions(fallbackQuestions);
+            console.log('✅ Questions state set');
             setUserAnswers(new Array(fallbackQuestions.length).fill(null));
+            console.log('✅ User answers initialized');
             setStarted(true);
+            console.log('✅ Started set to true');
         } finally {
             setLoading(false);
+            console.log('🏁 Loading set to false');
         }
     };
 

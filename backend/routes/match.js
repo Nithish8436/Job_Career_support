@@ -127,7 +127,7 @@ router.delete('/:id', async (req, res) => {
 
         // Find and delete the match
         const match = await Match.findByIdAndDelete(id);
-        
+
         if (!match) {
             return res.status(404).json({ error: 'Match not found' });
         }
@@ -282,9 +282,27 @@ router.get('/user/:userId', async (req, res) => {
             .sort({ createdAt: -1 })
             .limit(20);
 
+        // Calculate lifetime stats
+        const stats = await Match.aggregate([
+            { $match: { userId: req.params.userId } },
+            {
+                $group: {
+                    _id: null,
+                    totalMatches: { $sum: 1 },
+                    avgScore: { $avg: "$overallScore" }
+                }
+            }
+        ]);
+
+        const lifetimeStats = stats.length > 0 ? stats[0] : { totalMatches: 0, avgScore: 0 };
+
         res.json({
             success: true,
-            matches: matches
+            matches: matches,
+            stats: {
+                total: lifetimeStats.totalMatches,
+                avgScore: Math.round(lifetimeStats.avgScore || 0)
+            }
         });
     } catch (error) {
         console.error('Get user matches error:', error);

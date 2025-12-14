@@ -72,16 +72,18 @@ const DashboardPage = () => {
                 if (data.success) {
                     setMatches(data.matches);
 
-                    // Calculate stats
-                    const total = data.matches.length;
-                    const avgScore = total > 0
-                        ? Math.round(data.matches.reduce((acc, curr) => acc + curr.overallScore, 0) / total)
-                        : 0;
+                    // Use stats from server if available (for lifetime counts), otherwise calculate from visible list
+                    const total = data.stats ? data.stats.total : data.matches.length;
+                    const avgScore = data.stats
+                        ? data.stats.avgScore
+                        : (total > 0
+                            ? Math.round(data.matches.reduce((acc, curr) => acc + curr.overallScore, 0) / total)
+                            : 0);
 
                     setStats({
                         total,
                         avgScore,
-                        saved: data.matches.length
+                        saved: total // Same as total for now
                     });
                 }
             } catch (err) {
