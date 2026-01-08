@@ -56,7 +56,7 @@ const DashboardPage = () => {
             console.log('User ID:', user.id);
 
             try {
-                const url = `http://localhost:5000/api/match/user/${user.id}`;
+                const url = `${import.meta.env.VITE_API_URL}/api/match/user/${user.id}`;
                 console.log('Fetching from:', url);
 
                 const response = await fetch(url);

@@ -92,7 +92,7 @@ const MatchResultPage = () => {
             }
 
             try {
-                const response = await fetch(`http://localhost:5000/api/match/${matchId}`);
+                const response = await fetch(`${import.meta.env.VITE_API_URL}/api/match/${matchId}`);
                 if (!response.ok) {
                     throw new Error('Failed to fetch match data');
                 }
@@ -122,7 +122,7 @@ const MatchResultPage = () => {
         setShowResumeModal(true);
 
         try {
-            const response = await fetch('http://localhost:5000/api/match/enhanced-resume', {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/match/enhanced-resume`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -173,7 +173,7 @@ const MatchResultPage = () => {
             button.disabled = true;
             button.innerHTML = 'Generating PDF...';
 
-            const response = await fetch('http://localhost:5000/api/match/export-pdf', {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/match/export-pdf`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

@@ -30,7 +30,7 @@ const ProfilePage = () => {
 
             try {
                 // Fetch user's match history for analyses count
-                const response = await fetch(`http://localhost:5000/api/match/user/${user.id}`);
+                const response = await fetch(`${import.meta.env.VITE_API_URL}/api/match/user/${user.id}`);
                 const data = await response.json();
 
                 if (data.success) {

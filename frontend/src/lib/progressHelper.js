@@ -1,7 +1,7 @@
 // Helper function to award XP for user actions
 export const awardXP = async (action, metadata = {}, token) => {
     try {
-        const response = await fetch('http://localhost:5000/api/progress/award-xp', {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/progress/award-xp`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

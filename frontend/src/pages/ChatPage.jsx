@@ -77,7 +77,7 @@ const ChatPage = () => {
                 formData.append('resume', selectedFile);
                 formData.append('userId', user.id);
 
-                const response = await fetch('http://localhost:5000/api/upload/resume', {
+                const response = await fetch(`${import.meta.env.VITE_API_URL}/api/upload/resume`, {
                     method: 'POST',
                     body: formData,
                 });
@@ -140,7 +140,7 @@ const ChatPage = () => {
                 });
             }
 
-            const response = await fetch('http://localhost:5000/api/chat', {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/chat`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

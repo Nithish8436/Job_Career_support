@@ -89,7 +89,7 @@ const UploadPage = () => {
             formData.append('resume', resumeFile);
             formData.append('userId', user.id);
 
-            const uploadResponse = await fetch('http://localhost:5000/api/upload/resume', {
+            const uploadResponse = await fetch(`${import.meta.env.VITE_API_URL}/api/upload/resume`, {
                 method: 'POST',
                 body: formData,
             });
@@ -106,7 +106,7 @@ const UploadPage = () => {
             if (inputType === 'file' && jdFile) {
                 const jdFormData = new FormData();
                 jdFormData.append('file', jdFile);
-                const jdResponse = await fetch('http://localhost:5000/api/upload/extract-text', {
+                const jdResponse = await fetch(`${import.meta.env.VITE_API_URL}/api/upload/extract-text`, {
                     method: 'POST',
                     body: jdFormData
                 });
@@ -118,7 +118,7 @@ const UploadPage = () => {
                 }
             }
 
-            const analyzeResponse = await fetch('http://localhost:5000/api/match/analyze', {
+            const analyzeResponse = await fetch(`${import.meta.env.VITE_API_URL}/api/match/analyze`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

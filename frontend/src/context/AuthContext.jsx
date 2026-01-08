@@ -15,7 +15,7 @@ export const AuthProvider = ({ children }) => {
             if (token) {
                 console.log('🔑 Token found in localStorage:', token.substring(0, 20) + '...');
                 try {
-                    const response = await fetch('http://localhost:5000/api/auth/me', {
+                    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/me`, {
                         headers: {
                             'x-auth-token': token
                         }
@@ -53,7 +53,7 @@ export const AuthProvider = ({ children }) => {
     const register = async (name, email, password) => {
         setError(null);
         try {
-            const response = await fetch('http://localhost:5000/api/auth/register', {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/register`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -81,7 +81,7 @@ export const AuthProvider = ({ children }) => {
         setError(null);
         console.log('🔐 Attempting login for:', email);
         try {
-            const response = await fetch('http://localhost:5000/api/auth/login', {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/login`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

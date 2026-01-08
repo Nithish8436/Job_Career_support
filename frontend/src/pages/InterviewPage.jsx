@@ -42,7 +42,7 @@ const InterviewPage = () => {
         const fetchResumes = async () => {
             if (!user) return;
             try {
-                const response = await fetch(`http://localhost:5000/api/match/user/${user.id}`);
+                const response = await fetch(`${import.meta.env.VITE_API_URL}/api/match/user/${user.id}`);
                 const data = await response.json();
                 if (data.success && data.matches) {
                     setUserResumes(data.matches);
@@ -203,7 +203,7 @@ Example format:
 ["Tell me about a time when you had to work with a difficult team member. How did you handle it?", "Describe a challenging project you worked on. What obstacles did you face?", "What are your greatest strengths and how do they apply to this role?", "Tell me about a time you had to learn something new quickly.", "Where do you see yourself in 5 years?"]`;
             }
 
-            const response = await fetch('http://localhost:5000/api/chat', {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/chat`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -445,7 +445,7 @@ Here are the Q&A pairs:
 ${interviewSummary}`;
 
             try {
-                const response = await fetch('http://localhost:5000/api/interview/feedback', {
+                const response = await fetch(`${import.meta.env.VITE_API_URL}/api/interview/feedback`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -540,7 +540,7 @@ ${interviewSummary}`;
             formData.append('resume', resumeFile);
             formData.append('userId', user.id);
 
-            const uploadResponse = await fetch('http://localhost:5000/api/upload/resume', {
+            const uploadResponse = await fetch(`${import.meta.env.VITE_API_URL}/api/upload/resume`, {
                 method: 'POST',
                 body: formData,
             });
@@ -551,7 +551,7 @@ ${interviewSummary}`;
 
             const uploadData = await uploadResponse.json();
 
-            const response = await fetch(`http://localhost:5000/api/match/user/${user.id}`);
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/match/user/${user.id}`);
             const data = await response.json();
             if (data.success && data.matches) {
                 setUserResumes(data.matches);

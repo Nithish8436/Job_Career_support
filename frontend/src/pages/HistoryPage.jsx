@@ -26,7 +26,7 @@ const HistoryPage = () => {
     useEffect(() => {
         const fetchHistory = async () => {
             try {
-                const response = await fetch(`http://localhost:5000/api/match/user/${user.id}?limit=100`, {
+                const response = await fetch(`${import.meta.env.VITE_API_URL}/api/match/user/${user.id}?limit=100`, {
                     headers: { 'x-auth-token': token }
                 });
                 const data = await response.json();
@@ -62,7 +62,7 @@ const HistoryPage = () => {
 
         setDeleting(matchId);
         try {
-            const response = await fetch(`http://localhost:5000/api/match/${matchId}`, {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/match/${matchId}`, {
                 method: 'DELETE',
                 headers: { 'x-auth-token': token }
             });
@@ -87,7 +87,7 @@ const HistoryPage = () => {
 
         setDeleting('all');
         try {
-            const response = await fetch(`http://localhost:5000/api/match/user/${user.id}/all`, {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/match/user/${user.id}/all`, {
                 method: 'DELETE',
                 headers: { 'x-auth-token': token }
             });
