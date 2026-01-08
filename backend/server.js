@@ -51,6 +51,7 @@ app.use('/api/chat', require('./routes/chat'));
 app.use('/api/interview', require('./routes/interview'));
 app.use('/api/progress', require('./routes/progress'));
 
+
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });

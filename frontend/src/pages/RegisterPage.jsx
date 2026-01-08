@@ -2,9 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
+import SEO from '../components/SEO';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
-import { AlertCircle, Loader2, Eye, EyeOff, CheckCircle2, XCircle, ArrowRight, Sparkles } from 'lucide-react';
+import { AlertCircle, Loader2, Eye, EyeOff, CheckCircle2, XCircle, ArrowRight } from 'lucide-react';
 
 const RegisterPage = () => {
     const [name, setName] = useState('');
@@ -68,6 +69,10 @@ const RegisterPage = () => {
 
     return (
         <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-slate-50 via-white to-blue-50/30">
+            <SEO
+                title="Create Account"
+                description="Join Career Compass to build your career with AI-powered insights."
+            />
             <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
@@ -80,7 +85,7 @@ const RegisterPage = () => {
                         {/* Decorative Elements */}
                         <div className="absolute top-0 left-0 w-64 h-64 bg-blue-500/5 rounded-full blur-3xl"></div>
                         <div className="absolute bottom-0 right-0 w-48 h-48 bg-cyan-500/5 rounded-full blur-3xl"></div>
-                        
+
                         {/* Card Container */}
                         <motion.div
                             initial={{ opacity: 0, x: -20 }}
@@ -101,7 +106,7 @@ const RegisterPage = () => {
                                         Join our community and unlock your career potential with AI-powered insights
                                     </p>
                                 </div>
-                                
+
                                 {/* Benefits List */}
                                 <div className="space-y-3">
                                     {[
@@ -111,7 +116,7 @@ const RegisterPage = () => {
                                         'Track your career progress',
                                         'Join thousands of successful job seekers'
                                     ].map((benefit, index) => (
-                                        <motion.div 
+                                        <motion.div
                                             key={index}
                                             initial={{ opacity: 0, x: -10 }}
                                             animate={{ opacity: 1, x: 0 }}
@@ -126,8 +131,8 @@ const RegisterPage = () => {
                                         </motion.div>
                                     ))}
                                 </div>
-                                
-                                
+
+
                             </div>
                         </motion.div>
                     </div>
@@ -135,18 +140,17 @@ const RegisterPage = () => {
                     {/* Right Side - Form */}
                     <div className="w-full lg:w-1/2 p-8 lg:p-12 bg-gradient-to-b from-white to-slate-50/50">
                         {/* Logo */}
-                        <motion.div 
+                        <motion.div
                             initial={{ opacity: 0, y: -20 }}
                             animate={{ opacity: 1, y: 0 }}
                             className="mb-8"
                         >
                             <div className="flex items-center gap-2 mb-6">
-                                <motion.div 
+                                <motion.div
                                     whileHover={{ rotate: 5, scale: 1.1 }}
                                     className="w-10 h-10 bg-gradient-to-br from-blue-600 to-cyan-500 rounded-lg flex items-center justify-center text-white font-bold text-lg shadow-lg shadow-blue-500/30"
                                 >
                                     CC
-                                    <Sparkles className="absolute -top-1 -right-1 w-3 h-3 text-yellow-400 fill-yellow-400" />
                                 </motion.div>
                                 <span className="text-2xl font-bold bg-gradient-to-r from-slate-900 to-blue-700 bg-clip-text text-transparent">Career Compass</span>
                             </div>
@@ -225,7 +229,7 @@ const RegisterPage = () => {
 
                                 {/* Password Strength Indicator */}
                                 {password && (
-                                    <motion.div 
+                                    <motion.div
                                         initial={{ opacity: 0, height: 0 }}
                                         animate={{ opacity: 1, height: 'auto' }}
                                         className="mt-2 space-y-1"
@@ -274,7 +278,7 @@ const RegisterPage = () => {
 
                                 {/* Password Match Indicator */}
                                 {confirmPassword && (
-                                    <motion.div 
+                                    <motion.div
                                         initial={{ opacity: 0 }}
                                         animate={{ opacity: 1 }}
                                         className="mt-2 flex items-center gap-2 text-xs"
@@ -296,9 +300,9 @@ const RegisterPage = () => {
 
                             {/* Terms Checkbox */}
                             <div className="flex items-start gap-3 text-sm pt-2">
-                                <input 
-                                    type="checkbox" 
-                                    id="terms" 
+                                <input
+                                    type="checkbox"
+                                    id="terms"
                                     required
                                     className="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500 mt-1"
                                 />
@@ -333,7 +337,7 @@ const RegisterPage = () => {
                         </form>
 
                         {/* Sign In Link */}
-                        <motion.div 
+                        <motion.div
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             transition={{ delay: 0.3 }}

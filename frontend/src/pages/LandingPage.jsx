@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
+import SEO from '../components/SEO';
 import { Link } from 'react-router-dom';
 import { Button } from '../components/ui/Button';
 import { motion } from 'framer-motion';
 import {
     ArrowRight, CheckCircle, Upload, FileText, Search, X, Check,
-    Star, ChevronLeft, ChevronRight, User, Shield, Zap,
-    Sparkles, Target, TrendingUp, ShieldCheck, Globe, Users,
+    ChevronLeft, ChevronRight, User, Shield, Zap,
+    Target, TrendingUp, ShieldCheck, Globe, Users,
     Award, Clock, FileCheck, BarChart3, RefreshCw, Heart,
     Play, ChevronDown, Circle, AlertCircle
 } from 'lucide-react';
@@ -48,7 +49,7 @@ const LandingPage = () => {
 
     const features = [
         {
-            icon: Sparkles,
+            icon: Target,
             title: "AI-Powered Analysis",
             description: "Advanced AI scans your resume against job requirements for perfect matching",
             color: "from-purple-500 to-pink-500"
@@ -76,8 +77,8 @@ const LandingPage = () => {
     const stats = [
         { value: "95%", label: "Interview Rate Increase", icon: TrendingUp },
         { value: "50k+", label: "Resumes Optimized", icon: Users },
-        { value: "4.9/5", label: "User Rating", icon: Star },
-        { value: "2.3x", label: "More Interviews", icon: Award }
+        { value: "4.9/5", label: "User Rating", icon: Award },
+        { value: "2.3x", label: "More Interviews", icon: CheckCircle }
     ];
 
     useEffect(() => {
@@ -183,7 +184,11 @@ const LandingPage = () => {
     );
 
     return (
-        <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-blue-50/30 font-sans text-slate-900 overflow-x-hidden">
+        <div className="min-h-screen bg-slate-50 font-sans selection:bg-blue-200 selection:text-blue-900">
+            <SEO
+                title="AI-Powered Resume Analysis & Interview Prep"
+                description="Supercharge your job search with Career Compass. Get instant resume feedback, AI mock interviews, and personalized career roadmaps."
+            />
             {/* Floating Background Elements */}
             <div className="fixed inset-0 overflow-hidden pointer-events-none -z-10">
                 <div className="absolute -top-40 -right-40 w-96 h-96 bg-gradient-to-r from-blue-200/20 to-cyan-200/20 rounded-full blur-3xl animate-pulse"></div>
@@ -196,8 +201,8 @@ const LandingPage = () => {
                 initial={{ y: -100 }}
                 animate={{ y: 0 }}
                 className={`sticky top-0 z-50 transition-all duration-300 ${scrolled
-                        ? 'bg-white/95 backdrop-blur-lg border-b border-slate-200/80 shadow-lg shadow-slate-200/10'
-                        : 'bg-transparent border-b border-transparent'
+                    ? 'bg-white/95 backdrop-blur-lg border-b border-slate-200/80 shadow-lg shadow-slate-200/10'
+                    : 'bg-transparent border-b border-transparent'
                     }`}
             >
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
@@ -209,7 +214,6 @@ const LandingPage = () => {
                         <div className="relative">
                             <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-cyan-500 rounded-xl flex items-center justify-center text-white font-bold text-lg shadow-lg shadow-blue-500/30 group-hover:shadow-blue-500/50 transition-all duration-300">
                                 CC
-                                <Sparkles className="absolute -top-1 -right-1 w-3 h-3 text-yellow-400 fill-yellow-400" />
                             </div>
                         </div>
                         <span className="text-xl font-bold bg-gradient-to-r from-blue-700 to-cyan-600 bg-clip-text text-transparent tracking-tight">
@@ -226,8 +230,8 @@ const LandingPage = () => {
                                     key={item}
                                     onClick={() => scrollToSection(sections[index])}
                                     className={`relative px-1 py-2 transition-all duration-300 ${isActive
-                                            ? 'text-blue-700 font-semibold'
-                                            : 'text-slate-600 hover:text-blue-600'
+                                        ? 'text-blue-700 font-semibold'
+                                        : 'text-slate-600 hover:text-blue-600'
                                         }`}
                                 >
                                     {item}
@@ -496,8 +500,8 @@ const LandingPage = () => {
                                         <div
                                             key={index}
                                             className={`p-3 rounded-lg border ${item.status === 'missing'
-                                                    ? 'bg-red-50 border-red-100'
-                                                    : 'bg-green-50 border-green-100'
+                                                ? 'bg-red-50 border-red-100'
+                                                : 'bg-green-50 border-green-100'
                                                 }`}
                                         >
                                             <div className="flex items-center justify-between">
@@ -600,7 +604,7 @@ const LandingPage = () => {
                             >
                                 <div className="flex gap-1 mb-3">
                                     {[...Array(5)].map((_, i) => (
-                                        <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                                        <CheckCircle key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
                                     ))}
                                 </div>
                                 <h3 className="font-bold text-slate-900 mb-3">{testimonial.title}</h3>

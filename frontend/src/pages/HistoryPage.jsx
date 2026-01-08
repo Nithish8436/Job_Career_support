@@ -9,6 +9,7 @@ import { cn } from '../lib/utils';
 import Sidebar from '../components/Sidebar';
 import SidebarOverlay from '../components/SidebarOverlay';
 import ProfileModal from '../components/ProfileModal';
+import SEO from '../components/SEO';
 
 const HistoryPage = () => {
     const { user, token, logout } = useAuth();
@@ -123,6 +124,10 @@ const HistoryPage = () => {
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50/30 flex">
+            <SEO
+                title="Analysis History"
+                description="View your past resume analyses and track your improvement over time."
+            />
             {/* Mobile Sidebar Overlay */}
             <SidebarOverlay isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)}>
                 <Sidebar

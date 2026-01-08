@@ -2,9 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
+import SEO from '../components/SEO';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
-import { AlertCircle, Loader2, Eye, EyeOff, ArrowRight, Sparkles } from 'lucide-react';
+import { AlertCircle, Loader2, Eye, EyeOff, ArrowRight } from 'lucide-react';
 
 const LoginPage = () => {
     const [email, setEmail] = useState('');
@@ -32,6 +33,10 @@ const LoginPage = () => {
 
     return (
         <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-slate-50 via-white to-blue-50/30">
+            <SEO
+                title="Login"
+                description="Sign in to Career Compass to access your AI career tools."
+            />
             <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
@@ -42,18 +47,17 @@ const LoginPage = () => {
                     {/* Left Side - Form */}
                     <div className="w-full lg:w-1/2 p-8 lg:p-12 bg-gradient-to-b from-white to-slate-50/50">
                         {/* Logo */}
-                        <motion.div 
+                        <motion.div
                             initial={{ opacity: 0, y: -20 }}
                             animate={{ opacity: 1, y: 0 }}
                             className="mb-10"
                         >
                             <div className="flex items-center gap-2 mb-8">
-                                <motion.div 
+                                <motion.div
                                     whileHover={{ rotate: 5, scale: 1.1 }}
                                     className="w-10 h-10 bg-gradient-to-br from-blue-600 to-cyan-500 rounded-lg flex items-center justify-center text-white font-bold text-lg shadow-lg shadow-blue-500/30"
                                 >
                                     CC
-                                    <Sparkles className="absolute -top-1 -right-1 w-3 h-3 text-yellow-400 fill-yellow-400" />
                                 </motion.div>
                                 <span className="text-2xl font-bold bg-gradient-to-r from-slate-900 to-blue-700 bg-clip-text text-transparent">Career Compass</span>
                             </div>
@@ -149,7 +153,7 @@ const LoginPage = () => {
                         </form>
 
                         {/* Sign Up Link */}
-                        <motion.div 
+                        <motion.div
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             transition={{ delay: 0.3 }}
@@ -169,7 +173,7 @@ const LoginPage = () => {
                         {/* Decorative Elements */}
                         <div className="absolute top-0 right-0 w-64 h-64 bg-blue-500/5 rounded-full blur-3xl"></div>
                         <div className="absolute bottom-0 left-0 w-48 h-48 bg-cyan-500/5 rounded-full blur-3xl"></div>
-                        
+
                         {/* Features Card Container */}
                         <motion.div
                             initial={{ opacity: 0, x: 20 }}
@@ -190,7 +194,7 @@ const LoginPage = () => {
                                         Join thousands who found their dream jobs with Career Compass
                                     </p>
                                 </div>
-                                
+
                                 {/* Features List - Exact as in image */}
                                 <div className="space-y-4">
                                     {[
@@ -199,7 +203,7 @@ const LoginPage = () => {
                                         'Skill gap identification',
                                         'ATS optimization'
                                     ].map((feature, index) => (
-                                        <motion.div 
+                                        <motion.div
                                             key={index}
                                             initial={{ opacity: 0, x: 10 }}
                                             animate={{ opacity: 1, x: 0 }}
@@ -214,9 +218,9 @@ const LoginPage = () => {
                                         </motion.div>
                                     ))}
                                 </div>
-                               
-             
-                                
+
+
+
                             </div>
                         </motion.div>
                     </div>

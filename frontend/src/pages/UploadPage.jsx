@@ -9,6 +9,7 @@ import { useAuth } from '../context/AuthContext';
 import Sidebar from '../components/Sidebar';
 import SidebarOverlay from '../components/SidebarOverlay';
 import ProfileModal from '../components/ProfileModal';
+import SEO from '../components/SEO';
 
 const UploadPage = () => {
     const [resumeFile, setResumeFile] = useState(null);
@@ -149,6 +150,10 @@ const UploadPage = () => {
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50/30 flex">
+            <SEO
+                title="Start Analysis"
+                description="Upload your resume and job description to get instant AI-powered feedback and match scoring."
+            />
             {/* Mobile Sidebar Overlay */}
             <SidebarOverlay isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)}>
                 <Sidebar

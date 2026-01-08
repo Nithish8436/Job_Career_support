@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Sparkles } from 'lucide-react';
+
 
 const Navbar = ({ showProfile = true, rightContent = null }) => {
     const { user } = useAuth();
@@ -12,7 +12,6 @@ const Navbar = ({ showProfile = true, rightContent = null }) => {
                 <Link to={user ? "/dashboard" : "/"} className="flex items-center gap-2">
                     <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-cyan-500 rounded-lg flex items-center justify-center text-white font-bold text-lg shadow-lg shadow-blue-500/30">
                         CC
-                        <Sparkles className="absolute -top-1 -right-1 w-3 h-3 text-yellow-400 fill-yellow-400" />
                     </div>
                     <span className="text-xl font-bold bg-gradient-to-r from-slate-900 to-blue-700 bg-clip-text text-transparent">Career Compass</span>
                 </Link>

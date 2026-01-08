@@ -2,23 +2,23 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Link, useLocation } from 'react-router-dom'; // Add useLocation
-import { 
-  Home, Plus, History, User, Mic, BookOpen, Bot, 
-  LogOut, ChevronLeft, ChevronRight, Sparkles, X 
+import {
+  Home, Plus, History, User, Mic, BookOpen, Bot,
+  LogOut, ChevronLeft, ChevronRight, X
 } from 'lucide-react';
 import { Button } from './ui/Button';
 
-const Sidebar = ({ 
-  user, 
-  collapsed, 
-  onToggleCollapse, 
+const Sidebar = ({
+  user,
+  collapsed,
+  onToggleCollapse,
   onLogout,
   onProfileClick,
   sidebarOpen = false,
-  onCloseSidebar = () => {}
+  onCloseSidebar = () => { }
 }) => {
   const location = useLocation(); // Get current location
-  
+
   const sidebarItems = [
     {
       id: 'dashboard',
@@ -45,12 +45,12 @@ const Sidebar = ({
       bgColor: 'bg-purple-100'
     },
     {
-    id: 'profile',
-    label: 'Profile',
-    icon: User,
-    path: '/profile', // Changed from onClick to path
-    color: 'text-cyan-600',
-    bgColor: 'bg-cyan-100'
+      id: 'profile',
+      label: 'Profile',
+      icon: User,
+      path: '/profile', // Changed from onClick to path
+      color: 'text-cyan-600',
+      bgColor: 'bg-cyan-100'
     },
     {
       id: 'interview',
@@ -81,12 +81,12 @@ const Sidebar = ({
   // Check if current path matches sidebar item
   const isActive = (itemPath) => {
     if (!itemPath) return false;
-    
+
     // Exact match for dashboard
     if (itemPath === '/dashboard') {
       return location.pathname === '/dashboard';
     }
-    
+
     // For other paths, check if current path starts with item path
     // This handles nested routes like /result?matchId=...
     return location.pathname.startsWith(itemPath);
@@ -99,7 +99,6 @@ const Sidebar = ({
         <div className="flex items-center gap-2">
           <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-cyan-500 rounded-lg flex items-center justify-center text-white font-bold shadow-lg shadow-blue-500/30">
             CC
-            <Sparkles className="absolute -top-1 -right-1 w-3 h-3 text-yellow-400 fill-yellow-400" />
           </div>
           <span className="text-lg font-bold bg-gradient-to-r from-slate-900 to-blue-700 bg-clip-text text-transparent">
             Career Compass
@@ -126,13 +125,11 @@ const Sidebar = ({
                 }
                 onCloseSidebar();
               }}
-              className={`flex items-center gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors group ${
-                active ? 'bg-blue-50 border-l-4 border-l-blue-500' : ''
-              }`}
+              className={`flex items-center gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors group ${active ? 'bg-blue-50 border-l-4 border-l-blue-500' : ''
+                }`}
             >
-              <div className={`w-10 h-10 rounded-lg ${item.bgColor} flex items-center justify-center ${
-                active ? 'text-blue-700' : item.color
-              }`}>
+              <div className={`w-10 h-10 rounded-lg ${item.bgColor} flex items-center justify-center ${active ? 'text-blue-700' : item.color
+                }`}>
                 <item.icon className="w-5 h-5" />
               </div>
               <span className={`font-medium ${active ? 'text-blue-700 font-semibold' : 'text-slate-700'}`}>
@@ -173,7 +170,6 @@ const Sidebar = ({
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-cyan-500 rounded-lg flex items-center justify-center text-white font-bold shadow-lg shadow-blue-500/30">
               CC
-              <Sparkles className="absolute -top-1 -right-1 w-3 h-3 text-yellow-400 fill-yellow-400" />
             </div>
             <motion.span
               initial={{ opacity: 1 }}
@@ -208,23 +204,20 @@ const Sidebar = ({
               key={item.id}
               to={item.path || '#'}
               onClick={item.onClick}
-              className={`flex items-center gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors group ${
-                active ? 'bg-blue-50 border-l-4 border-l-blue-500' : ''
-              }`}
+              className={`flex items-center gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors group ${active ? 'bg-blue-50 border-l-4 border-l-blue-500' : ''
+                }`}
               title={collapsed ? item.label : ''}
             >
-              <div className={`w-10 h-10 rounded-lg ${item.bgColor} flex items-center justify-center ${
-                active ? 'text-blue-700' : item.color
-              } flex-shrink-0`}>
+              <div className={`w-10 h-10 rounded-lg ${item.bgColor} flex items-center justify-center ${active ? 'text-blue-700' : item.color
+                } flex-shrink-0`}>
                 <item.icon className="w-5 h-5" />
               </div>
               {!collapsed && (
                 <motion.span
                   initial={{ opacity: 1 }}
                   animate={{ opacity: collapsed ? 0 : 1 }}
-                  className={`font-medium whitespace-nowrap ${
-                    active ? 'text-blue-700 font-semibold' : 'text-slate-700'
-                  }`}
+                  className={`font-medium whitespace-nowrap ${active ? 'text-blue-700 font-semibold' : 'text-slate-700'
+                    }`}
                 >
                   {item.label}
                 </motion.span>

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Button } from '../components/ui/Button';
-import { Send, Loader2, Sparkles, Menu, Paperclip, X, FileText } from 'lucide-react';
+import { Send, Loader2, Menu, Paperclip, X, FileText, Bot } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import ReactMarkdown from 'react-markdown';
@@ -10,6 +10,7 @@ import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import Sidebar from '../components/Sidebar';
 import SidebarOverlay from '../components/SidebarOverlay';
 import ProfileModal from '../components/ProfileModal';
+import SEO from '../components/SEO';
 
 const ChatPage = () => {
     const location = useLocation();
@@ -180,6 +181,10 @@ const ChatPage = () => {
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50/30 flex">
+            <SEO
+                title="AI Career Coach"
+                description="Chat with our AI career coach for personalized advice on your resume and interview preparation."
+            />
             {/* Mobile Sidebar Overlay */}
             <SidebarOverlay isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)}>
                 <Sidebar
@@ -230,7 +235,7 @@ const ChatPage = () => {
                         {messages.length === 0 ? (
                             <div className="flex flex-col items-center justify-center h-full py-20">
                                 <div className="w-20 h-20 bg-gradient-to-br from-blue-600 to-cyan-500 rounded-2xl flex items-center justify-center mb-6 shadow-lg shadow-blue-600/30">
-                                    <Sparkles className="w-10 h-10 text-white" />
+                                    <Bot className="w-10 h-10 text-white" />
                                 </div>
                                 <h2 className="text-3xl font-bold text-slate-900 mb-3">How can I help you today?</h2>
                                 <p className="text-slate-600 text-center max-w-md mb-8">
@@ -263,7 +268,7 @@ const ChatPage = () => {
                                         {msg.role === 'assistant' && (
                                             <div className="flex-shrink-0 mr-3">
                                                 <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-cyan-500 rounded-lg flex items-center justify-center">
-                                                    <Sparkles className="w-4 h-4 text-white" />
+                                                    <Bot className="w-4 h-4 text-white" />
                                                 </div>
                                             </div>
                                         )}
@@ -334,7 +339,7 @@ const ChatPage = () => {
                                     <div className="flex justify-start">
                                         <div className="flex-shrink-0 mr-3">
                                             <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-cyan-500 rounded-lg flex items-center justify-center">
-                                                <Sparkles className="w-4 h-4 text-white" />
+                                                <Bot className="w-4 h-4 text-white" />
                                             </div>
                                         </div>
                                         <div className="bg-white border border-slate-200 rounded-2xl px-5 py-3 shadow-sm">

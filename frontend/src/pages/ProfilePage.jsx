@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { User, Mail, Calendar, Shield, TrendingUp, FileText, Mic, Award, Sparkles, Edit2, Save, Menu, LogOut } from 'lucide-react';
+
+import { User, Mail, Calendar, Shield, TrendingUp, FileText, Mic, Award, Edit2, Save, Menu, LogOut } from 'lucide-react';
 import { Button } from '../components/ui/Button';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/Card';
 import { useAuth } from '../context/AuthContext';
 import Sidebar from '../components/Sidebar';
 import SidebarOverlay from '../components/SidebarOverlay';
 import { cn } from '../lib/utils';
+import SEO from '../components/SEO';
 
 const ProfilePage = () => {
     const { user, logout } = useAuth();
@@ -87,6 +88,10 @@ const ProfilePage = () => {
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50/30 flex">
+            <SEO
+                title="Your Profile"
+                description="Manage your account settings and view your career progress."
+            />
             {/* Mobile Sidebar Overlay */}
             <SidebarOverlay isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)}>
                 <Sidebar
@@ -150,9 +155,6 @@ const ProfilePage = () => {
                                     <div className="absolute -bottom-16 left-8">
                                         <div className="w-32 h-32 rounded-full bg-gradient-to-br from-blue-700 to-cyan-600 border-4 border-white flex items-center justify-center text-white text-4xl font-bold shadow-xl">
                                             {user.name?.charAt(0).toUpperCase() || 'U'}
-                                            <div className="absolute -top-1 -right-1">
-                                                <Sparkles className="w-6 h-6 text-yellow-400 fill-yellow-400" />
-                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -285,7 +287,7 @@ const ProfilePage = () => {
                                     {stats.analyses === 0 ? (
                                         <div className="text-center py-8">
                                             <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                                                <Sparkles className="w-8 h-8 text-slate-300" />
+                                                <FileText className="w-8 h-8 text-slate-300" />
                                             </div>
                                             <h3 className="font-semibold text-slate-900 mb-2">No activity yet</h3>
                                             <p className="text-sm text-slate-600 mb-4">

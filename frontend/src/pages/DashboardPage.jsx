@@ -4,7 +4,8 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../co
 import { Dropdown, DropdownItem, DropdownDivider } from '../components/ui/Dropdown';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
-import { Plus, Clock, FileText, TrendingUp, ArrowRight, Loader2, AlertCircle, Bot, Mic, User, LogOut, Settings, Sparkles, Target, BookOpen, Info, Menu } from 'lucide-react';
+import SEO from '../components/SEO';
+import { Plus, Clock, FileText, TrendingUp, ArrowRight, Loader2, AlertCircle, Bot, Mic, User, LogOut, Settings, Target, BookOpen, Info, Menu } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { useAuth } from '../context/AuthContext';
 import Roadmap from '../components/Roadmap';
@@ -117,6 +118,10 @@ const DashboardPage = () => {
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50/30 flex">
+            <SEO
+                title="Dashboard"
+                description="Track your resume analysis history, skills growth, and career progress with Career Compass."
+            />
             {/* Mobile Sidebar Overlay with Sidebar */}
             <SidebarOverlay isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)}>
                 <Sidebar
@@ -227,7 +232,7 @@ const DashboardPage = () => {
                                     className="mt-6 p-4 bg-white/80 backdrop-blur-sm rounded-xl border border-blue-200/30"
                                 >
                                     <div className="flex items-start gap-3">
-                                        <Sparkles className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
+                                        <Target className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
                                         <div>
                                             <h3 className="font-semibold text-slate-900 mb-2">Getting Started</h3>
                                             <ul className="space-y-2 text-sm text-slate-600">

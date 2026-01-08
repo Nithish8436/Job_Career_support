@@ -1,6 +1,6 @@
 import React from 'react';
 import { Modal } from './ui/Modal';
-import { User, Mail, Calendar, Shield, FileText, Mic, Sparkles, Award } from 'lucide-react';
+import { User, Mail, Calendar, Shield, FileText, Mic, Award } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { cn } from '../lib/utils';
 
@@ -105,7 +105,7 @@ const ProfileModal = ({ isOpen, onClose }) => {
                         <div className="flex-1">
                             <p className="text-xs font-semibold text-cyan-800 uppercase tracking-wider">Account Status</p>
                             <p className="text-lg font-bold text-cyan-900 flex items-center gap-2">
-                                <Sparkles className="w-5 h-5 text-yellow-500" />
+                                <Shield className="w-5 h-5 text-yellow-500" />
                                 Active Premium
                             </p>
                         </div>
@@ -160,7 +160,7 @@ const ProfileModal = ({ isOpen, onClose }) => {
                         "hover:shadow-md"
                     )}>
                         <div className="w-12 h-12 rounded-full bg-gradient-to-br from-amber-100 to-amber-50 flex items-center justify-center mx-auto mb-3 text-amber-600">
-                            <Sparkles className="w-6 h-6" />
+                            <Award className="w-6 h-6" />
                         </div>
                         <p className="text-3xl font-bold text-amber-700">Level {stats.level}</p>
                         <p className="text-sm font-semibold text-amber-800">Career Level</p>
@@ -174,7 +174,7 @@ const ProfileModal = ({ isOpen, onClose }) => {
                         <span className="font-bold text-blue-700">85%</span>
                     </div>
                     <div className="h-3 bg-slate-100 rounded-full overflow-hidden">
-                        <div 
+                        <div
                             className="h-full bg-gradient-to-r from-blue-600 to-cyan-500 rounded-full transition-all duration-1000"
                             style={{ width: '85%' }}
                         />

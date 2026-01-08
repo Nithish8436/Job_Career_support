@@ -3,8 +3,9 @@ import { Button } from '../components/ui/Button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../components/ui/Card';
 import { Modal } from '../components/ui/Modal';
 import { motion } from 'framer-motion';
-import { CheckCircle, XCircle, AlertTriangle, ArrowLeft, Download, Share2, Loader2, Bot, Sparkles, ArrowRight, Menu } from 'lucide-react';
+import { CheckCircle, XCircle, AlertTriangle, ArrowLeft, Download, Share2, Loader2, Bot, ArrowRight, Menu } from 'lucide-react';
 import { Link, useSearchParams, useNavigate } from 'react-router-dom';
+import SEO from '../components/SEO';
 import { cn } from '../lib/utils';
 import SkillsRadar from '../components/SkillsRadar';
 import { toPng } from 'html-to-image';
@@ -251,6 +252,10 @@ const MatchResultPage = () => {
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50/30 flex">
+            <SEO
+                title="Analysis Report"
+                description="View your detailed resume analysis, match score, and personalized improvement suggestions."
+            />
             {/* Mobile Sidebar Overlay */}
             <SidebarOverlay isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)}>
                 <Sidebar
@@ -573,7 +578,7 @@ const MatchResultPage = () => {
                                             </div>
 
                                             <div className="flex items-start gap-3 bg-gradient-to-r from-blue-900/30 to-blue-800/30 border border-blue-900/50 p-4 rounded-lg">
-                                                <Sparkles className="w-5 h-5 text-blue-400 shrink-0 mt-0.5" />
+                                                <Bot className="w-5 h-5 text-blue-400 shrink-0 mt-0.5" />
                                                 <div>
                                                     <h4 className="font-semibold text-sm text-blue-400 mb-1">Recommendation</h4>
                                                     <p className="text-sm text-slate-300">
@@ -766,7 +771,7 @@ const MatchResultPage = () => {
                                         <CardHeader className="pb-6 pt-6 bg-gradient-to-br from-blue-50 via-cyan-50 to-slate-50 border-b border-slate-200">
                                             <div className="flex items-center gap-3 mb-2">
                                                 <div className="p-2 bg-gradient-to-br from-blue-600 to-cyan-500 rounded-xl shadow-md">
-                                                    <Sparkles className="w-6 h-6 text-white" />
+                                                    <Bot className="w-6 h-6 text-white" />
                                                 </div>
                                                 <CardTitle className="text-2xl text-slate-900">
                                                     Explore Other Career Paths
