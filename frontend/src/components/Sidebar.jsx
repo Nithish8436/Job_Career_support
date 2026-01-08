@@ -112,7 +112,7 @@ const Sidebar = ({
         </button>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-4 space-y-2">
+      <div className="flex-1 overflow-y-auto p-4 space-y-2 scrollbar-hide">
         {sidebarItems.map((item) => {
           const active = isActive(item.path);
           return (
@@ -196,7 +196,7 @@ const Sidebar = ({
         </button>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-4 space-y-2">
+      <div className="flex-1 overflow-y-auto p-4 space-y-2 scrollbar-hide">
         {sidebarItems.map((item) => {
           const active = isActive(item.path);
           return (
