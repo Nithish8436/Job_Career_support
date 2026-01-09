@@ -21,7 +21,7 @@ const VerifyEmailPage = () => {
             }
 
             try {
-                const response = await axios.get(`${import.meta.env.VITE_API_URL}/auth/verify-email?token=${token}`);
+                const response = await axios.get(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/auth/verify-email?token=${token}`);
                 setStatus('success');
                 setMessage(response.data.message || 'Email verified successfully!');
             } catch (error) {

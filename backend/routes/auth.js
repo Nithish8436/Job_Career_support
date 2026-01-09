@@ -219,6 +219,46 @@ router.post('/forgot-password', async (req, res) => {
     }
 });
 
+// @route   POST /api/auth/reset-password
+// @desc    Reset password
+// @access  Public
+router.post('/reset-password', async (req, res) => {
+    try {
+        const { token, newPassword } = req.body;
+
+        if (!token || !newPassword) {
+            return res.status(400).json({ message: 'Token and new password are required' });
+        }
+
+        // Verify token
+        try {
+            const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+            // Find user
+            const user = await User.findById(decoded.user.id);
+            if (!user) {
+                return res.status(404).json({ message: 'User not found' });
+            }
+
+            // Hash new password
+            const salt = await bcrypt.genSalt(10);
+            user.password = await bcrypt.hash(newPassword, salt);
+
+            await user.save();
+
+            res.json({ success: true, message: 'Password reset successfully' });
+
+        } catch (err) {
+            console.error('Token verification failed:', err);
+            return res.status(400).json({ message: 'Invalid or expired token' });
+        }
+
+    } catch (error) {
+        console.error('Reset Password error:', error);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
 module.exports = router;
 
 
