@@ -20,10 +20,15 @@ router.post('/register', async (req, res) => {
             return res.status(400).json({ error: 'User already exists' });
         }
 
+        // Generate verification token
+        const verificationToken = require('crypto').randomBytes(32).toString('hex');
+
         user = new User({
             name,
             email,
             password,
+            verificationToken,
+            isVerified: false
         });
 
         // Hash password
@@ -32,32 +37,58 @@ router.post('/register', async (req, res) => {
 
         await user.save();
 
-        // Return JWT
-        const payload = {
-            user: {
-                id: user.id,
-            },
-        };
+        // Send confirmation email
+        const { sendVerificationEmail } = require('../services/emailService');
+        try {
+            await sendVerificationEmail(email, verificationToken);
+            console.log(`Verification email sent to ${email}`);
+        } catch (emailErr) {
+            console.error('Failed to send verification email:', emailErr);
+            // Note: We still registered the user, but email failed. 
+            // In production, might want to rollback or allow "resend email".
+        }
 
-        jwt.sign(
-            payload,
-            process.env.JWT_SECRET,
-            { expiresIn: '7d' },
-            (err, token) => {
-                if (err) throw err;
-                res.status(201).json({
-                    success: true,
-                    token,
-                    user: {
-                        id: user._id,
-                        name: user.name,
-                        email: user.email,
-                    }
-                });
-            }
-        );
+        res.status(201).json({
+            success: true,
+            message: 'Registration successful! Please check your email to verify your account.',
+            requireVerification: true
+        });
+
     } catch (error) {
         console.error('Registration error:', error);
+        res.status(500).json({ error: 'Server error' });
+    }
+});
+
+// GET /api/auth/verify-email
+router.get('/verify-email', async (req, res) => {
+    try {
+        const { token } = req.query;
+
+        if (!token) {
+            return res.status(400).json({ error: 'Invalid token' });
+        }
+
+        // Find user with this token
+        const user = await User.findOne({ verificationToken: token });
+
+        if (!user) {
+            return res.status(400).json({ error: 'Invalid or expired verification link' });
+        }
+
+        if (user.isVerified) {
+            return res.status(200).json({ success: true, message: 'Email already verified. You can login.' });
+        }
+
+        // Verify user
+        user.isVerified = true;
+        user.verificationToken = undefined; // Clear token
+        await user.save();
+
+        res.status(200).json({ success: true, message: 'Email verified successfully!' });
+
+    } catch (error) {
+        console.error('Verification error:', error);
         res.status(500).json({ error: 'Server error' });
     }
 });
@@ -75,6 +106,11 @@ router.post('/login', async (req, res) => {
         const user = await User.findOne({ email });
         if (!user) {
             return res.status(400).json({ error: 'Invalid credentials' });
+        }
+
+        // Check verification
+        if (!user.isVerified) {
+            return res.status(401).json({ error: 'Please verify your email address first' });
         }
 
         // Check password
@@ -134,32 +170,52 @@ router.get('/me', auth, async (req, res) => {
     }
 });
 
-// POST /api/auth/forgot-password
+// @route   POST /api/auth/forgot-password
+// @desc    Send password reset email
+// @access  Public
 router.post('/forgot-password', async (req, res) => {
     try {
         const { email } = req.body;
 
         if (!email) {
-            return res.status(400).json({ error: 'Email is required' });
+            return res.status(400).json({ message: 'Email is required' });
         }
 
         // Check if user exists
         const user = await User.findOne({ email });
         if (!user) {
-            // Found NO user with this email
-            return res.status(404).json({ error: 'No account found with this email address' });
+            return res.status(404).json({ message: 'No account found with this email address' });
         }
 
-        // Found user - In a real app, generate token and send email here
-        // For now, we simulate success since we verified the user exists
-        res.json({
-            success: true,
-            message: `Password reset instructions sent to ${email}`
-        });
+        // Generate reset token (valid for 1 hour)
+        const payload = {
+            user: { id: user.id },
+            type: 'reset'
+        };
+        const resetToken = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' });
+
+        // Send password reset email
+        const { sendPasswordResetEmail } = require('../services/emailService');
+
+        try {
+            await sendPasswordResetEmail(email, resetToken);
+            res.json({
+                success: true,
+                message: 'Password reset instructions sent to your email'
+            });
+        } catch (emailError) {
+            console.error('Failed to send reset email:', emailError);
+            // Return demo link as fallback if email fails
+            res.json({
+                success: true,
+                message: 'Reset link generated (Demo Mode - Email service unavailable)',
+                demo_link: `/reset-password?token=${resetToken}`
+            });
+        }
 
     } catch (error) {
         console.error('Forgot Password error:', error);
-        res.status(500).json({ error: 'Server error' });
+        res.status(500).json({ message: 'Server error' });
     }
 });
 

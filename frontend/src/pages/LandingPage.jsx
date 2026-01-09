@@ -13,6 +13,7 @@ import {
 
 // Import assets
 import atsBot from '../assets/ats-bot.png';
+import Footer from '../components/Footer';
 
 const LandingPage = () => {
     const [currentTestimonial, setCurrentTestimonial] = useState(0);

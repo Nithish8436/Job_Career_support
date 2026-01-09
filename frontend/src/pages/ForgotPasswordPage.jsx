@@ -5,38 +5,34 @@ import { Input } from '../components/ui/Input';
 import SEO from '../components/SEO';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AlertCircle, Loader2, ArrowLeft, Mail, CheckCircle2 } from 'lucide-react';
+import axios from 'axios';
 
 const ForgotPasswordPage = () => {
     const [email, setEmail] = useState('');
-    const [isSubmitting, setIsSubmitting] = useState(false);
-    const [isSuccess, setIsSuccess] = useState(false);
+    const [status, setStatus] = useState('idle'); // idle, loading, success, demo_success, error
     const [error, setError] = useState(null);
+    const [demoLink, setDemoLink] = useState(null);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setIsSubmitting(true);
+        setStatus('loading');
         setError(null);
 
         try {
-            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/forgot-password`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ email })
-            });
+            const api = axios.create({ baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5000' });
+            const res = await api.post('/api/auth/forgot-password', { email });
 
-            const data = await response.json();
-
-            if (!response.ok) {
-                throw new Error(data.error || 'Failed to process request');
+            if (res.data.success) {
+                if (res.data.demo_link) {
+                    setDemoLink(res.data.demo_link);
+                    setStatus('demo_success');
+                } else {
+                    setStatus('success');
+                }
             }
-
-            setIsSuccess(true);
         } catch (err) {
-            setError(err.message);
-        } finally {
-            setIsSubmitting(false);
+            setStatus('error');
+            setError(err.response?.data?.message || 'Failed to process request');
         }
     };
 
@@ -66,10 +62,12 @@ const ForgotPasswordPage = () => {
                 </div>
 
                 <AnimatePresence mode="wait">
-                    {isSuccess ? (
+                    {status === 'success' && (
                         <motion.div
+                            key="success"
                             initial={{ opacity: 0, y: 10 }}
                             animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -10 }}
                             className="bg-green-50 border border-green-200 rounded-xl p-6 text-center"
                         >
                             <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -85,8 +83,41 @@ const ForgotPasswordPage = () => {
                                 </Button>
                             </Link>
                         </motion.div>
-                    ) : (
+                    )}
+
+                    {status === 'demo_success' && (
+                        <motion.div
+                            key="demo_success"
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -10 }}
+                            className="bg-blue-50 border border-blue-200 rounded-xl p-6 text-center"
+                        >
+                            <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <CheckCircle2 className="w-6 h-6 text-blue-600" />
+                            </div>
+                            <h3 className="text-lg font-bold text-blue-800 mb-2">Reset Link Ready!</h3>
+                            <p className="text-blue-700 text-sm mb-6">
+                                Click the button below to reset your password:
+                            </p>
+                            <Link to={demoLink}>
+                                <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white mb-3">
+                                    Reset Password Now
+                                </Button>
+                            </Link>
+                            <Button
+                                variant="ghost"
+                                onClick={() => { setStatus('idle'); setEmail(''); setDemoLink(null); }}
+                                className="w-full text-slate-500"
+                            >
+                                Try Another Email
+                            </Button>
+                        </motion.div>
+                    )}
+
+                    {(status === 'idle' || status === 'loading' || status === 'error') && (
                         <motion.form
+                            key="form"
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
@@ -115,9 +146,9 @@ const ForgotPasswordPage = () => {
                             <Button
                                 type="submit"
                                 className="w-full h-12 bg-gradient-to-r from-blue-700 to-cyan-600 hover:from-blue-800 hover:to-cyan-700 text-white font-bold rounded-xl shadow-lg shadow-blue-600/25 transition-all"
-                                disabled={isSubmitting}
+                                disabled={status === 'loading'}
                             >
-                                {isSubmitting ? (
+                                {status === 'loading' ? (
                                     <>
                                         <Loader2 className="w-5 h-5 mr-2 animate-spin" />
                                         Sending Instructions...

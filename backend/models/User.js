@@ -18,6 +18,11 @@ const userSchema = new mongoose.Schema({
         type: Date,
         default: Date.now,
     },
+    isVerified: {
+        type: Boolean,
+        default: false
+    },
+    verificationToken: String
 });
 
 module.exports = mongoose.model('User', userSchema);

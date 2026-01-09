@@ -50,6 +50,7 @@ app.use('/api/match', require('./routes/match'));
 app.use('/api/chat', require('./routes/chat'));
 app.use('/api/interview', require('./routes/interview'));
 app.use('/api/progress', require('./routes/progress'));
+app.use('/api/contact', require('./routes/contact'));
 
 
 app.listen(PORT, () => {
