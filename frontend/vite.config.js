@@ -10,7 +10,7 @@ export default defineConfig({
       output: {
         manualChunks: {
           vendor: ['react', 'react-dom', 'react-router-dom'],
-          ui: ['@radix-ui/react-slot', 'class-variance-authority', 'clsx', 'tailwind-merge', 'lucide-react', 'framer-motion'],
+          ui: ['clsx', 'tailwind-merge', 'lucide-react', 'framer-motion'],
           pdf: ['html2canvas', 'jspdf', 'html-to-image'],
           utils: ['react-helmet-async', 'react-speech-recognition', 'react-markdown', 'recharts']
         }
