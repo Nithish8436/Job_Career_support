@@ -51,8 +51,26 @@ async function getBrowser() {
     // Otherwise, launch a new browser and cache it
     browserLaunchPromise = (async () => {
         const launchAttempts = [
-            { headless: 'new', args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-gpu'] },
-            { headless: true, args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-gpu', '--single-process', '--no-zygote'] },
+            {
+                headless: 'new',
+                args: [
+                    '--no-sandbox',
+                    '--disable-setuid-sandbox',
+                    '--disable-dev-shm-usage',
+                    '--disable-gpu'
+                ]
+            },
+            {
+                headless: true,
+                args: [
+                    '--no-sandbox',
+                    '--disable-setuid-sandbox',
+                    '--disable-dev-shm-usage',
+                    '--disable-gpu',
+                    '--single-process',
+                    '--no-zygote'
+                ]
+            },
             { headless: true }
         ];
 
@@ -116,7 +134,7 @@ async function htmlToPdf(htmlContent) {
 
         // Disable images and stylesheets that aren't needed for faster rendering
         await page.setRequestInterception(false);
-        
+
         // Set content with faster waitUntil option (domcontentloaded instead of networkidle0)
         const contentStart = Date.now();
         await Promise.race([

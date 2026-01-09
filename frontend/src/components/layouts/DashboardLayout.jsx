@@ -46,9 +46,9 @@ const DashboardLayout = ({ children, pageTitle = "Dashboard" }) => {
             />
 
             {/* Main Content */}
-            <div className="flex-1">
+            <main className="flex-1">
                 {children}
-            </div>
+            </main>
 
             {/* Profile Modal */}
             <ProfileModal

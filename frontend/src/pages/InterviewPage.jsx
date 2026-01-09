@@ -98,11 +98,15 @@ const InterviewPage = () => {
                 clearInterval(timer);
                 setCountdown(null);
                 if (!listening) {
-                    SpeechRecognition.startListening({
-                        continuous: true,
-                        interimResults: true,
-                        language: 'en-US'
-                    });
+                    try {
+                        SpeechRecognition.startListening({
+                            continuous: true,
+                            interimResults: true,
+                            language: 'en-US'
+                        }).catch(e => console.error('Speech recognition failed to start:', e));
+                    } catch (e) {
+                        console.error('Speech recognition error:', e);
+                    }
                 }
             }
         }, 1000);

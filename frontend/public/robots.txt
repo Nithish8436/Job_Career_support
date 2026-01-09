@@ -1,0 +1,12 @@
+User-agent: *
+Allow: /
+Disallow: /dashboard
+Disallow: /profile
+Disallow: /chat
+Disallow: /history
+Disallow: /interview
+Disallow: /quiz
+Disallow: /result
+Disallow: /upload
+
+Sitemap: https://careercampus-eight.vercel.app/sitemap.xml
