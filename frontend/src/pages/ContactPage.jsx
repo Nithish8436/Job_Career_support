@@ -140,7 +140,7 @@ const ContactForm = () => {
                         required
                         type="text"
                         className="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
-                        placeholder="John"
+                        placeholder="e.g. Alex"
                     />
                 </div>
                 <div>
@@ -151,7 +151,7 @@ const ContactForm = () => {
                         onChange={handleChange}
                         type="text"
                         className="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
-                        placeholder="Doe"
+                        placeholder="e.g. Morgan"
                     />
                 </div>
             </div>
@@ -165,7 +165,7 @@ const ContactForm = () => {
                     required
                     type="email"
                     className="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
-                    placeholder="john@example.com"
+                    placeholder="alex@example.com"
                 />
             </div>
 

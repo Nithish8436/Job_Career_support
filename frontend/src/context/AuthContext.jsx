@@ -46,6 +46,16 @@ export const AuthProvider = ({ children }) => {
         loadUser();
     }, [token]);
 
+    // Auto-clear error after 5 seconds
+    useEffect(() => {
+        if (error) {
+            const timer = setTimeout(() => {
+                setError(null);
+            }, 5000);
+            return () => clearTimeout(timer);
+        }
+    }, [error]);
+
     const register = async (name, email, password) => {
         setError(null);
         try {

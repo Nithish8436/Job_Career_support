@@ -25,6 +25,16 @@ const RegisterPage = () => {
         }
     }, [isAuthenticated, navigate]);
 
+    // Auto-clear local error
+    useEffect(() => {
+        if (localError) {
+            const timer = setTimeout(() => {
+                setLocalError('');
+            }, 5000);
+            return () => clearTimeout(timer);
+        }
+    }, [localError]);
+
     // Password strength calculation
     const getPasswordStrength = (pwd) => {
         if (!pwd) return { strength: 0, label: '', color: '' };
