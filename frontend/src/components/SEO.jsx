@@ -10,7 +10,7 @@ const SEO = ({
     return (
         <Helmet>
             {/* Standard metadata tags */}
-            <title>{title} | {name}</title>
+            <title>{name}</title>
             <meta name='description' content={description} />
 
             {/* Facebook/Open Graph tags */}
