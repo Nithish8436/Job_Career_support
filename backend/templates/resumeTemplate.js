@@ -25,13 +25,13 @@ function generateResumeTemplate(resumeData) {
     <title>${name || 'Resume'}</title>
     <style>
         /* Enforce consistent PDF margins via @page. Adjust margin value here to change PDF margins. */
-        @page { size: A4; margin: 0.6in; }
+        @page { size: A4; margin: 0.5in; }
 
         html,body{height:100%;}
         body {
             font-family: 'Times New Roman', Times, serif;
-            font-size: 11pt;
-            line-height: 1.35;
+            font-size: 10.5pt;
+            line-height: 1.25;
             color: #000;
             background: #fff;
             margin: 0; /* @page controls printable margins */
@@ -42,44 +42,45 @@ function generateResumeTemplate(resumeData) {
         .container{max-width:100%;margin:0 auto;padding:0}
 
         /* Header */
-        .header { text-align: center; margin-bottom: 6px; }
-        .name { font-size: 24pt; font-weight: 700; letter-spacing: 0.6px; line-height:1; }
+        .header { text-align: center; margin-bottom: 4px; }
+        .name { font-size: 22pt; font-weight: 700; letter-spacing: 0.6px; line-height:1; }
         .contact { margin-top:4px; font-size:9pt; color:#111; }
-        .contact span{margin:0 8px}
-        .hr { border-top:1.2px solid #111; margin:10px 0 6px 0 }
+        .contact span{margin:0 6px}
+        .hr { border-top:1px solid #111; margin:8px 0 6px 0 }
 
         /* Section title styling */
-        .section { margin-top:10px; }
-        .section-title { font-size:12pt; font-weight:700; text-transform:uppercase; margin-bottom:6px; }
-        .section-rule { height:1px;background:#333;margin:6px 0 10px 0 }
+        .section { margin-top:8px; }
+        .section-title { font-size:11pt; font-weight:700; text-transform:uppercase; margin-bottom:4px; }
+        .section-rule { height:1px;background:#333;margin:4px 0 6px 0 }
 
-        .summary { text-align:justify; font-size:10pt; margin-bottom:8px; }
+        .summary { text-align:justify; font-size:10pt; margin-bottom:6px; }
 
-        .skills-grid { margin-bottom:8px }
-        .skill-row { margin-bottom:6px }
+        .skills-grid { margin-bottom:6px }
+        .skill-row { margin-bottom:4px }
         .skill-label{font-weight:700; margin-right:6px}
 
         /* Projects and experience styling */
-        .projects .project, .experience .job { margin-bottom:10px; page-break-inside: avoid }
-        .project-title { font-weight:700; font-size:11pt }
-        .project-meta{ font-style:italic; font-size:9pt; color:#333; margin-top:2px }
+        .projects .project, .experience .job { margin-bottom:8px; page-break-inside: avoid }
+        .project-title { font-weight:700; font-size:10.5pt }
+        .project-meta{ font-style:italic; font-size:9pt; color:#333; margin-top:1px }
         .two-col { display:flex; justify-content:space-between; align-items:flex-start; gap:12px }
         .two-col > div { flex: 1 }
         .right { text-align:right; font-size:9pt; white-space:nowrap }
 
-        ul.bullets { margin-left:18px; margin-top:6px; }
-        ul.bullets li { margin-bottom:4px; font-size:10pt }
+        ul.bullets { margin-left:16px; margin-top:4px; }
+        ul.bullets li { margin-bottom:2px; font-size:10pt }
 
-        .education-item{ margin-bottom:8px }
-        .education-degree{ font-weight:700; font-size:11pt }
+        .education-item{ margin-bottom:6px }
+        .education-degree{ font-weight:700; font-size:10.5pt }
         .education-meta{ font-size:9pt }
 
-        .certifications-list{ margin-left:18px }
+        .certifications-list{ margin-left:16px }
+        .comma-list { font-size: 10pt; margin-left: 0; }
 
         /* Ensure long sections don't split awkwardly */
         .section { page-break-inside: avoid }
 
-        @media print { .name{font-size:23pt} }
+        @media print { .name{font-size:22pt} }
     </style>
 </head>
 <body>
@@ -87,12 +88,12 @@ function generateResumeTemplate(resumeData) {
         <div class="header">
             <div class="name">${name || 'Your Name'}</div>
             <div class="contact">
-                ${contact.phone ? `<span>${contact.phone}</span>` : ''}
-                ${contact.location ? `<span>${contact.location}</span>` : ''}
-                ${contact.email ? `<span><a href="mailto:${contact.email}">${contact.email}</a></span>` : ''}
-                ${contact.linkedin ? `<span>${contact.linkedin}</span>` : ''}
-                ${contact.github ? `<span>${contact.github}</span>` : ''}
-                ${contact.portfolio ? `<span>${contact.portfolio}</span>` : ''}
+                ${contact.phone ? `<span>${contact.phone}</span> • ` : ''}
+                ${contact.location ? `<span>${contact.location}</span> • ` : ''}
+                ${contact.email ? `<span><a href="mailto:${contact.email}" style="color:inherit;text-decoration:none">${contact.email}</a></span>` : ''}
+                ${contact.linkedin ? ` • <span>${contact.linkedin.replace(/^https?:\/\//, '')}</span>` : ''}
+                ${contact.github ? ` • <span>${contact.github.replace(/^https?:\/\//, '')}</span>` : ''}
+                ${contact.portfolio ? ` • <span>${contact.portfolio.replace(/^https?:\/\//, '')}</span>` : ''}
             </div>
         </div>
         <div class="hr"></div>
@@ -121,8 +122,8 @@ function generateResumeTemplate(resumeData) {
         <div class="section">
             <div class="section-title">SOFT SKILLS</div>
             <div class="section-rule"></div>
-            <div>
-                <ul class="bullets">${softSkills.map(s => `<li>${s}</li>`).join('')}</ul>
+            <div class="comma-list">
+                ${Array.isArray(softSkills) ? softSkills.join(' • ') : softSkills}
             </div>
         </div>
         ` : ''}
@@ -140,8 +141,8 @@ function generateResumeTemplate(resumeData) {
                         </div>
                         <div class="right">${p.dates || ''}</div>
                     </div>
-                    ${p.technologies ? `<div style="margin-top:6px;font-style:italic;font-size:9pt;">${Array.isArray(p.technologies) ? p.technologies.join(', ') : p.technologies}</div>` : ''}
-                    ${p.description ? (Array.isArray(p.description) ? `<ul class="bullets">${p.description.map(d => `<li>${d}</li>`).join('')}</ul>` : `<p style="margin-top:6px">${p.description}</p>`) : ''}
+                    ${p.technologies ? `<div style="margin-top:2px;font-style:italic;font-size:9pt;">${Array.isArray(p.technologies) ? p.technologies.join(', ') : p.technologies}</div>` : ''}
+                    ${p.description ? (Array.isArray(p.description) ? `<ul class="bullets">${p.description.map(d => `<li>${d}</li>`).join('')}</ul>` : `<p style="margin-top:4px">${p.description}</p>`) : ''}
                 </div>
             `).join('')}
         </div>
@@ -161,7 +162,7 @@ function generateResumeTemplate(resumeData) {
                         </div>
                         <div class="right">${e.dates || ''}</div>
                     </div>
-                    ${e.responsibilities ? (Array.isArray(e.responsibilities) ? `<ul class="bullets">${e.responsibilities.map(r=>`<li>${r}</li>`).join('')}</ul>` : `<p style="margin-top:6px">${e.responsibilities}</p>`) : ''}
+                    ${e.responsibilities ? (Array.isArray(e.responsibilities) ? `<ul class="bullets">${e.responsibilities.map(r => `<li>${r}</li>`).join('')}</ul>` : `<p style="margin-top:4px">${e.responsibilities}</p>`) : ''}
                 </div>
             `).join('')}
         </div>
@@ -177,7 +178,7 @@ function generateResumeTemplate(resumeData) {
                         <div class="education-degree">${ed.degree || ''}</div>
                         <div class="education-meta">${ed.institution || ''}${ed.location ? `, ${ed.location}` : ''}</div>
                     </div>
-                    <div class="right">${ed.score ? ed.score : ''}<div style="font-size:9pt;margin-top:4px">${ed.dates||''}</div></div>
+                    <div class="right">${ed.score ? ed.score : ''}<div style="font-size:9pt;margin-top:2px">${ed.dates || ''}</div></div>
                 </div>
             `).join('')}
         </div>
@@ -187,7 +188,9 @@ function generateResumeTemplate(resumeData) {
         <div class="section">
             <div class="section-title">CERTIFICATIONS</div>
             <div class="section-rule"></div>
-            <ul class="certifications-list">${certifications.map(c => `<li>${c}</li>`).join('')}</ul>
+            <div class="comma-list">
+                ${Array.isArray(certifications) ? certifications.join(' • ') : certifications}
+            </div>
         </div>
         ` : ''}
 

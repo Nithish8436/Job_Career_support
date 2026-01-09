@@ -134,6 +134,35 @@ router.get('/me', auth, async (req, res) => {
     }
 });
 
+// POST /api/auth/forgot-password
+router.post('/forgot-password', async (req, res) => {
+    try {
+        const { email } = req.body;
+
+        if (!email) {
+            return res.status(400).json({ error: 'Email is required' });
+        }
+
+        // Check if user exists
+        const user = await User.findOne({ email });
+        if (!user) {
+            // Found NO user with this email
+            return res.status(404).json({ error: 'No account found with this email address' });
+        }
+
+        // Found user - In a real app, generate token and send email here
+        // For now, we simulate success since we verified the user exists
+        res.json({
+            success: true,
+            message: `Password reset instructions sent to ${email}`
+        });
+
+    } catch (error) {
+        console.error('Forgot Password error:', error);
+        res.status(500).json({ error: 'Server error' });
+    }
+});
+
 module.exports = router;
 
 

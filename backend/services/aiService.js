@@ -95,7 +95,7 @@ function tryParseJson(content) {
                         // Found a complete JSON object
                         const candidate = content.substring(start, j + 1);
                         try {
-                            JSON.parse(candidate);
+                            const parsedCandidate = JSON.parse(candidate);
                             if (candidate.length > bestLength) {
                                 bestMatch = candidate;
                                 bestLength = candidate.length;

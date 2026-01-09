@@ -6,14 +6,15 @@ export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
-    const [token, setToken] = useState(localStorage.getItem('token'));
+    // Check both storages on initial load
+    const [token, setToken] = useState(localStorage.getItem('token') || sessionStorage.getItem('token'));
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
     useEffect(() => {
         const loadUser = async () => {
             if (token) {
-                console.log('🔑 Token found in localStorage:', token.substring(0, 20) + '...');
+                // console.log('🔑 Token found:', token.substring(0, 20) + '...');
                 try {
                     const response = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/me`, {
                         headers: {
@@ -21,28 +22,23 @@ export const AuthProvider = ({ children }) => {
                         }
                     });
 
-                    console.log('📡 /api/auth/me response status:', response.status);
-
                     if (response.ok) {
                         const data = await response.json();
-                        console.log('✅ User data received:', data);
-                        console.log('👤 User object:', data.user);
-                        console.log('🆔 User ID:', data.user?.id);
                         setUser(data.user);
                     } else {
                         console.log('❌ Auth failed, clearing token');
                         localStorage.removeItem('token');
+                        sessionStorage.removeItem('token');
                         setToken(null);
                         setUser(null);
                     }
                 } catch (err) {
                     console.error('💥 Error loading user:', err);
                     localStorage.removeItem('token');
+                    sessionStorage.removeItem('token');
                     setToken(null);
                     setUser(null);
                 }
-            } else {
-                console.log('⚠️ No token found in localStorage');
             }
             setLoading(false);
         };
@@ -67,6 +63,7 @@ export const AuthProvider = ({ children }) => {
                 throw new Error(data.error || 'Registration failed');
             }
 
+            // Default to localStorage for register
             localStorage.setItem('token', data.token);
             setToken(data.token);
             setUser(data.user);
@@ -77,9 +74,8 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
-    const login = async (email, password) => {
+    const login = async (email, password, rememberMe = true) => {
         setError(null);
-        console.log('🔐 Attempting login for:', email);
         try {
             const response = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/login`, {
                 method: 'POST',
@@ -90,23 +86,23 @@ export const AuthProvider = ({ children }) => {
             });
 
             const data = await response.json();
-            console.log('📨 Login response:', data);
 
             if (!response.ok) {
                 throw new Error(data.error || 'Login failed');
             }
 
-            console.log('✅ Login successful!');
-            console.log('🎫 Token:', data.token?.substring(0, 20) + '...');
-            console.log('👤 User:', data.user);
-            console.log('🆔 User ID:', data.user?.id);
+            if (rememberMe) {
+                localStorage.setItem('token', data.token);
+                sessionStorage.removeItem('token');
+            } else {
+                sessionStorage.setItem('token', data.token);
+                localStorage.removeItem('token');
+            }
 
-            localStorage.setItem('token', data.token);
             setToken(data.token);
             setUser(data.user);
             return true;
         } catch (err) {
-            console.error('❌ Login error:', err.message);
             setError(err.message);
             return false;
         }
@@ -114,6 +110,7 @@ export const AuthProvider = ({ children }) => {
 
     const logout = () => {
         localStorage.removeItem('token');
+        sessionStorage.removeItem('token');
         setToken(null);
         setUser(null);
     };

@@ -690,16 +690,28 @@ const LandingPage = () => {
                             <div key={index}>
                                 <h4 className="font-bold text-white mb-4 text-sm">{column.title}</h4>
                                 <ul className="space-y-2">
-                                    {column.links.map((link) => (
-                                        <li key={link}>
-                                            <a
-                                                href="#"
-                                                className="text-slate-400 hover:text-blue-400 transition-colors duration-300 text-sm hover:pl-2 block"
-                                            >
-                                                {link}
-                                            </a>
-                                        </li>
-                                    ))}
+                                    {column.links.map((link) => {
+                                        const getLinkPath = (title) => {
+                                            switch (title) {
+                                                case 'About Us': return '/about';
+                                                case 'Contact': return '/contact';
+                                                case 'Privacy Policy': return '/privacy';
+                                                case 'Terms of Service': return '/terms';
+                                                case 'Resume Scannner': return '/resume-scanner'; // Placeholder
+                                                default: return '#';
+                                            }
+                                        };
+                                        return (
+                                            <li key={link}>
+                                                <Link
+                                                    to={getLinkPath(link)}
+                                                    className="text-slate-400 hover:text-blue-400 transition-colors duration-300 text-sm hover:pl-2 block"
+                                                >
+                                                    {link}
+                                                </Link>
+                                            </li>
+                                        );
+                                    })}
                                 </ul>
                             </div>
                         ))}

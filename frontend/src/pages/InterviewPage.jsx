@@ -504,11 +504,15 @@ ${interviewSummary}`;
         if (listening) {
             SpeechRecognition.stopListening();
         } else {
-            SpeechRecognition.startListening({
-                continuous: true,
-                interimResults: true,
-                language: 'en-US'
-            });
+            try {
+                SpeechRecognition.startListening({
+                    continuous: true,
+                    interimResults: true,
+                    language: 'en-US'
+                });
+            } catch (e) {
+                console.error('Manual start listening error:', e);
+            }
         }
     };
 

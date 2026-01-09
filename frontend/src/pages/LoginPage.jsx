@@ -11,6 +11,7 @@ const LoginPage = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
+    const [rememberMe, setRememberMe] = useState(true); // Default to true
     const [isSubmitting, setIsSubmitting] = useState(false);
     const { login, error, isAuthenticated } = useAuth();
     const navigate = useNavigate();
@@ -24,7 +25,7 @@ const LoginPage = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setIsSubmitting(true);
-        const success = await login(email, password);
+        const success = await login(email, password, rememberMe);
         if (success) {
             navigate('/dashboard');
         }
@@ -122,7 +123,12 @@ const LoginPage = () => {
                             {/* Remember Me & Forgot Password */}
                             <div className="flex items-center justify-between text-sm">
                                 <label className="flex items-center gap-2 cursor-pointer">
-                                    <input type="checkbox" className="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500" />
+                                    <input
+                                        type="checkbox"
+                                        className="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                                        checked={rememberMe}
+                                        onChange={(e) => setRememberMe(e.target.checked)}
+                                    />
                                     <span className="text-slate-700 font-medium">Remember me</span>
                                 </label>
                                 <Link to="/forgot-password" className="text-blue-600 hover:text-blue-700 hover:underline font-medium transition-colors">

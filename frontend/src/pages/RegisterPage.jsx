@@ -308,9 +308,9 @@ const RegisterPage = () => {
                                 />
                                 <label htmlFor="terms" className="text-slate-700">
                                     I agree to the{' '}
-                                    <a href="#" className="text-blue-600 hover:text-blue-700 font-medium hover:underline">Terms of Service</a>{' '}
+                                    <Link to="/terms" className="text-blue-600 hover:text-blue-700 font-medium hover:underline">Terms of Service</Link>{' '}
                                     and{' '}
-                                    <a href="#" className="text-blue-600 hover:text-blue-700 font-medium hover:underline">Privacy Policy</a>
+                                    <Link to="/privacy" className="text-blue-600 hover:text-blue-700 font-medium hover:underline">Privacy Policy</Link>
                                 </label>
                             </div>
 

@@ -6,6 +6,11 @@ import ProtectedRoute from './components/ProtectedRoute';
 const LandingPage = React.lazy(() => import('./pages/LandingPage'));
 const LoginPage = React.lazy(() => import('./pages/LoginPage'));
 const RegisterPage = React.lazy(() => import('./pages/RegisterPage'));
+const ForgotPasswordPage = React.lazy(() => import('./pages/ForgotPasswordPage'));
+const TermsPage = React.lazy(() => import('./pages/TermsPage'));
+const PrivacyPolicyPage = React.lazy(() => import('./pages/PrivacyPolicyPage'));
+const AboutPage = React.lazy(() => import('./pages/AboutPage'));
+const ContactPage = React.lazy(() => import('./pages/ContactPage'));
 const UploadPage = React.lazy(() => import('./pages/UploadPage'));
 const MatchResultPage = React.lazy(() => import('./pages/MatchResultPage'));
 const DashboardPage = React.lazy(() => import('./pages/DashboardPage'));
@@ -28,6 +33,11 @@ function App() {
             <Route path="/" element={<LandingPage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
+            <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+            <Route path="/terms" element={<TermsPage />} />
+            <Route path="/privacy" element={<PrivacyPolicyPage />} />
+            <Route path="/about" element={<AboutPage />} />
+            <Route path="/contact" element={<ContactPage />} />
             <Route
               path="/dashboard"
               element={
