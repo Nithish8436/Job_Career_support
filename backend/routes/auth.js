@@ -17,14 +17,12 @@ router.post('/register', async (req, res) => {
         // Check if user already exists
         let user = await User.findOne({ email });
         if (user) {
-            // Self-healing: If user exists but is NOT verified, resend token instead of error
             if (!user.isVerified) {
-                const verificationToken = require('crypto').randomBytes(32).toString('hex');
+                // Generate verification JWT
+                const payload = { user: { id: user.id } };
+                const verificationToken = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1d' });
+
                 user.verificationToken = verificationToken;
-                // Update password if they changed it, or keep old one? 
-                // Safer to just update token and resend for now.
-                // If they forgot password, they should use forgot password.
-                // But for "retry registration", we just resend.
                 await user.save();
 
                 const { sendVerificationEmail } = require('../services/emailService');
@@ -38,25 +36,26 @@ router.post('/register', async (req, res) => {
                     requireVerification: true
                 });
             }
-
             return res.status(400).json({ error: 'User already exists' });
         }
-
-        // Generate verification token
-        const verificationToken = require('crypto').randomBytes(32).toString('hex');
 
         user = new User({
             name,
             email,
             password,
-            verificationToken,
             isVerified: false
         });
 
         // Hash password
         const salt = await bcrypt.genSalt(10);
         user.password = await bcrypt.hash(password, salt);
+        await user.save(); // Save first to get the ID
 
+        // Generate verification JWT using the new user ID
+        const payload = { user: { id: user.id } };
+        const verificationToken = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1d' });
+
+        user.verificationToken = verificationToken;
         await user.save();
 
         // Send confirmation email (non-blocking)
@@ -86,23 +85,32 @@ router.get('/verify-email', async (req, res) => {
             return res.status(400).json({ error: 'Invalid token' });
         }
 
-        // Find user with this token
-        const user = await User.findOne({ verificationToken: token });
+        try {
+            // Verify JWT
+            const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-        if (!user) {
+            // Find user by ID from token
+            const user = await User.findById(decoded.user.id);
+
+            if (!user) {
+                return res.status(400).json({ error: 'User not found' });
+            }
+
+            if (user.isVerified) {
+                return res.status(200).json({ success: true, message: 'Email already verified. You can login.' });
+            }
+
+            // Verify user
+            user.isVerified = true;
+            user.verificationToken = undefined; // Clear token
+            await user.save();
+
+            res.status(200).json({ success: true, message: 'Email verified successfully!' });
+
+        } catch (err) {
+            console.error('Token verification failed:', err);
             return res.status(400).json({ error: 'Invalid or expired verification link' });
         }
-
-        if (user.isVerified) {
-            return res.status(200).json({ success: true, message: 'Email already verified. You can login.' });
-        }
-
-        // Verify user
-        user.isVerified = true;
-        user.verificationToken = undefined; // Clear token
-        await user.save();
-
-        res.status(200).json({ success: true, message: 'Email verified successfully!' });
 
     } catch (error) {
         console.error('Verification error:', error);
@@ -128,7 +136,9 @@ router.post('/login', async (req, res) => {
         // Check verification
         if (!user.isVerified) {
             // Self-healing: Resend verification email if they try to login but aren't verified
-            const verificationToken = require('crypto').randomBytes(32).toString('hex');
+            const payload = { user: { id: user.id } };
+            const verificationToken = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1d' });
+
             user.verificationToken = verificationToken;
             await user.save();
 
