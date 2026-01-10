@@ -37,16 +37,11 @@ router.post('/register', async (req, res) => {
 
         await user.save();
 
-        // Send confirmation email
+        // Send confirmation email (non-blocking)
         const { sendVerificationEmail } = require('../services/emailService');
-        try {
-            await sendVerificationEmail(email, verificationToken);
-            console.log(`Verification email sent to ${email}`);
-        } catch (emailErr) {
-            console.error('Failed to send verification email:', emailErr);
-            // Note: We still registered the user, but email failed. 
-            // In production, might want to rollback or allow "resend email".
-        }
+        sendVerificationEmail(email, verificationToken)
+            .then(() => console.log(`Verification email sent to ${email}`))
+            .catch(emailErr => console.error('Failed to send verification email:', emailErr));
 
         res.status(201).json({
             success: true,
@@ -109,9 +104,9 @@ router.post('/login', async (req, res) => {
         }
 
         // Check verification
-        if (!user.isVerified) {
-            return res.status(401).json({ error: 'Please verify your email address first' });
-        }
+        // if (!user.isVerified) {
+        //     return res.status(401).json({ error: 'Please verify your email address first' });
+        // }
 
         // Check password
         const isMatch = await bcrypt.compare(password, user.password);
@@ -194,24 +189,17 @@ router.post('/forgot-password', async (req, res) => {
         };
         const resetToken = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' });
 
-        // Send password reset email
+        // Send password reset email (non-blocking)
         const { sendPasswordResetEmail } = require('../services/emailService');
 
-        try {
-            await sendPasswordResetEmail(email, resetToken);
-            res.json({
-                success: true,
-                message: 'Password reset instructions sent to your email'
-            });
-        } catch (emailError) {
-            console.error('Failed to send reset email:', emailError);
-            // Return demo link as fallback if email fails
-            res.json({
-                success: true,
-                message: 'Reset link generated (Demo Mode - Email service unavailable)',
-                demo_link: `/reset-password?token=${resetToken}`
-            });
-        }
+        sendPasswordResetEmail(email, resetToken)
+            .then(() => console.log(`Password reset email sent to ${email}`))
+            .catch(err => console.error('Failed to send reset email:', err));
+
+        res.json({
+            success: true,
+            message: 'If an account exists, password reset instructions have been sent.'
+        });
 
     } catch (error) {
         console.error('Forgot Password error:', error);

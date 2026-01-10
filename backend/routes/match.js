@@ -27,14 +27,14 @@ router.post('/analyze', async (req, res) => {
         // Analyze with AI
         const analysis = await analyzeMatch(resumeText, jobDescription);
 
-        // Generate career patfh suggestions based on matched skills
-        let careerSuggestions = [];
-        if (analysis.matchedSkills && analysis.matchedSkills.length > 0) {
-            careerSuggestions = await generateCareerSuggestions(
-                analysis.matchedSkills,
-                resumeText
-            );
-        }
+        // Get career suggestions directly from analysis (merged prompt)
+        const careerSuggestions = analysis.careerSuggestions || [];
+
+        // Add default images to suggestions if missing
+        const enhancedSuggestions = careerSuggestions.map(suggestion => ({
+            ...suggestion,
+            imageUrl: suggestion.imageUrl || `https://image.pollinations.ai/prompt/${encodeURIComponent((suggestion.title || 'technology career') + ' professional workspace')}?width=800&height=400&nologo=true`
+        }));
 
         // Save match result to database
         const match = new Match({
@@ -49,7 +49,7 @@ router.post('/analyze', async (req, res) => {
             skillAnalysis: analysis.skillAnalysis || null,
             suggestions: analysis.suggestions || [],
             eligibility: analysis.eligibility || { eligible: true, reason: 'Eligible' },
-            careerSuggestions: careerSuggestions,
+            careerSuggestions: enhancedSuggestions,
             githubAnalysis: analysis.githubAnalysis || null
         });
 

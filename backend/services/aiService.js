@@ -277,6 +277,8 @@ async function analyzeMatch(resumeText, jobDescription) {
     3. If the candidate has < 50% of required keywords, the score MUST be below 60.
     4. Be harsh on formatting if it's messy or unstructured.
 
+    Also, act as a Career Counsellor and suggest 3-5 career paths based on the user's skills and resume.
+
     Return a STRICT JSON object with this EXACT structure:
     {
         "jobTitle": "Extracted Job Title",
@@ -306,6 +308,15 @@ async function analyzeMatch(resumeText, jobDescription) {
             "eligible": true,
             "reason": "Detailed reason why"
         },
+        "careerSuggestions": [
+            { 
+                "title": "Role Title", 
+                "description": "Why this fits", 
+                "requiredSkills": ["Skill1", "Skill2"],
+                "matchScore": 85,
+                "roadmap": ["Step 1", "Step 2"] 
+            }
+        ],
         "githubAnalysis": null
     }
     IMPORTANT: Return ONLY valid JSON. No markdown, no explanations.`;
