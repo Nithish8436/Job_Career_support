@@ -104,9 +104,9 @@ router.post('/login', async (req, res) => {
         }
 
         // Check verification
-        // if (!user.isVerified) {
-        //     return res.status(401).json({ error: 'Please verify your email address first' });
-        // }
+        if (!user.isVerified) {
+            return res.status(401).json({ error: 'Please verify your email address first' });
+        }
 
         // Check password
         const isMatch = await bcrypt.compare(password, user.password);
