@@ -17,6 +17,28 @@ router.post('/register', async (req, res) => {
         // Check if user already exists
         let user = await User.findOne({ email });
         if (user) {
+            // Self-healing: If user exists but is NOT verified, resend token instead of error
+            if (!user.isVerified) {
+                const verificationToken = require('crypto').randomBytes(32).toString('hex');
+                user.verificationToken = verificationToken;
+                // Update password if they changed it, or keep old one? 
+                // Safer to just update token and resend for now.
+                // If they forgot password, they should use forgot password.
+                // But for "retry registration", we just resend.
+                await user.save();
+
+                const { sendVerificationEmail } = require('../services/emailService');
+                sendVerificationEmail(email, verificationToken)
+                    .then(() => console.log(`Resent verification email (register retry) to ${email}`))
+                    .catch(emailErr => console.error('Failed to send verification email:', emailErr));
+
+                return res.status(200).json({
+                    success: true,
+                    message: 'Account exists but was not verified. A new verification link has been sent.',
+                    requireVerification: true
+                });
+            }
+
             return res.status(400).json({ error: 'User already exists' });
         }
 
@@ -105,7 +127,19 @@ router.post('/login', async (req, res) => {
 
         // Check verification
         if (!user.isVerified) {
-            return res.status(401).json({ error: 'Please verify your email address first' });
+            // Self-healing: Resend verification email if they try to login but aren't verified
+            const verificationToken = require('crypto').randomBytes(32).toString('hex');
+            user.verificationToken = verificationToken;
+            await user.save();
+
+            const { sendVerificationEmail } = require('../services/emailService');
+            sendVerificationEmail(user.email, verificationToken)
+                .then(() => console.log(`Resent verification email to ${user.email}`))
+                .catch(err => console.error('Failed to resend verification email:', err));
+
+            return res.status(401).json({
+                error: 'Account not verified. A new verification link has been sent to your email.'
+            });
         }
 
         // Check password
