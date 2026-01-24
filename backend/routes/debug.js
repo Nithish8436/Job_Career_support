@@ -1,53 +1,43 @@
 const express = require('express');
 const router = express.Router();
-const nodemailer = require('nodemailer');
+const { Resend } = require('resend');
 
 // @route   GET /api/debug/email
-// @desc    Test email configuration (Diagnostics)
-// @access  Public (Temporary)
+// @desc    Test Resend configuration
 router.get('/email', async (req, res) => {
-    console.log('--- Debug: Email Config Check ---');
+    console.log('--- Debug: Resend Config Check ---');
 
-    const user = process.env.EMAIL_USER;
-    const pass = process.env.EMAIL_PASS;
+    const apiKey = process.env.RESEND_API_KEY;
 
-    // 1. Check Env Vars Existence
-    const status = {
-        env: {
-            EMAIL_USER: user ? `Set (${user})` : 'MISSING',
-            EMAIL_PASS: pass ? 'Set (Length: ' + pass.length + ')' : 'MISSING',
-        },
-        connection: 'Pending',
-        error: null
-    };
-
-    if (!user || !pass) {
-        return res.status(500).json(status);
+    if (!apiKey) {
+        return res.status(500).json({ status: 'FAILED', error: 'RESEND_API_KEY missing' });
     }
 
-    // 2. Test Connection
-    const transporter = nodemailer.createTransport({
-        host: 'smtp.gmail.com',
-        port: 465,
-        secure: true,
-        auth: { user, pass },
-        connectionTimeout: 10000,
-        family: 4 // Match production config
-    });
+    const resend = new Resend(apiKey);
 
     try {
-        await transporter.verify();
-        status.connection = 'SUCCESS: Connected to Gmail SMTP';
-        res.json(status);
+        const data = await resend.emails.send({
+            from: 'onboarding@resend.dev',
+            to: 'nithish8436@gmail.com', // Creating user's email as target for test
+            subject: 'Resend Debug Test',
+            html: '<p>Resend configuration is working!</p>'
+        });
+
+        if (data.error) {
+            throw data.error;
+        }
+
+        res.json({
+            status: 'SUCCESS',
+            details: 'Email dispatched via Resend',
+            data
+        });
     } catch (error) {
-        status.connection = 'FAILED';
-        status.error = {
-            message: error.message,
-            code: error.code,
-            response: error.response
-        };
         console.error('Debug Email Error:', error);
-        res.status(500).json(status);
+        res.status(500).json({
+            status: 'FAILED',
+            error: error.message || error
+        });
     }
 });
 

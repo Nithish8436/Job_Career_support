@@ -1,56 +1,32 @@
-const nodemailer = require('nodemailer');
+const { Resend } = require('resend');
 
-// Create reusable transporter
-const createTransporter = () => {
-    return nodemailer.createTransport({
-        host: 'smtp.gmail.com',
-        port: 465,
-        secure: true,
-        auth: {
-            user: process.env.EMAIL_USER,
-            pass: process.env.EMAIL_PASS
-        },
-        family: 4, // Force IPv4
-        // Add timeout settings
-        family: 4, // Force IPv4 to prevent IPv6 timeouts on some cloud providers
-        // Add timeout settings
-        connectionTimeout: 10000,
-        greetingTimeout: 10000,
-        socketTimeout: 10000
-    });
-};
+// Initialize Resend with API Key from env
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 // Send contact form email
 const sendContactEmail = async ({ firstName, lastName, email, message }) => {
-    const transporter = createTransporter();
-
-    const mailOptions = {
-        from: process.env.EMAIL_USER,
-        to: process.env.EMAIL_USER, // Send to yourself
-        replyTo: email, // User's email for easy reply
-        subject: `New Contact Form Submission from ${firstName} ${lastName}`,
-        html: `
-            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-                <h2 style="color: #2563eb;">New Contact Form Message</h2>
-                <div style="background: #f8fafc; padding: 20px; border-radius: 8px; margin: 20px 0;">
-                    <p><strong>From:</strong> ${firstName} ${lastName}</p>
-                    <p><strong>Email:</strong> ${email}</p>
-                    <p><strong>Message:</strong></p>
-                    <p style="background: white; padding: 15px; border-left: 4px solid #2563eb; margin-top: 10px;">
-                        ${message}
-                    </p>
-                </div>
-                <p style="color: #64748b; font-size: 12px;">
-                    This email was sent from the Career Compass contact form.
-                </p>
-            </div>
-        `
-    };
-
     try {
-        const info = await transporter.sendMail(mailOptions);
-        console.log('Contact email sent:', info.messageId);
-        return { success: true, messageId: info.messageId };
+        const data = await resend.emails.send({
+            from: 'Career Compass <onboarding@resend.dev>', // Use default until domain verified
+            to: process.env.EMAIL_USER, // Send to admin (yourself)
+            reply_to: email,
+            subject: `New Contact Form Submission from ${firstName} ${lastName}`,
+            html: `
+                <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                    <h2 style="color: #2563eb;">New Contact Form Message</h2>
+                    <div style="background: #f8fafc; padding: 20px; border-radius: 8px; margin: 20px 0;">
+                        <p><strong>From:</strong> ${firstName} ${lastName}</p>
+                        <p><strong>Email:</strong> ${email}</p>
+                        <p><strong>Message:</strong></p>
+                        <p style="background: white; padding: 15px; border-left: 4px solid #2563eb; margin-top: 10px;">
+                            ${message}
+                        </p>
+                    </div>
+                </div>
+            `
+        });
+        console.log('Contact email sent:', data.id);
+        return { success: true, messageId: data.id };
     } catch (error) {
         console.error('Error sending contact email:', error);
         throw error;
@@ -59,57 +35,25 @@ const sendContactEmail = async ({ firstName, lastName, email, message }) => {
 
 // Send password reset email
 const sendPasswordResetEmail = async (email, resetToken) => {
-    const transporter = createTransporter();
-
-    // Construct reset URL (adjust based on your frontend URL)
+    // Construct reset URL
     const resetUrl = `${process.env.FRONTEND_URL || 'http://localhost:5173'}/reset-password?token=${resetToken}`;
 
-    const mailOptions = {
-        from: process.env.EMAIL_USER,
-        to: email,
-        subject: 'Password Reset Request - Career Compass',
-        html: `
-            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-                <div style="background: linear-gradient(135deg, #2563eb 0%, #0ea5e9 100%); padding: 30px; text-align: center; border-radius: 8px 8px 0 0;">
-                    <h1 style="color: white; margin: 0;">Password Reset Request</h1>
-                </div>
-                <div style="background: #f8fafc; padding: 30px; border-radius: 0 0 8px 8px;">
-                    <p style="font-size: 16px; color: #334155;">Hello,</p>
-                    <p style="font-size: 16px; color: #334155;">
-                        You requested to reset your password for your Career Compass account. 
-                        Click the button below to reset your password:
-                    </p>
-                    <div style="text-align: center; margin: 30px 0;">
-                        <a href="${resetUrl}" 
-                           style="background: #2563eb; color: white; padding: 14px 28px; text-decoration: none; 
-                                  border-radius: 8px; font-weight: bold; display: inline-block;">
-                            Reset Password
-                        </a>
-                    </div>
-                    <p style="font-size: 14px; color: #64748b;">
-                        Or copy and paste this link into your browser:
-                    </p>
-                    <p style="font-size: 12px; color: #2563eb; word-break: break-all; background: white; padding: 10px; border-radius: 4px;">
-                        ${resetUrl}
-                    </p>
-                    <p style="font-size: 14px; color: #64748b; margin-top: 30px;">
-                        <strong>This link will expire in 1 hour.</strong>
-                    </p>
-                    <p style="font-size: 14px; color: #64748b;">
-                        If you didn't request this password reset, please ignore this email.
-                    </p>
-                </div>
-                <div style="text-align: center; padding: 20px; color: #94a3b8; font-size: 12px;">
-                    <p>Career Compass - AI-Powered Career Guidance</p>
-                </div>
-            </div>
-        `
-    };
-
     try {
-        const info = await transporter.sendMail(mailOptions);
-        console.log('Password reset email sent:', info.messageId);
-        return { success: true, messageId: info.messageId };
+        const data = await resend.emails.send({
+            from: 'Career Compass <onboarding@resend.dev>',
+            to: email, // Note: In testing mode, this only works if 'email' is the verified account email
+            subject: 'Password Reset Request - Career Compass',
+            html: `
+                <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                    <h2>Password Reset Request</h2>
+                    <p>Click the button below to reset your password:</p>
+                    <a href="${resetUrl}" style="background: #2563eb; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Reset Password</a>
+                    <p>This link expires in 1 hour.</p>
+                </div>
+            `
+        });
+        console.log('Password reset email sent:', data.id);
+        return { success: true, messageId: data.id };
     } catch (error) {
         console.error('Error sending password reset email:', error);
         throw error;
@@ -118,47 +62,24 @@ const sendPasswordResetEmail = async (email, resetToken) => {
 
 // Send verification email
 const sendVerificationEmail = async (email, token) => {
-    const transporter = createTransporter();
-
     // Construct verification URL
     const verifyUrl = `${process.env.FRONTEND_URL || 'http://localhost:5173'}/verify-email?token=${token}`;
 
-    const mailOptions = {
-        from: process.env.EMAIL_USER,
-        to: email,
-        subject: 'Verify Your Email - Career Compass',
-        html: `
-            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-                <div style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); padding: 30px; text-align: center; border-radius: 8px 8px 0 0;">
-                    <h1 style="color: white; margin: 0;">Verify Your Email</h1>
-                </div>
-                <div style="background: #f8fafc; padding: 30px; border-radius: 0 0 8px 8px;">
-                    <p style="font-size: 16px; color: #334155;">Welcome to Career Compass!</p>
-                    <p style="font-size: 16px; color: #334155;">
-                        Please verify your email address to activate your account and access all features.
-                    </p>
-                    <div style="text-align: center; margin: 30px 0;">
-                        <a href="${verifyUrl}" 
-                           style="background: #10b981; color: white; padding: 14px 28px; text-decoration: none; 
-                                  border-radius: 8px; font-weight: bold; display: inline-block;">
-                            Verify Email Address
-                        </a>
-                    </div>
-                    <p style="font-size: 14px; color: #64748b;">
-                        Or copy and paste this link into your browser:
-                    </p>
-                    <p style="font-size: 12px; color: #10b981; word-break: break-all; background: white; padding: 10px; border-radius: 4px;">
-                        ${verifyUrl}
-                    </p>
-                </div>
-            </div>
-        `
-    };
-
     try {
-        const info = await transporter.sendMail(mailOptions);
-        console.log('Verification email sent:', info.messageId);
-        return { success: true, messageId: info.messageId };
+        const data = await resend.emails.send({
+            from: 'Career Compass <onboarding@resend.dev>',
+            to: email,
+            subject: 'Verify Your Email - Career Compass',
+            html: `
+                <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                    <h2>Verify Your Email</h2>
+                    <p>Please verify your email address to activate your account.</p>
+                    <a href="${verifyUrl}" style="background: #10b981; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Verify Email</a>
+                </div>
+            `
+        });
+        console.log('Verification email sent:', data.id);
+        return { success: true, messageId: data.id };
     } catch (error) {
         console.error('Error sending verification email:', error);
         throw error;
