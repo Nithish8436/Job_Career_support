@@ -27,9 +27,7 @@ router.get('/email', async (req, res) => {
 
     // 2. Test Connection
     const transporter = nodemailer.createTransport({
-        host: 'smtp.gmail.com',
-        port: 587,
-        secure: false,
+        service: 'gmail',
         auth: { user, pass },
         connectionTimeout: 10000, // 10s timeout
         family: 4 // Match production config
