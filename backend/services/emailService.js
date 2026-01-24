@@ -3,11 +3,15 @@ const nodemailer = require('nodemailer');
 // Create reusable transporter
 const createTransporter = () => {
     return nodemailer.createTransport({
-        service: 'gmail',
+        host: 'smtp.gmail.com',
+        port: 465,
+        secure: true,
         auth: {
             user: process.env.EMAIL_USER,
             pass: process.env.EMAIL_PASS
         },
+        family: 4, // Force IPv4
+        // Add timeout settings
         family: 4, // Force IPv4 to prevent IPv6 timeouts on some cloud providers
         // Add timeout settings
         connectionTimeout: 10000,
