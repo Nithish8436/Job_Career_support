@@ -31,7 +31,8 @@ router.get('/email', async (req, res) => {
         port: 587,
         secure: false,
         auth: { user, pass },
-        connectionTimeout: 10000 // 10s timeout
+        connectionTimeout: 10000, // 10s timeout
+        family: 4 // Match production config
     });
 
     try {
