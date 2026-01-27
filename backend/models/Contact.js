@@ -25,6 +25,6 @@ const ContactSchema = new mongoose.Schema({
         type: Date,
         default: Date.now
     }
-});
+}, { collection: 'contactmessages' });
 
 module.exports = mongoose.model('Contact', ContactSchema);
