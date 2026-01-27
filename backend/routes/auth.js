@@ -18,23 +18,9 @@ router.post('/register', async (req, res) => {
         let user = await User.findOne({ email });
         if (user) {
             if (!user.isVerified) {
-                // Generate verification JWT
-                const payload = { user: { id: user.id } };
-                const verificationToken = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1d' });
-
-                user.verificationToken = verificationToken;
-                await user.save();
-
-                const { sendVerificationEmail } = require('../services/emailService');
-                sendVerificationEmail(email, verificationToken)
-                    .then(() => console.log(`Resent verification email (register retry) to ${email}`))
-                    .catch(emailErr => console.error('Failed to send verification email:', emailErr));
-
-                return res.status(200).json({
-                    success: true,
-                    message: 'Account exists but was not verified. A new verification link has been sent.',
-                    requireVerification: true
-                });
+                // Auto-verify old unverified users if they try to register again?
+                // Or just return error.
+                return res.status(400).json({ error: 'User already exists' });
             }
             return res.status(400).json({ error: 'User already exists' });
         }
@@ -51,23 +37,24 @@ router.post('/register', async (req, res) => {
         user.password = await bcrypt.hash(password, salt);
         await user.save(); // Save first to get the ID
 
-        // Generate verification JWT using the new user ID
-        const payload = { user: { id: user.id } };
-        const verificationToken = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1d' });
-
-        user.verificationToken = verificationToken;
+        // Auto-verify user
+        user.isVerified = true;
         await user.save();
 
-        // Send confirmation email (non-blocking)
-        const { sendVerificationEmail } = require('../services/emailService');
-        sendVerificationEmail(email, verificationToken)
-            .then(() => console.log(`Verification email sent to ${email}`))
-            .catch(emailErr => console.error('Failed to send verification email:', emailErr));
+        // Create JWT token for immediate login
+        const payload = { user: { id: user.id } };
+        const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '7d' });
 
         res.status(201).json({
             success: true,
-            message: 'Registration successful! Please check your email to verify your account.',
-            requireVerification: true
+            token,
+            user: {
+                id: user._id,
+                name: user.name,
+                email: user.email
+            },
+            message: 'Registration successful!',
+            requireVerification: false
         });
 
     } catch (error) {
@@ -135,20 +122,8 @@ router.post('/login', async (req, res) => {
 
         // Check verification
         if (!user.isVerified) {
-            // Self-healing: Resend verification email if they try to login but aren't verified
-            const payload = { user: { id: user.id } };
-            const verificationToken = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1d' });
-
-            user.verificationToken = verificationToken;
-            await user.save();
-
-            const { sendVerificationEmail } = require('../services/emailService');
-            sendVerificationEmail(user.email, verificationToken)
-                .then(() => console.log(`Resent verification email to ${user.email}`))
-                .catch(err => console.error('Failed to resend verification email:', err));
-
             return res.status(401).json({
-                error: 'Account not verified. A new verification link has been sent to your email.'
+                error: 'Account not verified. Please contact support.'
             });
         }
 
@@ -234,11 +209,14 @@ router.post('/forgot-password', async (req, res) => {
         const resetToken = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' });
 
         // Send password reset email (non-blocking)
-        const { sendPasswordResetEmail } = require('../services/emailService');
+        // Mock sending email (log to console)
+        console.log(`Password reset requested for ${email}. Token: ${resetToken}`);
 
-        sendPasswordResetEmail(email, resetToken)
-            .then(() => console.log(`Password reset email sent to ${email}`))
-            .catch(err => console.error('Failed to send reset email:', err));
+        // Return success so frontend doesn't break, but warn API user
+        res.json({
+            success: true,
+            message: 'If an account exists, a reset link would be sent. (Email service disabled)'
+        });
 
         res.json({
             success: true,

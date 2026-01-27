@@ -51,7 +51,7 @@ app.use('/api/chat', require('./routes/chat'));
 app.use('/api/interview', require('./routes/interview'));
 app.use('/api/progress', require('./routes/progress'));
 app.use('/api/contact', require('./routes/contact'));
-app.use('/api/debug', require('./routes/debug'));
+
 
 
 app.listen(PORT, () => {

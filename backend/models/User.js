@@ -12,8 +12,11 @@ const userSchema = new mongoose.Schema({
     },
     password: {
         type: String,
-        required: true,
+        required: function () { return !this.googleId && !this.githubId && !this.linkedinId; } // Password not required if using social login
     },
+    googleId: String,
+    githubId: String,
+    linkedinId: String,
     createdAt: {
         type: Date,
         default: Date.now,

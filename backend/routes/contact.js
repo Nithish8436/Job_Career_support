@@ -12,20 +12,13 @@ router.post('/', async (req, res) => {
             return res.status(400).json({ error: 'Please fill in all required fields' });
         }
 
-        // Send email notification
-        const { sendContactEmail } = require('../services/emailService');
-        try {
-            await sendContactEmail({ firstName, lastName, email, message });
-            res.status(200).json({
-                success: true,
-                message: 'Message sent successfully! We will get back to you shortly.'
-            });
-        } catch (emailError) {
-            console.error('Email sending failed:', emailError);
-            res.status(500).json({
-                error: 'Failed to send message. Please try again later.'
-            });
-        }
+        // Mock email sending
+        console.log(`Contact Message from ${firstName} ${lastName} (${email}): ${message}`);
+
+        res.status(200).json({
+            success: true,
+            message: 'Message received! (Email service disabled)'
+        });
 
     } catch (error) {
         console.error('Contact error:', error);

@@ -79,39 +79,15 @@ const RegisterPage = () => {
         // Check if registration was successful (assuming register returns validation or boolean)
         // If your auth context returns true/false:
         if (result) {
-            setIsSuccess(true);
+            // Login successful/Registered
+            navigate('/dashboard');
         } else {
             // Error sets in context
         }
         setIsSubmitting(false);
     };
 
-    if (isSuccess) {
-        return (
-            <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-slate-50 via-white to-blue-50/30">
-                <SEO title="Verify Email" />
-                <motion.div
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    className="w-full max-w-md bg-white rounded-3xl shadow-xl overflow-hidden border border-slate-100 p-8 text-center"
-                >
-                    <div className="w-20 h-20 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-6">
-                        <CheckCircle2 className="w-10 h-10 text-green-600" />
-                    </div>
-                    <h2 className="text-3xl font-bold text-slate-900 mb-4">Check Your Email!</h2>
-                    <p className="text-slate-600 mb-8">
-                        We've sent a verification link to <strong>{email}</strong>.
-                        Please click the link to activate your account.
-                    </p>
-                    <Link to="/login">
-                        <Button className="w-full h-12 bg-blue-600 hover:bg-blue-700 text-white rounded-xl">
-                            Back to Login
-                        </Button>
-                    </Link>
-                </motion.div>
-            </div>
-        );
-    }
+
 
     return (
         <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-slate-50 via-white to-blue-50/30">
