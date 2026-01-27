@@ -47,28 +47,19 @@ const DashboardPage = () => {
     useEffect(() => {
         const fetchMatches = async () => {
             if (!user) {
-                console.log('No user found, skipping fetch');
                 setLoading(false);
                 return;
             }
 
-            console.log('Fetching matches for user:', user);
-            console.log('User ID:', user.id);
-
             try {
                 const url = `${import.meta.env.VITE_API_URL}/api/match/user/${user.id}`;
-                console.log('Fetching from:', url);
 
                 const response = await fetch(url);
-                console.log('Response status:', response.status);
 
                 if (!response.ok) {
-                    const errorText = await response.text();
-                    console.error('Error response:', errorText);
                     throw new Error('Failed to fetch matches');
                 }
                 const data = await response.json();
-                console.log('Received data:', data);
 
                 if (data.success) {
                     setMatches(data.matches);

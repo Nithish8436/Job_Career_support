@@ -6,6 +6,7 @@ import SEO from '../components/SEO';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
 import { AlertCircle, Loader2, Eye, EyeOff, ArrowRight } from 'lucide-react';
+import SocialLoginButtons from '../components/SocialLoginButtons';
 
 const LoginPage = () => {
     const [email, setEmail] = useState('');
@@ -157,6 +158,9 @@ const LoginPage = () => {
                                 </Button>
                             </motion.div>
                         </form>
+
+                        {/* Social Login */}
+                        <SocialLoginButtons />
 
                         {/* Sign Up Link */}
                         <motion.div

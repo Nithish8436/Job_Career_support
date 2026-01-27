@@ -56,7 +56,7 @@ export const AuthProvider = ({ children }) => {
         }
     }, [error]);
 
-    const register = async (name, email, password) => {
+    const register = async (name, email, password, securityQuestion, securityAnswer) => {
         setError(null);
         try {
             const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/auth/register`, {
@@ -64,7 +64,7 @@ export const AuthProvider = ({ children }) => {
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ name, email, password })
+                body: JSON.stringify({ name, email, password, securityQuestion, securityAnswer })
             });
 
             const data = await response.json();

@@ -1,7 +1,5 @@
 const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
-const GitHubStrategy = require('passport-github2').Strategy;
-const LinkedInStrategy = require('passport-linkedin-oauth2').Strategy;
 const User = require('../models/User');
 
 passport.serializeUser((user, done) => {
@@ -43,9 +41,9 @@ const handleSocialLogin = async (provider, profile, done) => {
         // 3. Create new user
         user = new User({
             name: profile.displayName || profile.username,
-            email: email, // Note: GitHub/LinkedIn might not provide email if private
+            email: email,
             [`${provider}Id`]: profile.id,
-            isVerified: true // Social login implies verified email (mostly)
+            isVerified: true // Social login implies verified email
         });
 
         await user.save();
@@ -57,33 +55,11 @@ const handleSocialLogin = async (provider, profile, done) => {
     }
 };
 
-// --- STRATEGIES ---
-
-// Google
+// --- GOOGLE STRATEGY ---
 if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
     passport.use(new GoogleStrategy({
         clientID: process.env.GOOGLE_CLIENT_ID,
         clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-        callbackURL: "/api/auth/google/callback"
+        callbackURL: `${process.env.BACKEND_URL || 'http://localhost:5000'}/api/auth/google/callback`
     }, (accessToken, refreshToken, profile, done) => handleSocialLogin('google', profile, done)));
-}
-
-// GitHub
-if (process.env.GITHUB_CLIENT_ID && process.env.GITHUB_CLIENT_SECRET) {
-    passport.use(new GitHubStrategy({
-        clientID: process.env.GITHUB_CLIENT_ID,
-        clientSecret: process.env.GITHUB_CLIENT_SECRET,
-        callbackURL: "/api/auth/github/callback",
-        scope: ['user:email']
-    }, (accessToken, refreshToken, profile, done) => handleSocialLogin('github', profile, done)));
-}
-
-// LinkedIn
-if (process.env.LINKEDIN_CLIENT_ID && process.env.LINKEDIN_CLIENT_SECRET) {
-    passport.use(new LinkedInStrategy({
-        clientID: process.env.LINKEDIN_CLIENT_ID,
-        clientSecret: process.env.LINKEDIN_CLIENT_SECRET,
-        callbackURL: "/api/auth/linkedin/callback",
-        scope: ['r_emailaddress', 'r_liteprofile'],
-    }, (accessToken, refreshToken, profile, done) => handleSocialLogin('linkedin', profile, done)));
 }

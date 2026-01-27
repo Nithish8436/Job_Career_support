@@ -4,42 +4,76 @@ import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
 import SEO from '../components/SEO';
 import { motion, AnimatePresence } from 'framer-motion';
-import { AlertCircle, Loader2, ArrowLeft, Mail, CheckCircle2 } from 'lucide-react';
+import { AlertCircle, Loader2, ArrowLeft, KeyRound, CheckCircle2, ShieldQuestion } from 'lucide-react';
 import axios from 'axios';
 
 const ForgotPasswordPage = () => {
+    const [step, setStep] = useState(1); // 1: Email, 2: Question/Answer
     const [email, setEmail] = useState('');
-    const [status, setStatus] = useState('idle'); // idle, loading, success, demo_success, error
-    const [error, setError] = useState(null);
-    const [demoLink, setDemoLink] = useState(null);
+    const [question, setQuestion] = useState('');
+    const [answer, setAnswer] = useState('');
+    const [newPassword, setNewPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
 
-    const handleSubmit = async (e) => {
+    const [status, setStatus] = useState('idle'); // idle, loading, success, error
+    const [error, setError] = useState(null);
+
+    const api = axios.create({ baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5000' });
+
+    const handleGetQuestion = async (e) => {
         e.preventDefault();
         setStatus('loading');
         setError(null);
 
         try {
-            const api = axios.create({ baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5000' });
-            const res = await api.post('/api/auth/forgot-password', { email });
-
+            const res = await api.post('/api/auth/get-question', { email });
             if (res.data.success) {
-                if (res.data.demo_link) {
-                    setDemoLink(res.data.demo_link);
-                    setStatus('demo_success');
-                } else {
-                    setStatus('success');
-                }
+                setQuestion(res.data.question);
+                setStep(2);
+                setStatus('idle');
             }
         } catch (err) {
             setStatus('error');
-            setError(err.response?.data?.message || 'Failed to process request');
+            setError(err.response?.data?.message || 'Failed to find account');
+        }
+    };
+
+    const handleResetPassword = async (e) => {
+        e.preventDefault();
+
+        if (newPassword !== confirmPassword) {
+            setError("Passwords do not match");
+            return;
+        }
+
+        if (newPassword.length < 6) {
+            setError("Password must be at least 6 characters");
+            return;
+        }
+
+        setStatus('loading');
+        setError(null);
+
+        try {
+            const res = await api.post('/api/auth/reset-via-question', {
+                email,
+                answer,
+                newPassword
+            });
+
+            if (res.data.success) {
+                setStatus('success');
+            }
+        } catch (err) {
+            setStatus('error');
+            setError(err.response?.data?.message || 'Failed to reset password');
         }
     };
 
     return (
         <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-slate-50 via-white to-blue-50/30">
             <SEO
-                title="Forgot Password"
+                title="Reset Password"
                 description="Reset your Career Compass password."
             />
             <motion.div
@@ -53,75 +87,42 @@ const ForgotPasswordPage = () => {
 
                 <div className="text-center mb-8">
                     <div className="w-16 h-16 mx-auto mb-6 rounded-2xl bg-gradient-to-br from-blue-50 to-cyan-50 flex items-center justify-center">
-                        <Mail className="w-8 h-8 text-blue-600" />
+                        <KeyRound className="w-8 h-8 text-blue-600" />
                     </div>
-                    <h1 className="text-3xl font-bold text-slate-900 mb-2">Forgot Password?</h1>
+                    <h1 className="text-3xl font-bold text-slate-900 mb-2">Password Recovery</h1>
                     <p className="text-slate-600">
-                        Enter your email address and we'll send you instructions to reset your password.
+                        {step === 1 ? "Enter your email to find your account." : "Answer your security question to reset."}
                     </p>
                 </div>
 
                 <AnimatePresence mode="wait">
-                    {status === 'success' && (
+                    {status === 'success' ? (
                         <motion.div
                             key="success"
                             initial={{ opacity: 0, y: 10 }}
                             animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: -10 }}
                             className="bg-green-50 border border-green-200 rounded-xl p-6 text-center"
                         >
                             <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
                                 <CheckCircle2 className="w-6 h-6 text-green-600" />
                             </div>
-                            <h3 className="text-lg font-bold text-green-800 mb-2">Check your email</h3>
+                            <h3 className="text-lg font-bold text-green-800 mb-2">Password Reset!</h3>
                             <p className="text-green-700 text-sm mb-6">
-                                We have sent a password reset link to <strong>{email}</strong>.
+                                Your password has been successfully updated.
                             </p>
                             <Link to="/login">
                                 <Button className="w-full bg-green-600 hover:bg-green-700 text-white">
-                                    Back to Login
+                                    Login with New Password
                                 </Button>
                             </Link>
                         </motion.div>
-                    )}
-
-                    {status === 'demo_success' && (
-                        <motion.div
-                            key="demo_success"
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: -10 }}
-                            className="bg-blue-50 border border-blue-200 rounded-xl p-6 text-center"
-                        >
-                            <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                                <CheckCircle2 className="w-6 h-6 text-blue-600" />
-                            </div>
-                            <h3 className="text-lg font-bold text-blue-800 mb-2">Reset Link Ready!</h3>
-                            <p className="text-blue-700 text-sm mb-6">
-                                Click the button below to reset your password:
-                            </p>
-                            <Link to={demoLink}>
-                                <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white mb-3">
-                                    Reset Password Now
-                                </Button>
-                            </Link>
-                            <Button
-                                variant="ghost"
-                                onClick={() => { setStatus('idle'); setEmail(''); setDemoLink(null); }}
-                                className="w-full text-slate-500"
-                            >
-                                Try Another Email
-                            </Button>
-                        </motion.div>
-                    )}
-
-                    {(status === 'idle' || status === 'loading' || status === 'error') && (
+                    ) : (
                         <motion.form
-                            key="form"
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                            onSubmit={handleSubmit}
+                            key={step} // Animate transition between steps
+                            initial={{ opacity: 0, x: 20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            exit={{ opacity: 0, x: -20 }}
+                            onSubmit={step === 1 ? handleGetQuestion : handleResetPassword}
                             className="space-y-6"
                         >
                             {error && (
@@ -131,17 +132,69 @@ const ForgotPasswordPage = () => {
                                 </div>
                             )}
 
-                            <div>
-                                <label className="block text-sm font-medium text-slate-700 mb-2 ml-1">Email Address</label>
-                                <Input
-                                    type="email"
-                                    placeholder="Enter your registered email"
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
-                                    required
-                                    className="w-full h-12 px-4 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-600"
-                                />
-                            </div>
+                            {step === 1 ? (
+                                // Step 1: Email
+                                <div>
+                                    <label className="block text-sm font-medium text-slate-700 mb-2 ml-1">Email Address</label>
+                                    <Input
+                                        type="email"
+                                        placeholder="Enter your registered email"
+                                        value={email}
+                                        onChange={(e) => setEmail(e.target.value)}
+                                        required
+                                        className="w-full h-12 px-4 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-600"
+                                    />
+                                </div>
+                            ) : (
+                                // Step 2: Security Question & New Password
+                                <div className="space-y-4">
+                                    <div className="p-4 bg-blue-50 border border-blue-200 rounded-xl">
+                                        <div className="flex items-center gap-2 text-blue-800 font-medium mb-1">
+                                            <ShieldQuestion className="w-5 h-5" />
+                                            Security Question:
+                                        </div>
+                                        <p className="text-blue-900 text-lg font-semibold">{question}</p>
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-sm font-medium text-slate-700 mb-2 ml-1">Your Answer</label>
+                                        <Input
+                                            type="text"
+                                            placeholder="Enter your answer"
+                                            value={answer}
+                                            onChange={(e) => setAnswer(e.target.value)}
+                                            required
+                                            className="w-full h-12 px-4 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-600"
+                                        />
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-sm font-medium text-slate-700 mb-2 ml-1">New Password</label>
+                                        <Input
+                                            type="password"
+                                            placeholder="Enter new password"
+                                            value={newPassword}
+                                            onChange={(e) => setNewPassword(e.target.value)}
+                                            required
+                                            minLength={6}
+                                            className="w-full h-12 px-4 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-600"
+                                        />
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-sm font-medium text-slate-700 mb-2 ml-1">Confirm New Password</label>
+                                        <Input
+                                            type="password"
+                                            placeholder="Confirm new password"
+                                            value={confirmPassword}
+                                            onChange={(e) => setConfirmPassword(e.target.value)}
+                                            required
+                                            minLength={6}
+                                            className="w-full h-12 px-4 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-600"
+                                        />
+                                    </div>
+                                </div>
+                            )}
 
                             <Button
                                 type="submit"
@@ -151,10 +204,10 @@ const ForgotPasswordPage = () => {
                                 {status === 'loading' ? (
                                     <>
                                         <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                                        Sending Instructions...
+                                        {step === 1 ? "Checking Email..." : "Resetting Password..."}
                                     </>
                                 ) : (
-                                    "Send Reset Link"
+                                    step === 1 ? "Continue" : "Reset Password"
                                 )}
                             </Button>
 

@@ -2,15 +2,16 @@ const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const passport = require('passport');
 const User = require('../models/User');
 const auth = require('../middleware/authMiddleware');
 
 // POST /api/auth/register
 router.post('/register', async (req, res) => {
     try {
-        const { name, email, password } = req.body;
+        const { name, email, password, securityQuestion, securityAnswer } = req.body;
 
-        if (!name || !email || !password) {
+        if (!name || !email || !password || !securityQuestion || !securityAnswer) {
             return res.status(400).json({ error: 'All fields are required' });
         }
 
@@ -29,12 +30,19 @@ router.post('/register', async (req, res) => {
             name,
             email,
             password,
+            securityQuestion,
+            // securityAnswer will be set below
             isVerified: false
         });
 
         // Hash password
         const salt = await bcrypt.genSalt(10);
         user.password = await bcrypt.hash(password, salt);
+
+        // Hash security answer (normalize to lowercase/trim first)
+        const normalizedAnswer = securityAnswer.trim().toLowerCase();
+        user.securityAnswer = await bcrypt.hash(normalizedAnswer, salt);
+
         await user.save(); // Save first to get the ID
 
         // Auto-verify user
@@ -265,6 +273,111 @@ router.post('/reset-password', async (req, res) => {
 
     } catch (error) {
         console.error('Reset Password error:', error);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
+
+// --- Social Login Routes ---
+
+// Helper to generate token and redirect
+const socialLoginRedirect = (req, res) => {
+    const payload = {
+        user: {
+            id: req.user.id
+        }
+    };
+
+    jwt.sign(
+        payload,
+        process.env.JWT_SECRET,
+        { expiresIn: '7d' },
+        (err, token) => {
+            if (err) {
+                console.error('Token generation error:', err);
+                return res.redirect(`${process.env.FRONTEND_URL}/login?error=auth_failed`);
+            }
+            // Redirect to frontend with token
+            res.redirect(`${process.env.FRONTEND_URL}/dashboard?token=${token}`);
+        }
+    );
+};
+
+// Google
+router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
+
+router.get('/google/callback',
+    passport.authenticate('google', { failureRedirect: '/login', session: false }),
+    socialLoginRedirect
+);
+
+// @route   POST /api/auth/get-question
+// @desc    Get security question for email
+// @access  Public
+router.post('/get-question', async (req, res) => {
+    try {
+        const { email } = req.body;
+
+        if (!email) {
+            return res.status(400).json({ message: 'Email is required' });
+        }
+
+        const user = await User.findOne({ email });
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        if (!user.securityQuestion) {
+            return res.status(400).json({ message: 'No security question set for this account (Social Login?)' });
+        }
+
+        res.json({ success: true, question: user.securityQuestion });
+
+    } catch (error) {
+        console.error('Get Security Question error:', error);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
+// @route   POST /api/auth/reset-via-question
+// @desc    Reset password via security question
+// @access  Public
+router.post('/reset-via-question', async (req, res) => {
+    try {
+        const { email, answer, newPassword } = req.body;
+
+        if (!email || !answer || !newPassword) {
+            return res.status(400).json({ message: 'All fields are required' });
+        }
+
+        const user = await User.findOne({ email });
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        if (!user.securityAnswer) {
+            return res.status(400).json({ message: 'No security answer set for this account' });
+        }
+
+        // Verify answer
+        const normalizedAnswer = answer.trim().toLowerCase();
+        const isMatch = await bcrypt.compare(normalizedAnswer, user.securityAnswer);
+
+        if (!isMatch) {
+            return res.status(400).json({ message: 'Incorrect answer' });
+        }
+
+        // Reset password
+        const salt = await bcrypt.genSalt(10);
+        user.password = await bcrypt.hash(newPassword, salt);
+        await user.save();
+
+        res.json({ success: true, message: 'Password reset successfully' });
+
+    } catch (error) {
+        console.error('Reset via Question error:', error);
         res.status(500).json({ message: 'Server error' });
     }
 });

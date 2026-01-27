@@ -6,6 +6,7 @@ import SEO from '../components/SEO';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
 import { AlertCircle, Loader2, Eye, EyeOff, CheckCircle2, XCircle, ArrowRight } from 'lucide-react';
+import SocialLoginButtons from '../components/SocialLoginButtons';
 
 const RegisterPage = () => {
     const [name, setName] = useState('');
@@ -14,6 +15,8 @@ const RegisterPage = () => {
     const [confirmPassword, setConfirmPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+    const [securityQuestion, setSecurityQuestion] = useState('');
+    const [securityAnswer, setSecurityAnswer] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
     const { register, error: authError, isAuthenticated } = useAuth();
     const [localError, setLocalError] = useState('');
@@ -74,7 +77,7 @@ const RegisterPage = () => {
         setIsSubmitting(true);
         // register now returns { success, message, requireVerification } or falls to catch
         // We'll trust the auth context or handle return
-        const result = await register(name, email, password);
+        const result = await register(name, email, password, securityQuestion, securityAnswer);
 
         // Check if registration was successful (assuming register returns validation or boolean)
         // If your auth context returns true/false:
@@ -320,6 +323,36 @@ const RegisterPage = () => {
                                 )}
                             </div>
 
+                            {/* Security Question */}
+                            <div>
+                                <select
+                                    value={securityQuestion}
+                                    onChange={(e) => setSecurityQuestion(e.target.value)}
+                                    required
+                                    className="w-full h-12 px-4 bg-white border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-blue-400 text-slate-700 transition-all duration-200 appearance-none"
+                                >
+                                    <option value="" disabled>Select a security question</option>
+                                    <option value="What is your mother's maiden name?">What is your mother's maiden name?</option>
+                                    <option value="What was the name of your first pet?">What was the name of your first pet?</option>
+                                    <option value="What was the make of your first car?">What was the make of your first car?</option>
+                                    <option value="What city were you born in?">What city were you born in?</option>
+                                    <option value="What is your favorite book?">What is your favorite book?</option>
+                                </select>
+                            </div>
+
+                            {/* Security Answer */}
+                            <div>
+                                <Input
+                                    id="security-answer"
+                                    type="text"
+                                    placeholder="Answer to security question"
+                                    value={securityAnswer}
+                                    onChange={(e) => setSecurityAnswer(e.target.value)}
+                                    required
+                                    className="w-full h-12 px-4 bg-white border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-blue-400 placeholder-slate-400 transition-all duration-200"
+                                />
+                            </div>
+
                             {/* Terms Checkbox */}
                             <div className="flex items-start gap-3 text-sm pt-2">
                                 <input
@@ -357,6 +390,9 @@ const RegisterPage = () => {
                                 </Button>
                             </motion.div>
                         </form>
+
+                        {/* Social Login */}
+                        <SocialLoginButtons />
 
                         {/* Sign In Link */}
                         <motion.div
