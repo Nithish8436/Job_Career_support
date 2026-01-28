@@ -7,7 +7,7 @@ import Footer from '../components/Footer';
 const AboutPage = () => {
     return (
         <div className="min-h-screen bg-slate-50 font-sans">
-            <SEO title="About Us" description="Learn about the mission and team behind Career Compass." />
+            <SEO title="About Us" description="Learn about the mission and team behind CareerFlux." />
 
             {/* Hero Section */}
             <div className="bg-slate-900 text-white py-24 relative overflow-hidden">

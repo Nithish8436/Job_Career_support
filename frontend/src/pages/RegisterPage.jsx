@@ -7,6 +7,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
 import { AlertCircle, Loader2, Eye, EyeOff, CheckCircle2, XCircle, ArrowRight } from 'lucide-react';
 import SocialLoginButtons from '../components/SocialLoginButtons';
+import Logo from '../components/Logo';
 
 const RegisterPage = () => {
     const [name, setName] = useState('');
@@ -96,7 +97,7 @@ const RegisterPage = () => {
         <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-slate-50 via-white to-blue-50/30">
             <SEO
                 title="Create Account"
-                description="Join Career Compass to build your career with AI-powered insights."
+                description="Join CareerFlux to build your career with AI-powered insights."
             />
             <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
@@ -170,14 +171,8 @@ const RegisterPage = () => {
                             animate={{ opacity: 1, y: 0 }}
                             className="mb-8"
                         >
-                            <div className="flex items-center gap-2 mb-6">
-                                <motion.div
-                                    whileHover={{ rotate: 5, scale: 1.1 }}
-                                    className="w-10 h-10 bg-gradient-to-br from-blue-600 to-cyan-500 rounded-lg flex items-center justify-center text-white font-bold text-lg shadow-lg shadow-blue-500/30"
-                                >
-                                    CC
-                                </motion.div>
-                                <span className="text-2xl font-bold bg-gradient-to-r from-slate-900 to-blue-700 bg-clip-text text-transparent">Career Compass</span>
+                            <div className="mb-6">
+                                <Logo className="scale-125 origin-left" />
                             </div>
                             <h1 className="text-4xl font-bold text-slate-900 mb-3">
                                 Create <br />Account

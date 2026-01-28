@@ -30,7 +30,7 @@ router.post('/', async (req, res) => {
             try {
                 const resend = new Resend(process.env.RESEND_API_KEY);
                 await resend.emails.send({
-                    from: 'Career Compass Support <onboarding@resend.dev>',
+                    from: 'CareerFlux Support <onboarding@resend.dev>',
                     to: process.env.EMAIL_USER || 'nithu2904@gmail.com',
                     subject: `New Contact Form Submission: ${firstName} ${lastName}`,
                     html: `
@@ -40,7 +40,7 @@ router.post('/', async (req, res) => {
                         <p><strong>Message:</strong></p>
                         <p>${message}</p>
                         <hr />
-                        <p>Sent via Career Compass Support Form</p>
+                        <p>Sent via CareerFlux Support Form</p>
                     `
                 });
                 console.log('📧 Contact notification email sent via Resend');

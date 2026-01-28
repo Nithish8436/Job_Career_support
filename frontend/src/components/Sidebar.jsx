@@ -1,11 +1,8 @@
-// components/Sidebar.jsx
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Link, useLocation } from 'react-router-dom'; // Add useLocation
-import {
-  Home, Plus, History, User, Mic, BookOpen, Bot,
-  LogOut, ChevronLeft, ChevronRight, X
-} from 'lucide-react';
+import { Link, useLocation } from 'react-router-dom';
+import { Home, BarChart2, CheckSquare, Settings, User, LogOut, ChevronLeft, ChevronRight, Menu, X, Plus, History, Mic, BookOpen, Bot } from 'lucide-react';
+import Logo from './Logo';
 import { Button } from './ui/Button';
 
 const Sidebar = ({
@@ -17,7 +14,7 @@ const Sidebar = ({
   sidebarOpen = false,
   onCloseSidebar = () => { }
 }) => {
-  const location = useLocation(); // Get current location
+  const location = useLocation();
 
   const sidebarItems = [
     {
@@ -48,7 +45,7 @@ const Sidebar = ({
       id: 'profile',
       label: 'Profile',
       icon: User,
-      path: '/profile', // Changed from onClick to path
+      path: '/profile',
       color: 'text-cyan-600',
       bgColor: 'bg-cyan-100'
     },
@@ -78,32 +75,20 @@ const Sidebar = ({
     }
   ];
 
-  // Check if current path matches sidebar item
   const isActive = (itemPath) => {
     if (!itemPath) return false;
-
-    // Exact match for dashboard
     if (itemPath === '/dashboard') {
       return location.pathname === '/dashboard';
     }
-
-    // For other paths, check if current path starts with item path
-    // This handles nested routes like /result?matchId=...
     return location.pathname.startsWith(itemPath);
   };
 
-  // Mobile Sidebar Component
   const MobileSidebar = () => (
     <>
       <div className="p-4 border-b border-slate-200/50 flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-cyan-500 rounded-lg flex items-center justify-center text-white font-bold shadow-lg shadow-blue-500/30">
-            CC
-          </div>
-          <span className="text-lg font-bold bg-gradient-to-r from-slate-900 to-blue-700 bg-clip-text text-transparent">
-            Career Compass
-          </span>
-        </div>
+        <Link to="/dashboard" onClick={onCloseSidebar}>
+          <Logo />
+        </Link>
         <button
           onClick={onCloseSidebar}
           className="p-2 hover:bg-slate-100 rounded-lg"
@@ -162,31 +147,17 @@ const Sidebar = ({
     </>
   );
 
-  // Desktop Sidebar Component
   const DesktopSidebar = () => (
     <>
-      <div className="p-4 border-b border-slate-200/50 flex items-center justify-between">
+      <div className="p-4 border-b border-slate-200/50 flex items-center justify-between h-16">
         {!collapsed ? (
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-cyan-500 rounded-lg flex items-center justify-center text-white font-bold shadow-lg shadow-blue-500/30">
-              CC
-            </div>
-            <motion.span
-              initial={{ opacity: 1 }}
-              animate={{ opacity: collapsed ? 0 : 1 }}
-              className="text-lg font-bold bg-gradient-to-r from-slate-900 to-blue-700 bg-clip-text text-transparent whitespace-nowrap"
-            >
-              Career Compass
-            </motion.span>
-          </div>
+          <Logo />
         ) : (
-          <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-cyan-500 rounded-lg flex items-center justify-center text-white font-bold shadow-lg shadow-blue-500/30 mx-auto">
-            CC
-          </div>
+          <Logo iconOnly={true} />
         )}
         <button
           onClick={onToggleCollapse}
-          className="p-1.5 hover:bg-slate-100 rounded-lg"
+          className="p-1.5 hover:bg-slate-100 rounded-lg ml-auto"
         >
           {collapsed ? (
             <ChevronRight className="w-4 h-4 text-slate-600" />
@@ -268,7 +239,6 @@ const Sidebar = ({
     </>
   );
 
-  // Return mobile sidebar container
   if (sidebarOpen) {
     return (
       <motion.div
@@ -283,7 +253,6 @@ const Sidebar = ({
     );
   }
 
-  // Return desktop sidebar container
   return (
     <motion.div
       initial={{ width: 80 }}
@@ -295,4 +264,4 @@ const Sidebar = ({
   );
 };
 
-export default Sidebar; 
+export default Sidebar;

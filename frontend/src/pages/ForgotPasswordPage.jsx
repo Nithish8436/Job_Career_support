@@ -74,7 +74,7 @@ const ForgotPasswordPage = () => {
         <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-slate-50 via-white to-blue-50/30">
             <SEO
                 title="Reset Password"
-                description="Reset your Career Compass password."
+                description="Reset your CareerFlux password."
             />
             <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}

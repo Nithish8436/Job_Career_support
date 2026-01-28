@@ -5,6 +5,7 @@ import {
     Shield, FileText, Info, MessageSquare,
     ArrowRight
 } from 'lucide-react';
+import Logo from './Logo';
 
 const Footer = () => {
     const currentYear = new Date().getFullYear();
@@ -15,13 +16,8 @@ const Footer = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
                     {/* Brand Column */}
                     <div>
-                        <Link to="/" className="flex items-center gap-2 mb-6">
-                            <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-cyan-500 rounded-lg flex items-center justify-center text-white font-bold text-sm shadow-lg shadow-blue-500/30">
-                                CC
-                            </div>
-                            <span className="text-xl font-bold bg-gradient-to-r from-blue-700 to-cyan-600 bg-clip-text text-transparent">
-                                Career Compass
-                            </span>
+                        <Link to="/" className="inline-block mb-6">
+                            <Logo />
                         </Link>
                         <p className="text-slate-600 mb-6 leading-relaxed">
                             Empowering careers with AI-driven insights. Get the tools you need to land your dream job faster.
@@ -112,7 +108,7 @@ const Footer = () => {
                 {/* Bottom Bar */}
                 <div className="pt-8 border-t border-slate-100 flex flex-col md:flex-row items-center justify-between gap-4">
                     <p className="text-slate-500 text-sm">
-                        © {currentYear} Career Compass. All rights reserved.
+                        © {currentYear} CareerFlux. All rights reserved.
                     </p>
                     <div className="flex gap-6 text-sm text-slate-500">
                         <Link to="/privacy" className="hover:text-blue-600 transition-colors">Privacy</Link>

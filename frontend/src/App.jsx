@@ -37,7 +37,7 @@ function App() {
                 <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
               </div>
             </div>
-            <p className="mt-4 text-slate-500 font-medium animate-pulse">Loading Career Compass...</p>
+            <p className="mt-4 text-slate-500 font-medium animate-pulse">Loading CareerFlux...</p>
           </div>
         }>
           <Routes>

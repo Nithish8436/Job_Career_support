@@ -111,7 +111,7 @@ const DashboardPage = () => {
         <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50/30 flex">
             <SEO
                 title="Dashboard"
-                description="Track your resume analysis history, skills growth, and career progress with Career Compass."
+                description="Track your resume analysis history, skills growth, and career progress with CareerFlux."
             />
             {/* Mobile Sidebar Overlay with Sidebar */}
             <SidebarOverlay isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)}>

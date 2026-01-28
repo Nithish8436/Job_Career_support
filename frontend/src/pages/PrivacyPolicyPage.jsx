@@ -36,7 +36,7 @@ const PrivacyPolicyPage = () => {
 
     return (
         <div className="min-h-screen bg-slate-50 font-sans">
-            <SEO title="Privacy Policy" description="Privacy Policy for Career Compass." />
+            <SEO title="Privacy Policy" description="Privacy Policy for CareerFlux." />
 
             {/* Header / Hero */}
             <div className="bg-slate-900 text-white py-20 relative overflow-hidden">

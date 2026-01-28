@@ -7,7 +7,7 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 const sendContactEmail = async ({ firstName, lastName, email, message }) => {
     try {
         const data = await resend.emails.send({
-            from: 'Career Compass <onboarding@resend.dev>', // Use default until domain verified
+            from: 'CareerFlux <onboarding@resend.dev>', // Use default until domain verified
             to: process.env.EMAIL_USER, // Send to admin (yourself)
             reply_to: email,
             subject: `New Contact Form Submission from ${firstName} ${lastName}`,
@@ -40,9 +40,9 @@ const sendPasswordResetEmail = async (email, resetToken) => {
 
     try {
         const data = await resend.emails.send({
-            from: 'Career Compass <onboarding@resend.dev>',
+            from: 'CareerFlux <onboarding@resend.dev>',
             to: email, // Note: In testing mode, this only works if 'email' is the verified account email
-            subject: 'Password Reset Request - Career Compass',
+            subject: 'Password Reset Request - CareerFlux',
             html: `
                 <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
                     <h2>Password Reset Request</h2>
@@ -67,9 +67,9 @@ const sendVerificationEmail = async (email, token) => {
 
     try {
         const data = await resend.emails.send({
-            from: 'Career Compass <onboarding@resend.dev>',
+            from: 'CareerFlux <onboarding@resend.dev>',
             to: email,
-            subject: 'Verify Your Email - Career Compass',
+            subject: 'Verify Your Email - CareerFlux',
             html: `
                 <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
                     <h2>Verify Your Email</h2>

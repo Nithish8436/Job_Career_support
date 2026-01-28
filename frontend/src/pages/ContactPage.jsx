@@ -9,7 +9,7 @@ import axios from 'axios';
 const ContactPage = () => {
     return (
         <div className="min-h-screen bg-slate-50 font-sans">
-            <SEO title="Contact Us" description="Get in touch with the Career Compass team." />
+            <SEO title="Contact Us" description="Get in touch with the CareerFlux team." />
 
             {/* Header / Hero */}
             <div className="bg-slate-900 text-white py-20 relative overflow-hidden">
@@ -50,8 +50,8 @@ const ContactPage = () => {
                             <div>
                                 <h3 className="font-bold text-slate-900 mb-1">Email Us</h3>
                                 <p className="text-sm text-slate-500 mb-2">For general inquiries and support:</p>
-                                <a href="mailto:support@careercompass.com" className="text-blue-600 font-semibold hover:underline block">support@careercompass.com</a>
-                                <a href="mailto:partnerships@careercompass.com" className="text-blue-600 font-semibold hover:underline block">partnerships@careercompass.com</a>
+                                <a href="mailto:support@careerflux.com" className="text-blue-600 font-semibold hover:underline block">support@careerflux.com</a>
+                                <a href="mailto:partnerships@careerflux.com" className="text-blue-600 font-semibold hover:underline block">partnerships@careerflux.com</a>
                             </div>
                         </div>
 

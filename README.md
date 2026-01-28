@@ -1,8 +1,8 @@
-# Career Compass (Delta Forge) 🚀
+# CareerFlux (Delta Forge) 🚀
 
-**Career Compass** is an advanced AI-powered career support platform designed to assist job seekers at every stage of their journey. By integrating cutting-edge AI tools, it provides personalized resume analysis, simulated mock interviews, and tailored career roadmaps to help users land their dream jobs.
+**CareerFlux** is an advanced AI-powered career support platform designed to assist job seekers at every stage of their journey. By integrating cutting-edge AI tools, it provides personalized resume analysis, simulated mock interviews, and tailored career roadmaps to help users land their dream jobs.
 
-![Career Compass Dashboard](https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?w=1200&h=400&fit=crop&q=80)
+![CareerFlux Dashboard](https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?w=1200&h=400&fit=crop&q=80)
 
 ## ✨ Key Features
 

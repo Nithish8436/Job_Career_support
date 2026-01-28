@@ -4,7 +4,7 @@ import { Helmet } from 'react-helmet-async';
 const SEO = ({
     title,
     description,
-    name = 'Career Compass',
+    name = 'CareerFlux',
     type = 'website'
 }) => {
     return (

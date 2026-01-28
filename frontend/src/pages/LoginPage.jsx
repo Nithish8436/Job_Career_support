@@ -7,6 +7,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
 import { AlertCircle, Loader2, Eye, EyeOff, ArrowRight } from 'lucide-react';
 import SocialLoginButtons from '../components/SocialLoginButtons';
+import Logo from '../components/Logo';
 
 const LoginPage = () => {
     const [email, setEmail] = useState('');
@@ -37,7 +38,7 @@ const LoginPage = () => {
         <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-slate-50 via-white to-blue-50/30">
             <SEO
                 title="Login"
-                description="Sign in to Career Compass to access your AI career tools."
+                description="Sign in to CareerFlux to access your AI career tools."
             />
             <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
@@ -54,14 +55,8 @@ const LoginPage = () => {
                             animate={{ opacity: 1, y: 0 }}
                             className="mb-10"
                         >
-                            <div className="flex items-center gap-2 mb-8">
-                                <motion.div
-                                    whileHover={{ rotate: 5, scale: 1.1 }}
-                                    className="w-10 h-10 bg-gradient-to-br from-blue-600 to-cyan-500 rounded-lg flex items-center justify-center text-white font-bold text-lg shadow-lg shadow-blue-500/30"
-                                >
-                                    CC
-                                </motion.div>
-                                <span className="text-2xl font-bold bg-gradient-to-r from-slate-900 to-blue-700 bg-clip-text text-transparent">Career Compass</span>
+                            <div className="mb-8">
+                                <Logo className="scale-125 origin-left" />
                             </div>
                             <h1 className="text-5xl font-bold text-slate-900 mb-3">
                                 Welcome <br />Back
@@ -201,7 +196,7 @@ const LoginPage = () => {
                                     </div>
                                     <h3 className="text-2xl font-bold text-slate-900 mb-2">Career Success Awaits</h3>
                                     <p className="text-slate-600 text-sm">
-                                        Join thousands who found their dream jobs with Career Compass
+                                        Join thousands who found their dream jobs with CareerFlux
                                     </p>
                                 </div>
 

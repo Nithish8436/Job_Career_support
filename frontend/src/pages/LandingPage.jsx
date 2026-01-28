@@ -14,6 +14,7 @@ import {
 // Import assets
 import atsBot from '../assets/ats-bot.png';
 import Footer from '../components/Footer';
+import Logo from '../components/Logo';
 
 const LandingPage = () => {
     const [currentTestimonial, setCurrentTestimonial] = useState(0);
@@ -28,7 +29,7 @@ const LandingPage = () => {
             date: "Jul 4, 2024",
             rating: 5,
             title: "Landing interviews became easier",
-            text: "Career Compass transformed my job search. My resume match rate went from 37% to 91% after optimization, and I started getting callbacks within days!"
+            text: "CareerFlux transformed my job search. My resume match rate went from 37% to 91% after optimization, and I started getting callbacks within days!"
         },
         {
             name: "Stephen H.",
@@ -36,7 +37,7 @@ const LandingPage = () => {
             date: "May 31, 2024",
             rating: 5,
             title: "Game-changing tool",
-            text: "The AI-powered insights helped me tailor my resume perfectly. I landed 3 interviews in 2 weeks after using Career Compass."
+            text: "The AI-powered insights helped me tailor my resume perfectly. I landed 3 interviews in 2 weeks after using CareerFlux."
         },
         {
             name: "Kathleen C.",
@@ -44,7 +45,7 @@ const LandingPage = () => {
             date: "May 30, 2024",
             rating: 5,
             title: "Invaluable for my clients",
-            text: "I recommend Career Compass to all my clients. The ATS optimization and gap analysis features are exactly what job seekers need in today's market."
+            text: "I recommend CareerFlux to all my clients. The ATS optimization and gap analysis features are exactly what job seekers need in today's market."
         }
     ];
 
@@ -188,7 +189,7 @@ const LandingPage = () => {
         <div className="min-h-screen bg-slate-50 font-sans selection:bg-blue-200 selection:text-blue-900">
             <SEO
                 title="AI-Powered Resume Analysis & Interview Prep"
-                description="Supercharge your job search with Career Compass. Get instant resume feedback, AI mock interviews, and personalized career roadmaps."
+                description="Supercharge your job search with CareerFlux. Get instant resume feedback, AI mock interviews, and personalized career roadmaps."
             />
             {/* Floating Background Elements */}
             <div className="fixed inset-0 overflow-hidden pointer-events-none -z-10">
@@ -212,14 +213,7 @@ const LandingPage = () => {
                         className="flex items-center gap-3 cursor-pointer group"
                         onClick={() => scrollToSection('hero')}
                     >
-                        <div className="relative">
-                            <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-cyan-500 rounded-xl flex items-center justify-center text-white font-bold text-lg shadow-lg shadow-blue-500/30 group-hover:shadow-blue-500/50 transition-all duration-300">
-                                CC
-                            </div>
-                        </div>
-                        <span className="text-xl font-bold bg-gradient-to-r from-blue-700 to-cyan-600 bg-clip-text text-transparent tracking-tight">
-                            Career Compass
-                        </span>
+                        <Logo />
                     </motion.div>
 
                     <div className="hidden lg:flex items-center gap-8 text-sm font-medium">
@@ -286,7 +280,7 @@ const LandingPage = () => {
                             </h1>
 
                             <p className="text-lg text-slate-600 mb-8 leading-relaxed">
-                                Career Compass uses advanced AI to analyze your resume, match it with job requirements, and provide actionable insights to get you more interviews.
+                                CareerFlux uses advanced AI to analyze your resume, match it with job requirements, and provide actionable insights to get you more interviews.
                             </p>
 
                             <div className="flex flex-col sm:flex-row gap-3">
@@ -439,7 +433,7 @@ const LandingPage = () => {
                                 </span>
                             </h2>
                             <p className="text-slate-600 mb-6 leading-relaxed">
-                                Over 98% of Fortune 500 companies use ATS to filter resumes. Career Compass ensures your resume passes through every major system with our advanced formatting and keyword optimization technology.
+                                Over 98% of Fortune 500 companies use ATS to filter resumes. CareerFlux ensures your resume passes through every major system with our advanced formatting and keyword optimization technology.
                             </p>
                             <ul className="space-y-3">
                                 {[
@@ -533,7 +527,7 @@ const LandingPage = () => {
 
                         <div>
                             <p className="text-slate-600 mb-6 leading-relaxed">
-                                Career Compass identifies exactly what skills and keywords are missing from your resume compared to job requirements. Get specific, actionable suggestions to fill those gaps and become the perfect candidate.
+                                CareerFlux identifies exactly what skills and keywords are missing from your resume compared to job requirements. Get specific, actionable suggestions to fill those gaps and become the perfect candidate.
                             </p>
 
                             <div className="space-y-4">
@@ -641,7 +635,7 @@ const LandingPage = () => {
                             </span>
                         </h2>
                         <p className="text-lg text-slate-300 mb-8 max-w-2xl mx-auto leading-relaxed">
-                            Join thousands of successful job seekers who landed their dream roles with Career Compass.
+                            Join thousands of successful job seekers who landed their dream roles with CareerFlux.
                         </p>
 
                     </motion.div>
@@ -654,10 +648,7 @@ const LandingPage = () => {
                     <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-8">
                         <div className="lg:col-span-2">
                             <div className="flex items-center gap-3 mb-4">
-                                <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-lg flex items-center justify-center text-white font-bold">
-                                    CC
-                                </div>
-                                <span className="text-xl font-bold text-white">Career Compass</span>
+                                <Logo textClassName="text-white bg-none text-white" />
                             </div>
                             <p className="text-slate-400 text-sm mb-6 max-w-md">
                                 AI-powered career assistant helping job seekers land more interviews with smart resume optimization and ATS compatibility checks.
@@ -719,7 +710,7 @@ const LandingPage = () => {
                     </div>
 
                     <div className="mt-8 pt-6 border-t border-slate-800 text-center text-slate-500 text-xs">
-                        <p>© {new Date().getFullYear()} Career Compass. All rights reserved.</p>
+                        <p>© {new Date().getFullYear()} CareerFlux. All rights reserved.</p>
                     </div>
                 </div>
             </footer>

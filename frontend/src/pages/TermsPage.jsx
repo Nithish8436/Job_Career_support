@@ -36,7 +36,7 @@ const TermsPage = () => {
 
     return (
         <div className="min-h-screen bg-slate-50 font-sans">
-            <SEO title="Terms of Service" description="Terms and Conditions for Career Compass." />
+            <SEO title="Terms of Service" description="Terms and Conditions for CareerFlux." />
 
             {/* Header / Hero */}
             <div className="bg-slate-900 text-white py-20 relative overflow-hidden">
@@ -51,7 +51,7 @@ const TermsPage = () => {
                         </div>
                         <h1 className="text-4xl md:text-5xl font-bold mb-6">Terms of Service</h1>
                         <p className="text-xl text-slate-300 leading-relaxed">
-                            Please read these terms carefully before using Career Compass. They govern your use of our AI-powered career tools and services.
+                            Please read these terms carefully before using CareerFlux. They govern your use of our AI-powered career tools and services.
                         </p>
                         <div className="mt-8 flex items-center text-sm text-slate-400">
                             <span>Last Updated: January 8, 2026</span>
@@ -117,7 +117,7 @@ const TermsPage = () => {
                                 </div>
                                 <div className="prose prose-slate max-w-none text-slate-600 leading-relaxed">
                                     <p>
-                                        By accessing or using Career Compass ("Services"), you agree to be bound by these Terms of Service and all applicable laws and regulations. If you do not agree with any of these terms, you are prohibited from using or accessing this site.
+                                        By accessing or using CareerFlux ("Services"), you agree to be bound by these Terms of Service and all applicable laws and regulations. If you do not agree with any of these terms, you are prohibited from using or accessing this site.
                                     </p>
                                     <p className="mt-4">
                                         These terms apply to all visitors, users, and others who access or use the Service. Your access to and use of the Service is conditioned on your acceptance of and compliance with these Terms.
@@ -137,7 +137,7 @@ const TermsPage = () => {
                                 </div>
                                 <div className="prose prose-slate max-w-none text-slate-600 leading-relaxed">
                                     <p>
-                                        Permission is granted to temporarily download one copy of the materials (information or software) on Career Compass for personal, non-commercial transitory viewing only. This is the grant of a license, not a transfer of title, and under this license you may not:
+                                        Permission is granted to temporarily download one copy of the materials (information or software) on CareerFlux for personal, non-commercial transitory viewing only. This is the grant of a license, not a transfer of title, and under this license you may not:
                                     </p>
                                     <ul className="mt-4 space-y-2 list-none pl-0">
                                         {[
@@ -162,7 +162,7 @@ const TermsPage = () => {
                             <section id="disclaimer" className="scroll-mt-28">
                                 <h2 className="text-2xl font-bold text-slate-900 mb-4">3. Disclaimer</h2>
                                 <p className="text-slate-600 mb-6 leading-relaxed">
-                                    The materials on Career Compass are provided on an 'as is' basis. Career Compass makes no warranties, expressed or implied, and hereby disclaims and negates all other warranties including, without limitation, implied warranties or conditions of merchantability, fitness for a particular purpose, or non-infringement of intellectual property.
+                                    The materials on CareerFlux are provided on an 'as is' basis. CareerFlux makes no warranties, expressed or implied, and hereby disclaims and negates all other warranties including, without limitation, implied warranties or conditions of merchantability, fitness for a particular purpose, or non-infringement of intellectual property.
                                 </p>
                                 <div className="bg-yellow-50 border border-yellow-100 rounded-xl p-6 flex gap-4">
                                     <AlertCircle className="w-6 h-6 text-yellow-600 flex-shrink-0" />
@@ -209,7 +209,7 @@ const TermsPage = () => {
                             <section id="limitations" className="scroll-mt-28">
                                 <h2 className="text-2xl font-bold text-slate-900 mb-4">5. Limitations</h2>
                                 <p className="text-slate-600 leading-relaxed">
-                                    In no event shall Career Compass or its suppliers be liable for any damages (including, without limitation, damages for loss of data or profit, or due to business interruption) arising out of the use or inability to use the materials on Career Compass, even if Career Compass or a Career Compass authorized representative has been notified orally or in writing of the possibility of such damage.
+                                    In no event shall CareerFlux or its suppliers be liable for any damages (including, without limitation, damages for loss of data or profit, or due to business interruption) arising out of the use or inability to use the materials on CareerFlux, even if CareerFlux or a CareerFlux authorized representative has been notified orally or in writing of the possibility of such damage.
                                 </p>
                             </section>
 
