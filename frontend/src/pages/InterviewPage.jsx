@@ -86,6 +86,7 @@ const InterviewPage = () => {
     const startCountdown = () => {
         if (listening) {
             SpeechRecognition.stopListening();
+            console.log('Stopped listening before countdown');
             return;
         }
 
@@ -163,7 +164,10 @@ Requirements:
 - Questions should match their experience level and technologies
 - Mix of conceptual, practical, and problem-solving questions
 - Appropriate difficulty for their background
+- Appropriate difficulty for their background
 - IMPORTANT: Ask UNIQUE and DIVERSE questions compared to previous interviews. Focus on different projects or skills if possible.
+- Avoid generic questions. Ask specific, scenario-based questions.
+- Random Seed: ${Date.now()} (Use this to ensure uniqueness)
 
 CRITICAL: Return ONLY a valid JSON array with exactly 5 questions. No markdown, no explanations, no code blocks. Just the array.
 
@@ -186,6 +190,9 @@ Requirements:
 - Mix of conceptual understanding, practical application, and problem-solving
 - Appropriate for mid-level candidates
 - Cover key technologies and concepts in this domain
+- Include modern/recent trends in the field.
+- Avoid standard textbook questions; ask about real-world scenarios.
+- Random Seed: ${Date.now()} (Use this to ensure uniqueness)
 
 CRITICAL: Return ONLY a valid JSON array with exactly 5 questions. No markdown, no explanations, no code blocks. Just the array.
 
@@ -198,7 +205,10 @@ Focus areas:
 - Programming fundamentals (algorithms, data structures)
 - System design concepts
 - Problem-solving approaches
+- Problem-solving approaches
 - Best practices and patterns
+- Emerging technologies and trends
+- Random Seed: ${Date.now()} (Use this to ensure uniqueness)
 
 CRITICAL: Return ONLY a valid JSON array with exactly 5 questions. No markdown, no explanations, no code blocks. Just the array.
 
@@ -211,6 +221,9 @@ Example format:
 Focus areas:
 - ${focusAreas}
 - General fit and soft skills
+- Situational judgment
+- Workplace challenges
+- Random Seed: ${Date.now()} (Use this to ensure uniqueness)
 
 CRITICAL: Return ONLY a valid JSON array with exactly 5 questions. No markdown, no explanations, no code blocks. Just the array.
 
@@ -303,12 +316,14 @@ Example format:
     const submitAnswer = async () => {
         if (listening) {
             try {
-                SpeechRecognition.stopListening();
+                await SpeechRecognition.stopListening();
+                console.log('Stopped listening for answer submission');
             } catch (e) {
                 console.warn('stopListening error:', e);
             }
 
-            await new Promise((res) => setTimeout(res, 700));
+            // Small buffer to allow state to update
+            await new Promise((res) => setTimeout(res, 500));
         }
 
         const finalAnswer = transcript || '';
@@ -500,16 +515,22 @@ ${interviewSummary}`;
         }
     };
 
-    const handleListen = () => {
+    const handleListen = async () => {
         if (listening) {
-            SpeechRecognition.stopListening();
+            try {
+                await SpeechRecognition.stopListening();
+                console.log('Manual stop listening triggered');
+            } catch (e) {
+                console.error('Error stopping listening:', e);
+            }
         } else {
             try {
-                SpeechRecognition.startListening({
+                await SpeechRecognition.startListening({
                     continuous: true,
                     interimResults: true,
                     language: 'en-US'
                 });
+                console.log('Manual start listening triggered');
             } catch (e) {
                 console.error('Manual start listening error:', e);
             }

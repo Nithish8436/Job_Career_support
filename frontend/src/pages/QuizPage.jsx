@@ -43,7 +43,15 @@ const QuizPage = () => {
                     'x-auth-token': token
                 },
                 body: JSON.stringify({
-                    message: `Generate 5 multiple choice questions about common interview topics (behavioral, technical, career). Format EXACTLY as JSON array:
+                    message: `Generate 5 UNIQUE and DISTINCT multiple choice questions about common interview topics (behavioral, technical, career). 
+                    
+Requirements:
+- Questions must be diverse and NOT repetitive.
+- Include some less common but important topics.
+- Ensure the questions are challenging but fair.
+- Random Seed: ${Date.now()} (Use this to ensure uniqueness)
+
+Format EXACTLY as JSON array:
 [
   {
     "question": "Question text here?",
